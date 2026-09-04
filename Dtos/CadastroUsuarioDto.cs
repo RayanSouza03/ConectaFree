@@ -22,5 +22,7 @@ namespace ConectaFree.Dtos
         [Required]
         public required bool AceitouTermos { get; set; }    
 
+        public required EnderecoDto Endereco { get; set; }
+
     }
 }

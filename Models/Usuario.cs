@@ -23,5 +23,7 @@ namespace ConectaFree.Models
         public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
         public DateTime? DataAtualizacao { get; set; }
 
+        public Endereco? Endereco { get; set; }
+
     }
 }

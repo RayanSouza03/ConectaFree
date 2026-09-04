@@ -22,6 +22,59 @@ namespace ConectaFree.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ConectaFree.Models.Endereco", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Bairro")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Cep")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("character varying(9)");
+
+                    b.Property<string>("Cidade")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Complemento")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<string>("Logradouro")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("Numero")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId")
+                        .IsUnique();
+
+                    b.ToTable("Enderecos");
+                });
+
             modelBuilder.Entity("ConectaFree.Models.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -63,6 +116,22 @@ namespace ConectaFree.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("ConectaFree.Models.Endereco", b =>
+                {
+                    b.HasOne("ConectaFree.Models.Usuario", "Usuario")
+                        .WithOne("Endereco")
+                        .HasForeignKey("ConectaFree.Models.Endereco", "UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("ConectaFree.Models.Usuario", b =>
+                {
+                    b.Navigation("Endereco");
                 });
 #pragma warning restore 612, 618
         }
