@@ -110,6 +110,11 @@ namespace ConectaFree.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
+                    b.Property<string>("Telefone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
                     b.Property<int>("TipoUsuario")
                         .HasColumnType("integer");
 

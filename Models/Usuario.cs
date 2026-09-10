@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.SignalR;
 
 namespace ConectaFree.Models
 {
@@ -14,6 +15,9 @@ namespace ConectaFree.Models
 
         [MaxLength(255)]
         public required string SenhaHash { get; set; }
+
+        [MaxLength(20)]
+        public required string Telefone { get; set; }
 
         public required TipoUsuario TipoUsuario { get; set; }
 

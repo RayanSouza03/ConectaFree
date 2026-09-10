@@ -17,12 +17,15 @@ namespace ConectaFree.Dtos
         public required string Senha { get; set; }
 
         [Required]
+        [MaxLength(20)]
+        public required string Telefone { get; set; }
+
+        [Required]
         public required TipoUsuario TipoUsuario { get; set; }
 
         [Required]
         public required bool AceitouTermos { get; set; }    
 
-        public required EnderecoDto Endereco { get; set; }
 
     }
 }

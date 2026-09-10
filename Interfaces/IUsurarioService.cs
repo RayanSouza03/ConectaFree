@@ -1,0 +1,11 @@
+using ConectaFree.Dtos;
+using ConectaFree.Models;
+
+namespace ConectaFree.Interfaces
+{
+ public interface IUsuarioService
+    {
+        Task<Usuario> CadastrarAsync(CadastroUsuarioDto dto);
+        Task<LoginResponseDto?> LoginAsync(LoginDto dto);
+    }   
+}
