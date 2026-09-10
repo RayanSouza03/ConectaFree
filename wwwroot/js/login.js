@@ -8,6 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const campoSenha = document.getElementById("senha");
   const botaoEntrar = document.getElementById("btn-entrar");
   const mensagemErro = document.getElementById("mensagem-erro");
+  const botaoCriarConta = document.getElementById("btn-criar-conta");
+
+  
+  botaoCriarConta.addEventListener("click", () => {
+  window.location.href = "cadastro.html";
+  });
 
   formulario.addEventListener("submit", async (evento) => {
     evento.preventDefault();
