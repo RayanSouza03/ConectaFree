@@ -75,6 +75,156 @@ namespace ConectaFree.Migrations
                     b.ToTable("Enderecos");
                 });
 
+            modelBuilder.Entity("ConectaFree.Models.Habilidade", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int?>("UsuarioId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Habilidades");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Nome = "Design gráfico"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Nome = "Ilustração"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Nome = "Social media"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Nome = "Programação"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Nome = "Babá"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Nome = "Garçom"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Nome = "Marketing digital"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Nome = "Edição de vídeo"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Nome = "Fotografia"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Nome = "UI/UX Design"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Nome = "Desenvolvimento Web"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Nome = "Desenvolvimento Mobile"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Nome = "Consultoria"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Nome = "Contabilidade"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Nome = "Advocacia"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Nome = "Arquitetura"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Nome = "Engenharia"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Nome = "Professor particular"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Nome = "Cuidador de idosos"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Nome = "Pintor"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Nome = "Eletricista"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Nome = "Encanador"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Nome = "Cuidador de pet"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Nome = "Bartender"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Nome = "Jardineiro"
+                        });
+                });
+
             modelBuilder.Entity("ConectaFree.Models.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -85,6 +235,10 @@ namespace ConectaFree.Migrations
 
                     b.Property<bool>("AceitouTermos")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Bio")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime?>("DataAceiteTermos")
                         .HasColumnType("timestamp with time zone");
@@ -100,10 +254,18 @@ namespace ConectaFree.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("FotoUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<string>("OutraHabilidade")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("SenhaHash")
                         .IsRequired()
@@ -134,9 +296,18 @@ namespace ConectaFree.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("ConectaFree.Models.Habilidade", b =>
+                {
+                    b.HasOne("ConectaFree.Models.Usuario", null)
+                        .WithMany("Habilidades")
+                        .HasForeignKey("UsuarioId");
+                });
+
             modelBuilder.Entity("ConectaFree.Models.Usuario", b =>
                 {
                     b.Navigation("Endereco");
+
+                    b.Navigation("Habilidades");
                 });
 #pragma warning restore 612, 618
         }

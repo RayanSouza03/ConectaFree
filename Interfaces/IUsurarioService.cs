@@ -7,5 +7,6 @@ namespace ConectaFree.Interfaces
     {
         Task<Usuario> CadastrarAsync(CadastroUsuarioDto dto);
         Task<LoginResponseDto?> LoginAsync(LoginDto dto);
+        Task<Usuario> AtualizarPerfilAsync(int usuarioId, AtualizarPerfilDto dto);
     }   
 }

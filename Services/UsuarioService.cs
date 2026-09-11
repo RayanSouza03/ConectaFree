@@ -12,7 +12,6 @@ namespace ConectaFree.Services
 {
     public class UsuarioService : IUsuarioService
     {
-        
         private readonly ConectaFreeDbContext _context;
         private readonly IConfiguration _config;
 
@@ -21,12 +20,12 @@ namespace ConectaFree.Services
             _context = context;
             _config = config;
         }
-        
+
         public async Task<Usuario> CadastrarAsync(CadastroUsuarioDto dto)
         {
             var emailExiste = await _context.Usuarios.AnyAsync(u => u.Email == dto.Email);
-            if(emailExiste)
-                throw new InvalidOperationException ("Email já cadastrado.");
+            if (emailExiste)
+                throw new InvalidOperationException("Email já cadastrado.");
 
             var usuario = new Usuario
             {
@@ -37,7 +36,6 @@ namespace ConectaFree.Services
                 TipoUsuario = dto.TipoUsuario,
                 AceitouTermos = dto.AceitouTermos,
                 DataAceiteTermos = dto.AceitouTermos ? DateTime.UtcNow : null,
-                
             };
 
             _context.Usuarios.Add(usuario);
@@ -62,6 +60,82 @@ namespace ConectaFree.Services
                 Email = usuario.Email,
                 TipoUsuario = usuario.TipoUsuario
             };
+        }
+
+        public async Task<Usuario> AtualizarPerfilAsync(int usuarioId, AtualizarPerfilDto dto)
+        {
+            var usuario = await _context.Usuarios
+                .Include(u => u.Endereco)
+                .Include(u => u.Habilidades)
+                .FirstOrDefaultAsync(u => u.Id == usuarioId);
+
+            if (usuario == null)
+                throw new InvalidOperationException("Usuário não encontrado.");
+
+            if (!string.IsNullOrWhiteSpace(dto.Nome))
+                usuario.Nome = dto.Nome;
+
+            if (!string.IsNullOrWhiteSpace(dto.Telefone))
+                usuario.Telefone = dto.Telefone;
+
+            if (dto.Bio != null)
+                usuario.Bio = dto.Bio;
+
+            if (dto.FotoUrl != null)
+                usuario.FotoUrl = dto.FotoUrl;
+
+            if (dto.HabilidadeIds != null)
+            {
+                if (usuario.TipoUsuario == TipoUsuario.Contratante && dto.HabilidadeIds.Any())
+                    throw new InvalidOperationException("Contratantes não podem ter habilidades.");
+
+                var habilidades = await _context.Habilidades
+                    .Where(h => dto.HabilidadeIds.Contains(h.Id))
+                    .ToListAsync();
+
+                usuario.Habilidades = habilidades;
+            }
+
+            if (dto.OutraHabilidade != null)
+            {
+                if (usuario.TipoUsuario == TipoUsuario.Contratante)
+                    throw new InvalidOperationException("Contratantes não podem ter habilidades.");
+
+                usuario.OutraHabilidade = dto.OutraHabilidade;
+            }
+
+            if (dto.Endereco != null)
+            {
+                if (usuario.Endereco == null)
+                {
+                    usuario.Endereco = new Endereco
+                    {
+                        Logradouro = dto.Endereco.Logradouro,
+                        Numero = dto.Endereco.Numero,
+                        Complemento = dto.Endereco.Complemento,
+                        Bairro = dto.Endereco.Bairro,
+                        Cidade = dto.Endereco.Cidade,
+                        Estado = dto.Endereco.Estado,
+                        Cep = dto.Endereco.Cep
+                    };
+                }
+                else
+                {
+                    usuario.Endereco.Logradouro = dto.Endereco.Logradouro;
+                    usuario.Endereco.Numero = dto.Endereco.Numero;
+                    usuario.Endereco.Complemento = dto.Endereco.Complemento;
+                    usuario.Endereco.Bairro = dto.Endereco.Bairro;
+                    usuario.Endereco.Cidade = dto.Endereco.Cidade;
+                    usuario.Endereco.Estado = dto.Endereco.Estado;
+                    usuario.Endereco.Cep = dto.Endereco.Cep;
+                }
+            }
+
+            usuario.DataAtualizacao = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return usuario;
         }
 
         private string GerarToken(Usuario usuario)

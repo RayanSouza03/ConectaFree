@@ -1,17 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using ConectaFree.Dtos;
 using ConectaFree.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ConectaFree.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] // vira /api/usuarios
+    [Route("api/[controller]")] 
     public class UsuariosController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
 
-        // Injeção de dependência: o Controller recebe a Service pronta,
-        // não sabe (nem precisa saber) como ela funciona por dentro.
         public UsuariosController(IUsuarioService usuarioService)
         {
             _usuarioService = usuarioService;
@@ -41,6 +41,27 @@ namespace ConectaFree.Controllers
                 return Unauthorized(new { erro = "Email ou senha inválidos." });
 
             return Ok(resultado);
+        }
+
+        [Authorize]
+        [HttpPut("perfil")]
+        public async Task<IActionResult> AtualizarPerfil([FromBody] AtualizarPerfilDto dto)
+        {
+            var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (usuarioIdClaim == null)
+                return Unauthorized();
+
+            var usuarioId = int.Parse(usuarioIdClaim);
+
+            try
+            {
+                var usuario = await _usuarioService.AtualizarPerfilAsync(usuarioId, dto);
+                return Ok(usuario);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
