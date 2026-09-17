@@ -17,7 +17,7 @@ namespace ConectaFree.Controllers
             _usuarioService = usuarioService;
         }
 
-        [HttpPost("cadastro")] // POST /api/usuarios/cadastro
+        [HttpPost("cadastro")] 
         public async Task<IActionResult> Cadastrar(CadastroUsuarioDto dto)
         {
             try
@@ -27,12 +27,11 @@ namespace ConectaFree.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                // Email duplicado, por exemplo
                 return BadRequest(new { erro = ex.Message });
             }
         }
 
-        [HttpPost("login")] // POST /api/usuarios/login
+        [HttpPost("login")] 
         public async Task<IActionResult> Login(LoginDto dto)
         {
             var resultado = await _usuarioService.LoginAsync(dto);
@@ -62,6 +61,12 @@ namespace ConectaFree.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+        [HttpGet("filtrar-freelancers")]
+        public async Task<IActionResult>  FiltrarFreelancers([FromQuery] FiltroFreelancerDto filtro)
+        {
+            var Resultado = await _usuarioService.FiltrarFreelancersAsync(filtro);
+            return Ok(Resultado);   
         }
     }
 }

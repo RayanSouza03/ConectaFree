@@ -24,6 +24,9 @@ namespace ConectaFree.Models
         [MaxLength(20)]
         public required string Telefone { get; set; }
 
+        [MaxLength(14)]
+        public required string Documento { get; set; }
+
         [MaxLength(500)]
         public string? Bio { get; set; }
 

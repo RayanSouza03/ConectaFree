@@ -22,6 +22,51 @@ namespace ConectaFree.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ConectaFree.Models.Anuncio", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ContratanteId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<int>("HabilidadeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<bool>("Urgente")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("ValorProposto")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContratanteId");
+
+                    b.HasIndex("HabilidadeId");
+
+                    b.ToTable("Anuncios");
+                });
+
             modelBuilder.Entity("ConectaFree.Models.Endereco", b =>
                 {
                     b.Property<int>("Id")
@@ -249,6 +294,11 @@ namespace ConectaFree.Migrations
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Documento")
+                        .IsRequired()
+                        .HasMaxLength(14)
+                        .HasColumnType("character varying(14)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -282,7 +332,29 @@ namespace ConectaFree.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Documento")
+                        .IsUnique();
+
                     b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("ConectaFree.Models.Anuncio", b =>
+                {
+                    b.HasOne("ConectaFree.Models.Usuario", "Contratante")
+                        .WithMany()
+                        .HasForeignKey("ContratanteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConectaFree.Models.Habilidade", "Habilidade")
+                        .WithMany()
+                        .HasForeignKey("HabilidadeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contratante");
+
+                    b.Navigation("Habilidade");
                 });
 
             modelBuilder.Entity("ConectaFree.Models.Endereco", b =>

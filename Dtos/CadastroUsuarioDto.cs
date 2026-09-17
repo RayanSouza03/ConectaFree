@@ -21,6 +21,10 @@ namespace ConectaFree.Dtos
         public required string Telefone { get; set; }
 
         [Required]
+        [MaxLength(14)]
+        public required string Documento { get; set; }
+
+        [Required]
         public required TipoUsuario TipoUsuario { get; set; }
 
         [Required]

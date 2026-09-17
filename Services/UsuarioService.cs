@@ -33,6 +33,7 @@ namespace ConectaFree.Services
                 Email = dto.Email,
                 SenhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha),
                 Telefone = dto.Telefone,
+                Documento = dto.Documento,
                 TipoUsuario = dto.TipoUsuario,
                 AceitouTermos = dto.AceitouTermos,
                 DataAceiteTermos = dto.AceitouTermos ? DateTime.UtcNow : null,
@@ -159,6 +160,26 @@ namespace ConectaFree.Services
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+        public async Task<List<Usuario>> FiltrarFreelancersAsync(FiltroFreelancerDto filtro)
+        {
+            
+            var query = _context.Usuarios
+                .Include(u => u.Endereco)
+                .Include(u => u.Habilidades)
+                .Where(u => u.TipoUsuario == TipoUsuario.Freelancer)
+                .AsQueryable();
+
+            if (filtro.HabilidadeId.HasValue)
+                query = query.Where(u => u.Habilidades.Any(h => h.Id == filtro.HabilidadeId.Value));
+
+            if (!string.IsNullOrWhiteSpace(filtro.Cidade))
+                query = query.Where(u => u.Endereco != null && u.Endereco.Cidade == filtro.Cidade);
+
+            if (!string.IsNullOrWhiteSpace(filtro.Estado))
+                query = query.Where(u => u.Endereco != null && u.Endereco.Estado == filtro.Estado);
+
+            return await query.ToListAsync();
         }
     }
 }

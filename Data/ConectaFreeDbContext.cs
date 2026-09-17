@@ -16,6 +16,9 @@ public DbSet<Endereco> Enderecos { get; set; }
 
 public DbSet<Habilidade> Habilidades { get; set; }
 
+public DbSet<Anuncio> Anuncios { get; set; }
+
+
 protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -47,6 +50,10 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
             new Habilidade { Id = 24, Nome = "Bartender" },
             new Habilidade { Id = 25, Nome = "Jardineiro" }
         );
+
+        modelBuilder.Entity<Usuario>()
+        .HasIndex(u => u.Documento)
+        .IsUnique();
     }
 }
 }
