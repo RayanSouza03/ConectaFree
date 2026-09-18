@@ -270,6 +270,48 @@ namespace ConectaFree.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ConectaFree.Models.PortfolioItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AnuncioId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Descricao")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("FotoUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnuncioId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("PortfolioItens");
+                });
+
             modelBuilder.Entity("ConectaFree.Models.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -373,6 +415,23 @@ namespace ConectaFree.Migrations
                     b.HasOne("ConectaFree.Models.Usuario", null)
                         .WithMany("Habilidades")
                         .HasForeignKey("UsuarioId");
+                });
+
+            modelBuilder.Entity("ConectaFree.Models.PortfolioItem", b =>
+                {
+                    b.HasOne("ConectaFree.Models.Anuncio", "Anuncio")
+                        .WithMany()
+                        .HasForeignKey("AnuncioId");
+
+                    b.HasOne("ConectaFree.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Anuncio");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("ConectaFree.Models.Usuario", b =>

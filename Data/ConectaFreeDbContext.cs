@@ -17,7 +17,7 @@ public DbSet<Endereco> Enderecos { get; set; }
 public DbSet<Habilidade> Habilidades { get; set; }
 
 public DbSet<Anuncio> Anuncios { get; set; }
-
+public DbSet<PortfolioItem> PortfolioItens { get; set; }
 
 protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

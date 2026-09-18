@@ -20,6 +20,8 @@ builder.Services.AddDbContext<ConectaFreeDbContext>(options =>
 
 // Injeta a Service no Controller através da Interface
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IPortfolioService, PortfolioService>();
 builder.Services.AddScoped<IAnuncioService, AnuncioService>();
 
 // CORS - libera o frontend (Vite/React) a chamar essa API
