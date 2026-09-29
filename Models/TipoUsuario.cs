@@ -1,5 +1,5 @@
 namespace ConectaFree.Models
-{ 
+{
     public enum TipoUsuario
     {
         Freelancer = 0,

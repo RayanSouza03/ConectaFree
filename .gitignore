@@ -24,3 +24,5 @@ appsettings.*.local.json
 # Operating system files
 .DS_Store
 Thumbs.db
+# Fotos enviadas em modo local
+wwwroot/uploads/

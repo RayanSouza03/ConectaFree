@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConectaFree</title>
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/menu-lateral.css">
+  <link rel="stylesheet" href="css/visualizar-perfil.css">
+  <link rel="stylesheet" href="css/tema.css">
+</head>
+<body class="pagina-visualizar-perfil tem-menu" data-menu-ativo="visualizar-perfil.html">
+
+<script src="js/config.js"></script>
+<script src="js/authService.js"></script>
+<script src="js/api.js"></script>
+<script>if (!AuthService.estaAutenticado()) window.location.replace("index.html");</script>
+<script src="js/menuLateral.js"></script>
+
+<div class="conteudo-pagina">
+
+  <header class="cabecalho-perfil">
+    <a href="index.html" class="marca-conecta marca-cabecalho">ConectaFree</a>
+  </header>
+
+  <main class="container-visualizar-perfil">
+
+    <div class="cabecalho-usuario">
+      <div class="foto-usuario-wrapper" id="foto-usuario-wrapper">
+        <img id="foto-usuario" class="foto-usuario" alt="Foto de perfil" style="display: none;">
+        <div id="foto-usuario-placeholder" class="foto-usuario-placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+        </div>
+      </div>
+      <div class="dados-cabecalho">
+        <h1 id="nome-usuario" class="nome-usuario"></h1>
+        <p id="categoria-usuario" class="categoria-usuario"></p>
+      </div>
+    </div>
+
+    <div class="grade-painéis">
+
+      <section class="painel-cartao painel-informacoes">
+        <h2 class="titulo-painel">Todas as informações</h2>
+
+        <dl class="lista-informacoes">
+          <div class="linha-info">
+            <dt>Nome</dt>
+            <dd id="info-nome">—</dd>
+          </div>
+          <div class="linha-info">
+            <dt>CPF / CNPJ</dt>
+            <dd id="info-documento">—</dd>
+          </div>
+          <div class="linha-info">
+            <dt>E-mail</dt>
+            <dd id="info-email">—</dd>
+          </div>
+          <div class="linha-info">
+            <dt>Telefone</dt>
+            <dd id="info-telefone">—</dd>
+          </div>
+          <div class="linha-info">
+            <dt>Categoria</dt>
+            <dd id="info-categoria">—</dd>
+          </div>
+          <div class="linha-info">
+            <dt>Habilidades</dt>
+            <dd id="info-habilidades" class="tags-info">—</dd>
+          </div>
+          <div class="linha-info">
+            <dt>Endereço</dt>
+            <dd id="info-endereco">—</dd>
+          </div>
+        </dl>
+
+        <div class="rodape-painel">
+          <a href="perfil.html" class="btn-editar">Editar perfil</a>
+        </div>
+      </section>
+
+      <div class="coluna-direita">
+        <section class="painel-cartao painel-bio">
+          <h2 class="titulo-painel">Bio</h2>
+          <p id="info-bio" class="texto-bio">—</p>
+
+          <div class="rodape-painel">
+            <a href="perfil.html#secao-bio" class="btn-editar">Editar bio</a>
+          </div>
+        </section>
+
+        <section class="painel-cartao painel-portfolio">
+          <h2 class="titulo-painel">Portfólio</h2>
+          <div id="lista-portfolio-perfil"><p class="texto-em-breve">Carregando...</p></div>
+
+          <div class="rodape-painel">
+            <a href="portfolio.html" class="btn-editar" id="linkPortfolioCompleto">Editar portfólio</a>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <nav class="rodape-links">
+      <a href="#">Sobre</a>
+      <a href="#">Ajuda</a>
+      <a href="#">Privacidade</a>
+      <a href="#">Termos</a>
+    </nav>
+    <div class="rodape-baixo">
+      <span>Português (Brasil)</span>
+      <span>© 2026</span>
+    </div>
+  </footer>
+
+</div>
+
+  <script src="js/perfilService.js"></script>
+  <script src="js/portfolioModal.js"></script>
+  <script src="js/visualizarPerfil.js"></script>
+  <script src="js/tema.js"></script>
+</body>
+</html>

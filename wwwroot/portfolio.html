@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConectaFree</title>
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/menu-lateral.css">
+  <link rel="stylesheet" href="css/vagas.css">
+  <link rel="stylesheet" href="css/tema.css">
+</head>
+<body class="pagina-portfolio tem-menu" data-menu-ativo="portfolio.html">
+
+<script src="js/config.js"></script>
+<script src="js/authService.js"></script>
+<script src="js/api.js"></script>
+<script>
+  if (new URLSearchParams(location.search).get("usuario")) { if (!AuthService.estaAutenticado()) location.replace("index.html"); }
+  else if (!AuthService.exigirTipo(0)) throw new Error("redirect");
+</script>
+<script src="js/menuLateral.js"></script>
+
+<div class="conteudo-pagina">
+  <main class="container-pagina">
+      <div class="cabecalho-pagina">
+        <h1>Portfólio</h1>
+        <p class="subtitulo-pagina">Mostre suas experiências e conhecimentos para que contratantes conheçam seu trabalho.</p>
+      </div>
+
+      <a class="botao-nova-experiencia" id="btnNovaExperiencia" href="adicionar-experiencia.html">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Adicionar nova experiência
+      </a>
+
+      <p class="rotulo-secao">Experiências</p>
+
+      <ul class="lista-experiencias" id="listaExperiencias"></ul>
+
+      <div class="estado-vazio" id="estadoVazio" hidden>
+        <span class="icone-vazio">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+        </span>
+        <p class="titulo-vazio">Ainda não há nenhuma experiência</p>
+        <p class="texto-vazio">Adicione mais informações sobre a sua trajetória usando o botão "Adicionar nova experiência" acima.</p>
+      </div>
+  </main>
+
+  <footer>
+    <nav class="rodape-links">
+      <a href="#">Sobre</a>
+      <a href="#">Ajuda</a>
+      <a href="#">Privacidade</a>
+      <a href="#">Termos</a>
+    </nav>
+    <div class="rodape-baixo">
+      <span>Português (Brasil)</span>
+      <span>© 2026</span>
+    </div>
+  </footer>
+</div>
+
+  <script src="js/portfolioModal.js"></script>
+  <script src="js/portfolio.js"></script>
+  <script src="js/tema.js"></script>
+</body>
+</html>

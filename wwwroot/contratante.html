@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConectaFree</title>
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/menu-lateral.css">
+  <link rel="stylesheet" href="css/contratante.css">
+  <link rel="stylesheet" href="css/tema.css">
+</head>
+<body class="tem-menu" data-menu-ativo="contratante.html">
+
+<script src="js/config.js"></script>
+<script src="js/authService.js"></script>
+<script src="js/api.js"></script>
+<script>if (!AuthService.exigirTipo(1)) throw new Error("redirect");</script>
+<script src="js/menuLateral.js"></script>
+
+<div class="conteudo-pagina">
+  <main class="container-contratante">
+    <section class="boas-vindas-c">
+      <h1>Olá, <span id="nomeContratante">Contratante</span>!</h1>
+      <p>Encontre freelancers para o seu projeto.</p>
+    </section>
+
+    <section class="filtros-c">
+      <input type="text" id="filtroHabilidade" placeholder="Habilidade: programação, design..." autocomplete="off">
+      <input type="text" id="filtroCidade" placeholder="Cidade">
+      <input type="text" id="filtroEstado" placeholder="UF" maxlength="2">
+      <button type="button" id="btnBuscar">Buscar</button>
+    </section>
+
+    <p id="statusBusca" class="status-c"></p>
+    <section id="listaFreelancers" class="grade-c"></section>
+  </main>
+
+  <footer>
+    <div class="rodape-baixo"><span>Português (Brasil)</span><span>© 2026</span></div>
+  </footer>
+</div>
+
+<script src="js/autocomplete.js"></script>
+<script src="js/contratante.js"></script>
+  <script src="js/tema.js"></script>
+</body>
+</html>

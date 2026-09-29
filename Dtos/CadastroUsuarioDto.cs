@@ -28,8 +28,7 @@ namespace ConectaFree.Dtos
         public required TipoUsuario TipoUsuario { get; set; }
 
         [Required]
-        public required bool AceitouTermos { get; set; }    
-
+        public required bool AceitouTermos { get; set; }
 
     }
 }

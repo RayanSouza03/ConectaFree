@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ConectaFree</title>
   <link rel="stylesheet" href="css/login.css">
-  <!-- Caminhos relativos: como o index.html está na raiz de wwwroot,
-       "css/..." e "js/..." já apontam certo, sem precisar de ~/ (isso é sintaxe Razor/MVC, não se aplica aqui). -->
+  <link rel="stylesheet" href="css/tema.css">
+
 </head>
 <body>
 
@@ -15,16 +15,11 @@
     <section class="lado-esquerdo">
       <div class="conteudo-esquerdo">
         <h1 class="titulo">
-          Encontre e anuncie seus serviços
+          Encontre e anuncie seus <span class="dest">serviços</span>
         </h1>
 
         <div class="imagem-central">
-          <!--
-            Campo de imagem central.
-            Para usar, cole a URL da imagem no atributo src abaixo.
-            Ex: <img id="imagem-hero" src="https://exemplo.com/minha-imagem.png" alt="Imagem de destaque">
-          -->
-          <img id="imagem-hero" class="imagem-hero" src="https://github.com/Mosselin/imagens-conectafree/blob/main/imagem-centro.png?raw=true" alt="Imagem de destaque">
+          <img id="imagem-hero" class="imagem-hero" src="img/imagem-centro.png" alt="Imagem de destaque">
         </div>
       </div>
     </section>
@@ -57,10 +52,10 @@
             </svg>
             Entrar com o Google
           </button>
-          <button type="button" id="btn-criar-conta" class="btn-criar-conta">Criar nova conta</button>
+          <a href="cadastro.html" class="btn-criar-conta">Criar nova conta</a>
         </div>
 
-        <p class="marca-conecta">Conectafree</p>
+        <p class="marca-conecta">ConectaFree</p>
       </div>
     </section>
 
@@ -79,10 +74,9 @@
     </div>
   </footer>
 
-
-
   <script src="js/config.js"></script>
   <script src="js/authService.js"></script>
   <script src="js/login.js"></script>
+  <script src="js/tema.js"></script>
 </body>
 </html>

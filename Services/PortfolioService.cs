@@ -9,17 +9,15 @@ namespace ConectaFree.Services
     public class PortfolioService : IPortfolioService
     {
         private readonly ConectaFreeDbContext _context;
-        private readonly HttpClient _httpClient;
-        private readonly IConfiguration _config;
+        private readonly IStorageService _storage;
 
-        public PortfolioService(ConectaFreeDbContext context, IHttpClientFactory httpClientFactory, IConfiguration config)
+        public PortfolioService(ConectaFreeDbContext context, IStorageService storage)
         {
             _context = context;
-            _httpClient = httpClientFactory.CreateClient();
-            _config = config;
+            _storage = storage;
         }
 
-        public async Task<PortfolioItem> CriarAsync(int usuarioId, CriarPortfolioItemDto dto)
+        public async Task<PortfolioItemRespostaDto> CriarAsync(int usuarioId, CriarPortfolioItemDto dto)
         {
             var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == usuarioId);
             if (usuario == null)
@@ -44,7 +42,7 @@ namespace ConectaFree.Services
                     throw new InvalidOperationException("Título é obrigatório pra foto.");
 
                 item.Descricao = dto.Descricao;
-                item.FotoUrl = await SubirFotoAsync(dto.Foto, usuarioId);
+                item.FotoUrl = await _storage.UploadAsync(dto.Foto, $"portfolio/{usuarioId}");
             }
             else
             {
@@ -54,6 +52,11 @@ namespace ConectaFree.Services
                 var anuncio = await _context.Anuncios.FirstOrDefaultAsync(a => a.Id == dto.AnuncioId.Value);
                 if (anuncio == null)
                     throw new InvalidOperationException("Vaga não encontrada.");
+
+                var participou = await _context.Candidaturas.AnyAsync(c =>
+                    c.AnuncioId == anuncio.Id && c.FreelancerId == usuarioId && c.Status == StatusCandidatura.Aceita);
+                if (!participou)
+                    throw new InvalidOperationException("Você não foi aprovado nesta vaga.");
 
                 if (anuncio.Status != StatusAnuncio.Concluida)
                     throw new InvalidOperationException("Só é possível adicionar vagas concluídas ao portfólio.");
@@ -66,43 +69,27 @@ namespace ConectaFree.Services
             _context.PortfolioItens.Add(item);
             await _context.SaveChangesAsync();
 
-            return item;
+            return Mapeamento.ParaPortfolio(item);
         }
 
-        public async Task<List<PortfolioItem>> ListarPorUsuarioAsync(int usuarioId)
+        public async Task<List<PortfolioItemRespostaDto>> ListarPorUsuarioAsync(int usuarioId)
         {
-            return await _context.PortfolioItens
-                .Include(p => p.Anuncio)
+            var itens = await _context.PortfolioItens
+                .AsNoTracking()
                 .Where(p => p.UsuarioId == usuarioId)
                 .OrderByDescending(p => p.DataCriacao)
                 .ToListAsync();
+
+            return itens.Select(Mapeamento.ParaPortfolio).ToList();
         }
 
-        private async Task<string> SubirFotoAsync(IFormFile foto, int usuarioId)
+        public async Task ExcluirAsync(int usuarioId, int itemId)
         {
-            var supabaseUrl = _config["Supabase:Url"];
-            var serviceKey = _config["Supabase:ServiceRoleKey"];
-            var bucket = _config["Supabase:Bucket"];
+            var item = await _context.PortfolioItens.FirstOrDefaultAsync(p => p.Id == itemId && p.UsuarioId == usuarioId)
+                ?? throw new KeyNotFoundException("Item não encontrado.");
 
-            var caminho = $"{usuarioId}/{Guid.NewGuid()}_{foto.FileName}";
-            var uploadUrl = $"{supabaseUrl}/storage/v1/object/{bucket}/{caminho}";
-
-            using var stream = foto.OpenReadStream();
-            using var content = new StreamContent(stream);
-            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(foto.ContentType);
-
-            using var request = new HttpRequestMessage(HttpMethod.Post, uploadUrl);
-            request.Headers.Add("Authorization", $"Bearer {serviceKey}");
-            request.Content = content;
-
-            var response = await _httpClient.SendAsync(request);
-            if (!response.IsSuccessStatusCode)
-            {
-                var erro = await response.Content.ReadAsStringAsync();
-                throw new InvalidOperationException($"Falha ao subir foto: {erro}");
-            }
-
-            return $"{supabaseUrl}/storage/v1/object/public/{bucket}/{caminho}";
+            _context.PortfolioItens.Remove(item);
+            await _context.SaveChangesAsync();
         }
     }
 }

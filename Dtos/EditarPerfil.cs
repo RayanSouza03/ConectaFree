@@ -22,5 +22,7 @@ namespace ConectaFree.Dtos
         public List<int>? HabilidadeIds { get; set; }
 
         public EnderecoDto? Endereco { get; set; }
+
+        public bool RemoverFoto { get; set; }
     }
 }

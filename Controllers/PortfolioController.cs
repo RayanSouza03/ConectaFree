@@ -34,7 +34,24 @@ namespace ConectaFree.Controllers
             }
         }
 
-        [HttpGet("{usuarioId}")]
+        [Authorize]
+        [HttpDelete("{itemId:int}")]
+        public async Task<IActionResult> Excluir(int itemId)
+        {
+            var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            try
+            {
+                await _portfolioService.ExcluirAsync(usuarioId, itemId);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { erro = ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpGet("{usuarioId:int}")]
         public async Task<IActionResult> ListarPorUsuario(int usuarioId)
         {
             var itens = await _portfolioService.ListarPorUsuarioAsync(usuarioId);

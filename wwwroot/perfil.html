@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConectaFree</title>
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/menu-lateral.css">
+  <link rel="stylesheet" href="css/perfil.css">
+  <link rel="stylesheet" href="css/tema.css">
+</head>
+<body class="pagina-perfil tem-menu" data-menu-ativo="visualizar-perfil.html">
+
+<script src="js/config.js"></script>
+<script src="js/authService.js"></script>
+<script src="js/api.js"></script>
+<script>if (!AuthService.estaAutenticado()) window.location.replace("index.html");</script>
+<script src="js/menuLateral.js"></script>
+
+<div class="conteudo-pagina">
+
+  <header class="cabecalho-perfil">
+    <a href="index.html" class="marca-conecta marca-cabecalho">ConectaFree</a>
+  </header>
+
+  <main class="container-perfil">
+    <form id="form-perfil" novalidate>
+
+      <h1 class="titulo-perfil">Meu perfil</h1>
+      <p class="subtitulo-perfil">Mantenha suas informações atualizadas.</p>
+
+      <section class="secao-cartao secao-foto">
+        <div class="avatar-wrapper">
+          <img id="preview-foto" class="avatar-preview" src="https://via.placeholder.com/120x120.png?text=Foto" alt="Foto de perfil">
+          <label for="input-foto" class="btn-trocar-foto" title="Trocar foto">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 13.5V19a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5.5"/>
+              <path d="M12 15V3"/>
+              <path d="M7 8l5-5 5 5"/>
+            </svg>
+          </label>
+          <input type="file" id="input-foto" name="foto" accept="image/png, image/jpeg, image/webp" hidden>
+        </div>
+        <div class="foto-textos">
+          <p class="foto-titulo">Foto de perfil</p>
+          <p class="foto-dica">JPG, PNG ou WEBP. Máximo 5MB.</p>
+          <button type="button" id="btn-remover-foto" class="btn-link-remover">Remover foto</button>
+        </div>
+      </section>
+
+      <section class="secao-cartao">
+        <h2 class="titulo-secao">Dados pessoais</h2>
+
+        <div class="grupo-campo">
+          <label for="nome">Nome completo</label>
+          <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
+        </div>
+
+        <div class="grupo-campo">
+          <label for="telefone">Telefone</label>
+          <input type="text" id="telefone" name="telefone" placeholder="(00) 00000-0000" inputmode="numeric" required>
+        </div>
+
+        <div class="grupo-campo" id="grupo-categoria">
+          <label for="categoria">Categoria principal</label>
+          <input type="text" id="categoria" name="categoria" placeholder="Digite sua área: programação, design, fotografia..." autocomplete="off">
+        </div>
+
+        <div class="grupo-campo" id="grupo-habilidades">
+          <label for="habilidades">Outras habilidades</label>
+          <div class="campo-habilidades" id="campo-habilidades">
+            <input type="text" id="input-habilidade" placeholder="Digite uma habilidade e pressione Enter">
+          </div>
+          <p class="dica-campo">Ex: Photoshop, Elétrica residencial, Excel avançado...</p>
+        </div>
+
+        <p class="aviso-info">Se precisar alterar alguma outra informação da sua conta, entre em contato com o suporte.</p>
+      </section>
+
+      <section class="secao-cartao" id="secao-bio">
+        <h2 class="titulo-secao">Sobre você</h2>
+
+        <div class="grupo-campo">
+          <label for="bio">Bio</label>
+          <textarea id="bio" name="bio" rows="5" maxlength="500" placeholder="Conte um pouco sobre você, sua experiência e o que você oferece..."></textarea>
+          <p class="dica-campo"><span id="contador-bio">0</span>/500 caracteres</p>
+        </div>
+      </section>
+
+      <section class="secao-cartao">
+        <h2 class="titulo-secao">Endereço</h2>
+
+        <div class="linha-campos linha-cep">
+          <div class="grupo-campo campo-cep">
+            <label for="cep">CEP</label>
+            <input type="text" id="cep" name="cep" placeholder="00000-000" inputmode="numeric" required>
+          </div>
+          <p id="status-cep" class="status-cep"></p>
+        </div>
+
+        <div class="grupo-campo">
+          <label for="logradouro">Logradouro</label>
+          <input type="text" id="logradouro" name="logradouro" placeholder="Rua, avenida...">
+        </div>
+
+        <div class="linha-campos">
+          <div class="grupo-campo campo-numero">
+            <label for="numero">Número</label>
+            <input type="text" id="numero" name="numero" placeholder="Nº" inputmode="numeric">
+          </div>
+
+          <div class="grupo-campo">
+            <label for="complemento">Complemento</label>
+            <input type="text" id="complemento" name="complemento" placeholder="Apto, bloco... (opcional)">
+          </div>
+        </div>
+
+        <div class="linha-campos">
+          <div class="grupo-campo">
+            <label for="bairro">Bairro</label>
+            <input type="text" id="bairro" name="bairro" placeholder="Bairro">
+          </div>
+
+          <div class="grupo-campo">
+            <label for="cidade">Cidade</label>
+            <input type="text" id="cidade" name="cidade" placeholder="Cidade">
+          </div>
+
+          <div class="grupo-campo campo-estado">
+            <label for="estado">Estado</label>
+            <select id="estado" name="estado">
+              <option value="" disabled selected>UF</option>
+              <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+              <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+              <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+              <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+              <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+              <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option>
+              <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+              <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+              <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <p id="mensagem-erro-perfil" class="mensagem-erro" role="alert"></p>
+      <p id="mensagem-sucesso-perfil" class="mensagem-sucesso" role="status"></p>
+
+      <div class="acoes-form acoes-perfil">
+        <button type="submit" id="btn-salvar-perfil" class="btn-entrar">Salvar alterações</button>
+        <a href="index.html" class="link-cancelar">Cancelar</a>
+      </div>
+
+    </form>
+  </main>
+
+  <footer>
+    <nav class="rodape-links">
+      <a href="#">Sobre</a>
+      <a href="#">Ajuda</a>
+      <a href="#">Privacidade</a>
+      <a href="#">Termos</a>
+    </nav>
+    <div class="rodape-baixo">
+      <span>Português (Brasil)</span>
+      <span>© 2026</span>
+    </div>
+  </footer>
+
+</div>
+
+  <script src="js/perfilService.js"></script>
+  <script src="js/autocomplete.js"></script>
+  <script src="js/perfil.js"></script>
+  <script src="js/tema.js"></script>
+</body>
+</html>

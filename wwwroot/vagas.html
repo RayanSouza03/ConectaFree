@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConectaFree</title>
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/menu-lateral.css">
+  <link rel="stylesheet" href="css/vagas.css">
+  <link rel="stylesheet" href="css/tema.css">
+</head>
+<body class="pagina-vagas tem-menu" data-menu-ativo="vagas.html">
+
+<script src="js/config.js"></script>
+<script src="js/authService.js"></script>
+<script src="js/api.js"></script>
+<script>if (!AuthService.exigirTipo(1)) throw new Error("redirect");</script>
+<script src="js/menuLateral.js"></script>
+
+<div class="conteudo-pagina">
+  <main class="container-pagina">
+      <div class="topo-vagas">
+        <div class="cabecalho-pagina">
+          <a class="link-voltar" href="#" id="linkVoltar" hidden>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <span id="textoVoltar">Voltar</span>
+          </a>
+          <h1 id="tituloPagina">Postar vaga</h1>
+          <p class="subtitulo-pagina" id="subtituloPagina">Preencha as informações abaixo para divulgar uma nova vaga aos freelancers.</p>
+        </div>
+        <button class="botao-suas-vagas" id="botaoTopo" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></svg>
+          <span id="textoBotaoTopo">Suas Vagas</span>
+          <span class="contador-vagas" id="contadorVagas">0</span>
+        </button>
+      </div>
+
+      <form class="cartao-formulario" id="formVaga" novalidate>
+        <div class="cartao-campo largura-total">
+          <div class="campo">
+            <label for="nomeVaga">Nome da vaga</label>
+            <input type="text" id="nomeVaga" placeholder="Ex.: Designer gráfico para identidade visual" maxlength="90">
+            <p class="mensagem-erro" id="erroNome">Informe o nome da vaga.</p>
+          </div>
+        </div>
+
+        <div class="cartao-campo">
+          <div class="campo">
+            <label for="categoriaVaga">Categoria</label>
+            <input type="text" id="categoriaVaga" placeholder="Digite ou escolha: programação, design, fotografia..." autocomplete="off">
+            <p class="mensagem-erro" id="erroCategoria">Informe a categoria.</p>
+          </div>
+        </div>
+
+        <div class="cartao-campo">
+          <div class="campo">
+            <label for="statusVaga">Status</label>
+            <select id="statusVaga">
+              <option value="Aberta">Aberta</option>
+              <option value="EmAndamento">Em andamento</option>
+              <option value="Concluida">Concluída</option>
+              <option value="Cancelada">Cancelada</option>
+            </select>
+            <p class="auxiliar">Só vagas abertas recebem candidaturas. Marque como concluída para o freelancer poder exibi-la no portfólio.</p>
+          </div>
+        </div>
+
+        <div class="cartao-campo">
+          <div class="campo">
+            <label>Prioridade</label>
+            <label class="campo-check"><input type="checkbox" id="urgenteVaga"> Vaga urgente</label>
+          </div>
+        </div>
+
+        <div class="cartao-campo">
+          <div class="campo">
+            <label for="valorVaga">Valor da vaga</label>
+            <input type="text" id="valorVaga" inputmode="decimal" placeholder="R$ 0,00">
+            <p class="auxiliar">Deixe em branco para exibir "A combinar".</p>
+          </div>
+        </div>
+
+        <div class="cartao-campo largura-total">
+          <div class="campo">
+            <label for="descricaoVaga">Descrição</label>
+            <textarea id="descricaoVaga" placeholder="Descreva as atividades, requisitos e prazo esperado"></textarea>
+          </div>
+        </div>
+
+        <p class="msg-inline erro" id="erroGeralVaga"></p>
+        <div class="acoes-formulario">
+          <button class="botao-perigo" type="button" id="botaoExcluir" hidden>Excluir vaga</button>
+          <button class="botao-secundario" type="button" id="botaoCancelar">Limpar</button>
+          <button class="botao-primario" type="submit" id="botaoSalvar">Publicar vaga</button>
+        </div>
+      </form>
+
+      <section id="telaLista" hidden>
+        <ul class="lista-vagas" id="listaVagas"></ul>
+        <div class="estado-vazio" id="estadoVazioVagas" hidden>
+          <span class="icone-vazio">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>
+          </span>
+          <p class="titulo-vazio">Você ainda não postou nenhuma vaga</p>
+          <p class="texto-vazio">Use o botão "Nova vaga" acima para publicar a primeira.</p>
+        </div>
+      </section>
+
+      <section id="telaDetalhe" hidden></section>
+  </main>
+
+  <footer>
+    <nav class="rodape-links">
+      <a href="#">Sobre</a>
+      <a href="#">Ajuda</a>
+      <a href="#">Privacidade</a>
+      <a href="#">Termos</a>
+    </nav>
+    <div class="rodape-baixo">
+      <span>Português (Brasil)</span>
+      <span>© 2026</span>
+    </div>
+  </footer>
+</div>
+
+  <script src="js/autocomplete.js"></script>
+  <script src="js/vagas.js"></script>
+  <script src="js/tema.js"></script>
+</body>
+</html>

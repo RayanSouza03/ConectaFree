@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConectaFree</title>
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/menu-lateral.css">
+  <link rel="stylesheet" href="css/inicio.css">
+  <link rel="stylesheet" href="css/tema.css">
+</head>
+<body class="pagina-inicio tem-menu" data-menu-ativo="inicio.html">
+
+<script src="js/menuLateral.js"></script>
+
+<div class="conteudo-pagina">
+  <main class="container-inicio">
+    <section class="boas-vindas">
+      <h1>Olá, <span id="nomeUsuarioInicio">Freelancer</span>!</h1>
+      <p>Encontre oportunidades que combinam com suas habilidades.</p>
+    </section>
+
+    <section class="search-section">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Busque por vaga ou categoria: programador, design, fotografia..." autocomplete="off">
+        <button type="button" class="btn-search" id="btnBuscarVagas" aria-label="Buscar">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+      </div>
+      <p class="resumo-busca" id="resumoBusca"></p>
+    </section>
+
+    <section class="jobs-section" id="secaoUrgentes" hidden>
+      <h2>Vagas urgentes</h2>
+      <div class="lista-vagas-i" id="listaUrgentes"></div>
+    </section>
+
+    <section class="jobs-section">
+      <h2 id="tituloRecentes">Vagas recentes</h2>
+      <div class="lista-vagas-i" id="listaRecentes"></div>
+    </section>
+  </main>
+
+  <footer>
+    <nav class="rodape-links">
+      <a href="#">Sobre</a>
+      <a href="#">Ajuda</a>
+      <a href="#">Privacidade</a>
+      <a href="#">Termos</a>
+    </nav>
+    <div class="rodape-baixo">
+      <span>Português (Brasil)</span>
+      <span>© 2026</span>
+    </div>
+  </footer>
+</div>
+
+  <script src="js/config.js"></script>
+  <script src="js/authService.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/autocomplete.js"></script>
+  <script src="js/inicio.js"></script>
+  <script src="js/tema.js"></script>
+</body>
+</html>

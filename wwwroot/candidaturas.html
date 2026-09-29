@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConectaFree</title>
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/menu-lateral.css">
+  <link rel="stylesheet" href="css/vagas.css">
+  <link rel="stylesheet" href="css/tema.css">
+</head>
+<body class="pagina-vagas tem-menu" data-menu-ativo="candidaturas.html">
+
+<script src="js/config.js"></script>
+<script src="js/authService.js"></script>
+<script src="js/api.js"></script>
+<script>if (!AuthService.exigirTipo(0)) throw new Error("redirect");</script>
+<script src="js/menuLateral.js"></script>
+
+<div class="conteudo-pagina">
+  <main class="container-pagina">
+    <div class="cabecalho-pagina">
+      <h1>Minhas candidaturas</h1>
+      <p class="subtitulo-pagina">Acompanhe as vagas às quais você se candidatou.</p>
+    </div>
+    <ul class="lista-vagas" id="listaCandidaturas"></ul>
+    <div class="estado-vazio" id="vazioCandidaturas" hidden>
+      <p class="titulo-vazio">Você ainda não se candidatou a nenhuma vaga</p>
+      <p class="texto-vazio">Explore as vagas na tela de início e candidate-se.</p>
+    </div>
+    <p class="msg-inline erro" id="erroCandidaturas"></p>
+  </main>
+  <footer>
+    <div class="rodape-baixo"><span>Português (Brasil)</span><span>© 2026</span></div>
+  </footer>
+</div>
+<script src="js/candidaturas.js"></script>
+  <script src="js/tema.js"></script>
+</body>
+</html>

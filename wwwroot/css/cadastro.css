@@ -1,0 +1,210 @@
+.pagina-cadastro { background-image: var(--cor-gradiente); }
+
+.area-cadastro {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 20px;
+}
+
+.cadastro-container button,
+.cadastro-container input {
+    font-family: inherit;
+}
+
+.cadastro-container {
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 420px;
+}
+
+.logo-cadastro {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    max-width: 140px;
+    height: auto;
+}
+
+.cadastro-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.tipo-conta-toggle {
+    display: flex;
+    background: #f0f0f0;
+    border-radius: 25px;
+    padding: 4px;
+    margin-bottom: 20px;
+}
+
+.toggle-btn {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.toggle-btn.active {
+    background: linear-gradient(90deg, #641349 0%, #901C60 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(144, 28, 96, 0.3);
+}
+
+.doc-toggle-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.doc-toggle {
+    display: inline-flex;
+    background: #f0f0f0;
+    border-radius: 15px;
+    padding: 3px;
+    width: 160px;
+}
+
+.doc-toggle-btn {
+    flex: 1;
+    padding: 5px 0;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-weight: 600;
+    font-size: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.doc-toggle-btn.active {
+    background: linear-gradient(90deg, #641349 0%, #901C60 100%);
+    color: #ffffff;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.input-group {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 42px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    color: #777;
+    transition: color 0.2s ease;
+}
+
+.toggle-password:hover {
+    color: #901C60;
+}
+
+.eye-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.input-group input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.input-group input:focus {
+    border-color: #7b1853;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
+
+.error-message.visible {
+    display: block;
+}
+
+.btn-cadastrar {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(90deg, #641349 0%, #901C60 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: opacity 0.2s ease;
+}
+
+.btn-cadastrar:hover {
+    opacity: 0.92;
+}
+
+.link-login {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    margin-top: 18px;
+}
+
+.link-login a {
+    color: #901C60;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.link-login a:hover { text-decoration: underline; }
+
+.input-group input:focus {
+    box-shadow: none;
+}

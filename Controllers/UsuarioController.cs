@@ -1,13 +1,13 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using ConectaFree.Dtos;
 using ConectaFree.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
 namespace ConectaFree.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] 
+    [Route("api/[controller]")]
     public class UsuariosController : ControllerBase
     {
         private readonly IUsuarioService _usuarioService;
@@ -17,7 +17,9 @@ namespace ConectaFree.Controllers
             _usuarioService = usuarioService;
         }
 
-        [HttpPost("cadastro")] 
+        private int UsuarioId => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        [HttpPost("cadastro")]
         public async Task<IActionResult> Cadastrar(CadastroUsuarioDto dto)
         {
             try
@@ -31,7 +33,7 @@ namespace ConectaFree.Controllers
             }
         }
 
-        [HttpPost("login")] 
+        [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto)
         {
             var resultado = await _usuarioService.LoginAsync(dto);
@@ -43,30 +45,44 @@ namespace ConectaFree.Controllers
         }
 
         [Authorize]
+        [HttpGet("perfil")]
+        public async Task<IActionResult> ObterPerfil()
+        {
+            try { return Ok(await _usuarioService.ObterPerfilAsync(UsuarioId)); }
+            catch (InvalidOperationException ex) { return NotFound(new { erro = ex.Message }); }
+        }
+
+        [Authorize]
         [HttpPut("perfil")]
         public async Task<IActionResult> AtualizarPerfil([FromBody] AtualizarPerfilDto dto)
         {
-            var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (usuarioIdClaim == null)
-                return Unauthorized();
+            try { return Ok(await _usuarioService.AtualizarPerfilAsync(UsuarioId, dto)); }
+            catch (InvalidOperationException ex) { return BadRequest(new { erro = ex.Message }); }
+        }
 
-            var usuarioId = int.Parse(usuarioIdClaim);
-
+        [Authorize]
+        [HttpPost("perfil/foto")]
+        public async Task<IActionResult> AtualizarFoto([FromForm] IFormFile foto)
+        {
             try
             {
-                var usuario = await _usuarioService.AtualizarPerfilAsync(usuarioId, dto);
-                return Ok(usuario);
+                var url = await _usuarioService.AtualizarFotoAsync(UsuarioId, foto);
+                return Ok(new { fotoUrl = url });
             }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            catch (InvalidOperationException ex) { return BadRequest(new { erro = ex.Message }); }
         }
-        [HttpGet("filtrar-freelancers")]
-        public async Task<IActionResult>  FiltrarFreelancers([FromQuery] FiltroFreelancerDto filtro)
+
+        [Authorize]
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> ObterPublico(int id)
         {
-            var Resultado = await _usuarioService.FiltrarFreelancersAsync(filtro);
-            return Ok(Resultado);   
+            try { return Ok(await _usuarioService.ObterPublicoAsync(id)); }
+            catch (KeyNotFoundException ex) { return NotFound(new { erro = ex.Message }); }
         }
+
+        [Authorize]
+        [HttpGet("filtrar-freelancers")]
+        public async Task<IActionResult> FiltrarFreelancers([FromQuery] FiltroFreelancerDto filtro) =>
+            Ok(await _usuarioService.FiltrarFreelancersAsync(filtro));
     }
 }

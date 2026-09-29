@@ -14,23 +14,55 @@ namespace ConectaFree.Services
     {
         private readonly ConectaFreeDbContext _context;
         private readonly IConfiguration _config;
+        private readonly IStorageService _storage;
 
-        public UsuarioService(ConectaFreeDbContext context, IConfiguration config)
+        public UsuarioService(ConectaFreeDbContext context, IConfiguration config, IStorageService storage)
         {
             _context = context;
             _config = config;
+            _storage = storage;
+        }
+
+        private IQueryable<Usuario> ComDetalhes() =>
+            _context.Usuarios.Include(u => u.Endereco).Include(u => u.Habilidades);
+
+        public async Task<PerfilRespostaDto> ObterPerfilAsync(int usuarioId)
+        {
+            var usuario = await ComDetalhes().AsNoTracking().FirstOrDefaultAsync(u => u.Id == usuarioId)
+                ?? throw new InvalidOperationException("Usuário não encontrado.");
+            return Mapeamento.ParaPerfil(usuario);
+        }
+
+        public async Task<PerfilPublicoDto> ObterPublicoAsync(int usuarioId)
+        {
+            var usuario = await ComDetalhes().AsNoTracking().FirstOrDefaultAsync(u => u.Id == usuarioId)
+                ?? throw new KeyNotFoundException("Usuário não encontrado.");
+            return Mapeamento.ParaPublico(usuario);
+        }
+
+        public async Task<string> AtualizarFotoAsync(int usuarioId, IFormFile foto)
+        {
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == usuarioId)
+                ?? throw new InvalidOperationException("Usuário não encontrado.");
+
+            var url = await _storage.UploadAsync(foto, $"perfil/{usuarioId}");
+            usuario.FotoUrl = url;
+            usuario.DataAtualizacao = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return url;
         }
 
         public async Task<Usuario> CadastrarAsync(CadastroUsuarioDto dto)
         {
-            var emailExiste = await _context.Usuarios.AnyAsync(u => u.Email == dto.Email);
+            var email = dto.Email.Trim().ToLowerInvariant();
+            var emailExiste = await _context.Usuarios.AnyAsync(u => u.Email == email);
             if (emailExiste)
                 throw new InvalidOperationException("Email já cadastrado.");
 
             var usuario = new Usuario
             {
                 Nome = dto.Nome,
-                Email = dto.Email,
+                Email = email,
                 SenhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha),
                 Telefone = dto.Telefone,
                 Documento = dto.Documento,
@@ -47,7 +79,8 @@ namespace ConectaFree.Services
 
         public async Task<LoginResponseDto?> LoginAsync(LoginDto dto)
         {
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == dto.Email);
+            var email = dto.Email.Trim().ToLowerInvariant();
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
 
             if (usuario == null || !BCrypt.Net.BCrypt.Verify(dto.Senha, usuario.SenhaHash))
                 return null;
@@ -63,8 +96,11 @@ namespace ConectaFree.Services
             };
         }
 
-        public async Task<Usuario> AtualizarPerfilAsync(int usuarioId, AtualizarPerfilDto dto)
+        public async Task<PerfilRespostaDto> AtualizarPerfilAsync(int usuarioId, AtualizarPerfilDto dto)
         {
+            if (FiltroPalavras.Contem(dto.OutraHabilidade))
+                throw new InvalidOperationException("Uma das habilidades informadas contém termo não permitido.");
+
             var usuario = await _context.Usuarios
                 .Include(u => u.Endereco)
                 .Include(u => u.Habilidades)
@@ -82,7 +118,9 @@ namespace ConectaFree.Services
             if (dto.Bio != null)
                 usuario.Bio = dto.Bio;
 
-            if (dto.FotoUrl != null)
+            if (dto.RemoverFoto)
+                usuario.FotoUrl = null;
+            else if (dto.FotoUrl != null)
                 usuario.FotoUrl = dto.FotoUrl;
 
             if (dto.HabilidadeIds != null)
@@ -136,7 +174,7 @@ namespace ConectaFree.Services
 
             await _context.SaveChangesAsync();
 
-            return usuario;
+            return Mapeamento.ParaPerfil(usuario);
         }
 
         private string GerarToken(Usuario usuario)
@@ -155,15 +193,15 @@ namespace ConectaFree.Services
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(8), // token expira em 8h
+                expires: DateTime.UtcNow.AddDays(30),
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        public async Task<List<Usuario>> FiltrarFreelancersAsync(FiltroFreelancerDto filtro)
+        public async Task<List<PerfilPublicoDto>> FiltrarFreelancersAsync(FiltroFreelancerDto filtro)
         {
-            
+
             var query = _context.Usuarios
                 .Include(u => u.Endereco)
                 .Include(u => u.Habilidades)
@@ -174,12 +212,13 @@ namespace ConectaFree.Services
                 query = query.Where(u => u.Habilidades.Any(h => h.Id == filtro.HabilidadeId.Value));
 
             if (!string.IsNullOrWhiteSpace(filtro.Cidade))
-                query = query.Where(u => u.Endereco != null && u.Endereco.Cidade == filtro.Cidade);
+                query = query.Where(u => u.Endereco != null && EF.Functions.ILike(u.Endereco.Cidade, "%" + filtro.Cidade.Trim().Replace("%", "").Replace("_", "") + "%"));
 
             if (!string.IsNullOrWhiteSpace(filtro.Estado))
-                query = query.Where(u => u.Endereco != null && u.Endereco.Estado == filtro.Estado);
+                query = query.Where(u => u.Endereco != null && EF.Functions.ILike(u.Endereco.Estado, filtro.Estado.Trim().Replace("%", "").Replace("_", "")));
 
-            return await query.ToListAsync();
+            var lista = await query.AsNoTracking().OrderBy(u => u.Nome).ToListAsync();
+            return lista.Select(Mapeamento.ParaPublico).ToList();
         }
     }
 }

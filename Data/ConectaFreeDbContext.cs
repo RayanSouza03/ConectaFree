@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ConectaFree.Models;
 
-
 namespace ConectaFree.Data
 {
 
@@ -18,6 +17,7 @@ public DbSet<Habilidade> Habilidades { get; set; }
 
 public DbSet<Anuncio> Anuncios { get; set; }
 public DbSet<PortfolioItem> PortfolioItens { get; set; }
+public DbSet<Candidatura> Candidaturas { get; set; }
 
 protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -54,6 +54,16 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
         modelBuilder.Entity<Usuario>()
         .HasIndex(u => u.Documento)
         .IsUnique();
+
+        modelBuilder.Entity<Candidatura>()
+        .HasIndex(c => new { c.AnuncioId, c.FreelancerId })
+        .IsUnique();
+
+        modelBuilder.Entity<Candidatura>()
+        .HasOne(c => c.Freelancer)
+        .WithMany()
+        .HasForeignKey(c => c.FreelancerId)
+        .OnDelete(DeleteBehavior.Restrict);
     }
 }
 }

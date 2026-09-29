@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConectaFree</title>
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/menu-lateral.css">
+  <link rel="stylesheet" href="css/vagas.css">
+  <link rel="stylesheet" href="css/tema.css">
+</head>
+<body class="pagina-portfolio tem-menu" data-menu-ativo="portfolio.html">
+
+<script src="js/config.js"></script>
+<script src="js/authService.js"></script>
+<script src="js/api.js"></script>
+<script>if (!AuthService.exigirTipo(0)) throw new Error("redirect");</script>
+<script src="js/menuLateral.js"></script>
+
+<div class="conteudo-pagina">
+  <main class="container-pagina">
+      <a class="link-voltar" href="portfolio.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        Voltar ao portfólio
+      </a>
+
+      <div class="cabecalho-pagina">
+        <h1>Novo item do portfólio</h1>
+        <p class="subtitulo-pagina">Adicione uma foto de trabalho ou uma vaga que você concluiu na plataforma.</p>
+      </div>
+
+      <form class="cartao-formulario" id="formExperiencia" novalidate>
+        <div class="cartao-campo largura-total">
+          <div class="campo">
+            <label for="tipo">Tipo de item</label>
+            <select id="tipo">
+              <option value="Foto">Foto de um trabalho</option>
+              <option value="Vaga">Vaga concluída pela plataforma</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cartao-campo largura-total" id="blocoVaga" hidden>
+          <div class="campo">
+            <label for="anuncioId">Vaga concluída</label>
+            <select id="anuncioId"><option value="">Selecione</option></select>
+            <p class="auxiliar" id="avisoVagas"></p>
+          </div>
+        </div>
+
+        <div class="cartao-campo largura-total">
+          <div class="campo">
+            <label for="titulo" id="rotuloTitulo">Título</label>
+            <input type="text" id="titulo" name="titulo" maxlength="150" placeholder="Ex.: Identidade visual para cafeteria">
+            <p class="mensagem-erro" id="erroTitulo">Informe um título.</p>
+          </div>
+        </div>
+
+        <div class="cartao-campo largura-total" id="blocoFoto">
+          <div class="campo">
+            <label for="foto">Foto ou arquivo</label>
+            <label class="dropzone" id="dropzoneFoto" for="foto">
+              <svg class="icone-dropzone" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5.5-5.5L7 19"/></svg>
+              <span class="rotulo-dropzone">Clique para adicionar uma foto ou arquivo PDF (até 5MB)</span>
+              <input type="file" id="foto" name="foto" accept="image/jpeg,image/png,image/webp,application/pdf">
+            </label>
+            <p class="mensagem-erro" id="erroFoto">Envie uma foto ou arquivo.</p>
+          </div>
+        </div>
+
+        <div class="cartao-campo largura-total">
+          <div class="campo">
+            <label for="descricao">Descrição</label>
+            <textarea id="descricao" name="descricao" maxlength="2000" placeholder="Descreva o que você fez neste trabalho"></textarea>
+          </div>
+        </div>
+
+        <p class="msg-inline erro" id="erroGeral"></p>
+        <div class="acoes-formulario">
+          <a class="botao-secundario" href="portfolio.html">Cancelar</a>
+          <button class="botao-primario" type="submit">Salvar no portfólio</button>
+        </div>
+      </form>
+  </main>
+
+  <footer>
+    <nav class="rodape-links">
+      <a href="#">Sobre</a>
+      <a href="#">Ajuda</a>
+      <a href="#">Privacidade</a>
+      <a href="#">Termos</a>
+    </nav>
+    <div class="rodape-baixo">
+      <span>Português (Brasil)</span>
+      <span>© 2026</span>
+    </div>
+  </footer>
+</div>
+
+  <script src="js/portfolio.js"></script>
+  <script src="js/tema.js"></script>
+</body>
+</html>

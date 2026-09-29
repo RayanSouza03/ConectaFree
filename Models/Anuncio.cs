@@ -22,7 +22,7 @@ namespace ConectaFree.Models
         public int HabilidadeId { get; set; }
         public Habilidade Habilidade { get; set; } = null!;
 
-        public int ContratanteId { get; set; } 
+        public int ContratanteId { get; set; }
         public Usuario Contratante { get; set; } = null!;
 
         public StatusAnuncio Status { get; set; } = StatusAnuncio.Aberta;

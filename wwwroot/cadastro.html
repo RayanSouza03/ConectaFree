@@ -1,3 +1,119 @@
 <!DOCTYPE html>
-    <a> Cadastro </a>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConectaFree</title>
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/cadastro.css">
+  <link rel="stylesheet" href="css/tema.css">
+</head>
+<body class="pagina-cadastro">
+
+  <main class="area-cadastro">
+    <div class="cadastro-container">
+      <div class="logo-cadastro">
+        <img src="img/logo-cadastro.png" alt="ConectaFree" class="logo">
+      </div>
+
+        <h2>Criar Conta</h2>
+
+        <div class="tipo-conta-toggle">
+            <button type="button" id="btnProfissional" class="toggle-btn active">Profissional</button>
+            <button type="button" id="btnEmpresa" class="toggle-btn">Empresa</button>
+        </div>
+
+        <form id="formCadastro">
+            <div id="opcaoDocEmpresa" class="doc-toggle-container hidden">
+                <div class="doc-toggle">
+                    <button type="button" id="btnCNPJ" class="doc-toggle-btn active">CNPJ</button>
+                    <button type="button" id="btnCPF" class="doc-toggle-btn">CPF</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="nome" id="labelNome">Nome Completo</label>
+                <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required>
+            </div>
+
+            <div class="input-group">
+                <label for="documento" id="labelDocumento">CPF</label>
+                <input
+                    type="text"
+                    id="documento"
+                    name="documento"
+                    placeholder="000.000.000-00"
+                    maxlength="14"
+                    required>
+                <span id="erroDocumento" class="error-message"></span>
+            </div>
+
+            <div class="input-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+            </div>
+
+            <div class="input-group">
+                <label for="telefone">Telefone</label>
+                <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" maxlength="15" required>
+            </div>
+
+            <div class="input-group">
+                <label for="senha">Senha</label>
+                <div class="password-wrapper">
+                    <input type="password" id="senha" name="senha" placeholder="Sua senha" required>
+                    <button type="button" class="toggle-password" data-target="senha" aria-label="Mostrar/Ocultar Senha">
+                        <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="confirmarSenha">Confirmar Senha</label>
+                <div class="password-wrapper">
+                    <input type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Confirme sua senha" required>
+                    <button type="button" class="toggle-password" data-target="confirmarSenha" aria-label="Mostrar/Ocultar Senha">
+                        <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+                <span id="erroSenha" class="error-message"></span>
+            </div>
+
+            <div class="input-group">
+                <label style="display:flex;gap:8px;align-items:center;font-weight:400">
+                    <input type="checkbox" id="termos" required style="width:auto"> Li e aceito os Termos de Uso
+                </label>
+                <span id="erroGeral" class="error-message"></span>
+            </div>
+
+            <button type="submit" class="btn-cadastrar">Cadastrar</button>
+        </form>
+
+      <p class="link-login">Já tem uma conta? <a href="index.html">Entrar</a></p>
+    </div>
+  </main>
+
+  <footer>
+    <nav class="rodape-links">
+      <a href="#">Sobre</a>
+      <a href="#">Ajuda</a>
+      <a href="#">Privacidade</a>
+      <a href="#">Termos</a>
+    </nav>
+    <div class="rodape-baixo">
+      <span>Português (Brasil)</span>
+      <span>© 2026</span>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/cadastro.js"></script>
+  <script src="js/tema.js"></script>
+</body>
 </html>

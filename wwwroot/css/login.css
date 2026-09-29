@@ -1,25 +1,19 @@
-/* ==========================================================================
-   Variáveis globais
-   ========================================================================== */
 :root {
-  --cor-roxo: #9b5cf6;
-  --cor-roxo-escuro: #7c3aed;
-  --cor-rosa: #ec4899;
-  --cor-gradiente: linear-gradient(135deg, #9b5cf6 0%, #d946ef 55%, #ec4899 100%);
-  --cor-texto: #262626;
-  --cor-texto-claro: #737373;
-  --cor-borda: #e5ddf5;
-  --cor-fundo-input: #faf8fd;
 
-  --cor-painel-esquerdo: #f0e0fd;
-  --cor-painel-direito: #e1c1f2;
-  --cor-fundo-rodape: #f5ebfd;
-  --cor-linha-divisoria: #000;
+  --cor-branco:#fff;
+  --cor-roxo: #901C60;
+  --cor-roxo-claro: #ca2987;
+  --cor-roxo-clarinho: #ff34ab;
+  --cor-roxo-escuro: #641349;
+  --cor-roxo-bem-escuro: #2A0845;
+  --cor-gradiente: linear-gradient(135deg, #2A0845 0%, #641349 50%,#901C60 100%);
+  --cor-texto: #262626;
+  --cor-cinza-escuro: #3d3d3d;
+  --cor-cinza-claro: #c4c4c4;
+  --largura-menu: 260px;
+  --largura-menu-fechado: 84px;
 }
 
-/* ==========================================================================
-   Reset básico
-   ========================================================================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -27,48 +21,53 @@
 }
 
 html, body {
-  height: 100%;
+  min-height: 100%;
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: var(--cor-fundo-rodape);
-  color: var(--cor-texto);
+  background-image: var(--cor-gradiente);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* ==========================================================================
-   Layout principal — painéis de tela cheia
-   ========================================================================== */
 .paineis {
   flex: 1;
   display: flex;
   width: 100%;
 }
 
-.lado-esquerdo,
+.lado-esquerdo {
+  flex: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 50px;
+  position: relative;
+}
+
+.lado-esquerdo::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 80%;
+  background: var(--cor-branco);
+}
+
 .lado-direito {
-  flex: 1;
+  flex: 4;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 60px 50px;
 }
 
-.lado-esquerdo {
-  background: var(--cor-painel-esquerdo);
-  border-right: 1px solid var(--cor-linha-divisoria);
-}
-
-.lado-direito {
-  background: var(--cor-painel-direito);
-}
-
-/* ==========================================================================
-   Lado esquerdo — hero
-   ========================================================================== */
 .conteudo-esquerdo {
   width: 100%;
   max-width: 540px;
@@ -82,18 +81,14 @@ body {
   font-weight: 400;
   line-height: 1.35;
   max-width: 540px;
-  color: #1c1c1c;
+  color: var(--cor-branco);
 }
-
-/* ==========================================================================
-   Mockups (cartões flutuantes)
-   ========================================================================== */
 
 .imagem-central {
   position: relative;
   width: 100%;
   max-width: 500px;
-  height: 440px;
+  height: 500px;
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -112,19 +107,6 @@ body {
   filter: blur(30px);
 }
 
-.imagem-central::after {
-  content: "";
-  position: absolute;
-  top: -18px;
-  right: -18px;
-  width: 90px;
-  height: 90px;
-  z-index: 0;
-  border-radius: 50%;
-  background: var(--cor-gradiente);
-  opacity: 0.35;
-}
-
 .imagem-hero {
   position: relative;
   z-index: 1;
@@ -135,9 +117,6 @@ body {
   display: block;
 }
 
-/* ==========================================================================
-   Lado direito — formulário de login
-   ========================================================================== */
 .conteudo-direito {
   width: 100%;
   max-width: 340px;
@@ -156,7 +135,7 @@ body {
   font-size: 15px;
   font-weight: 600;
   margin-bottom: 4px;
-  color: var(--cor-texto);
+  color: var(--cor-cinza-claro);
 }
 
 .acoes-form {
@@ -176,9 +155,9 @@ body {
 input {
   width: 100%;
   padding: 14px 12px;
-  border: 1px solid var(--cor-borda);
+  border: 1px solid var(--cor-roxo-clarinho);
   border-radius: 8px;
-  background: var(--cor-fundo-input);
+  background: var(--cor-branco);
   font-size: 14px;
   outline: none;
 }
@@ -190,7 +169,7 @@ input:focus {
 }
 
 input::placeholder {
-  color: var(--cor-texto-claro);
+  color: var(--cor-cinza-claro);
 }
 
 .mensagem-erro {
@@ -209,7 +188,7 @@ input::placeholder {
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  box-shadow: 0 0 0 5px #fff, 0 6px 16px -6px rgba(155, 92, 246, 0.5);
+  box-shadow: 0 0 0 2px #fff, 0 6px 16px -6px rgba(155, 92, 246, 0.5);
   transition: filter 0.15s ease, transform 0.15s ease;
 }
 
@@ -226,7 +205,7 @@ input::placeholder {
 .link-esqueceu {
   text-align: center;
   font-size: 13px;
-  color: var(--cor-texto);
+  color: var(--cor-branco);
   text-decoration: none;
   padding: 4px 0 0;
 }
@@ -239,9 +218,9 @@ input::placeholder {
   width: 100%;
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid var(--cor-borda);
+  border: 1px solid var(--cor-roxo-clarinho);
   background: #fff;
-  color: var(--cor-texto);
+  color: var(--cor-cinza-escuro);
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
@@ -252,16 +231,19 @@ input::placeholder {
 }
 
 .btn-google:hover {
-  background: var(--cor-fundo-input);
+  background: var(--cor-cinza-claro);
 }
 
 .btn-criar-conta {
+  display: block;
+  text-align: center;
+  text-decoration: none;
   width: 100%;
   padding: 11px;
   border-radius: 8px;
   border: 1px solid var(--cor-roxo);
   background: #fff;
-  color: var(--cor-roxo-escuro);
+  color: var(--cor-cinza-escuro);
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
@@ -275,7 +257,7 @@ input::placeholder {
 .marca-conecta {
   text-align: center;
   font-size: 14px;
-  color: var(--cor-texto-claro);
+  color: var(--cor-branco);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -283,14 +265,11 @@ input::placeholder {
   margin-top: 8px;
 }
 
-/* ==========================================================================
-   Rodapé
-   ========================================================================== */
 footer {
   position: relative;
-  background: var(--cor-fundo-rodape);
-  border-top: 1px solid var(--cor-linha-divisoria);
-  padding: 24px 20px;
+  background: var(--cor-roxo);
+  padding: 32px 20px 28px;
+  margin-top: auto;
 }
 
 footer::before {
@@ -299,23 +278,23 @@ footer::before {
   top: -1px;
   left: 50%;
   transform: translateX(-50%);
-  width: 140px;
-  height: 2px;
-  background: var(--cor-gradiente);
-  border-radius: 2px;
+  width: 30%;
+  height: 3px;
+  background: var(--cor-roxo-escuro);
+  border-radius: 20px;
 }
 
 .rodape-links {
   max-width: 1000px;
-  margin: 0 auto 16px;
+  margin: 0 auto 28px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 6px 18px;
+  gap: 14px 36px;
 }
 
 .rodape-links a {
-  color: var(--cor-texto-claro);
+  color: var(--cor-branco);
   text-decoration: none;
   font-size: 13px;
 }
@@ -328,14 +307,11 @@ footer::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 44px;
   font-size: 13px;
-  color: var(--cor-texto-claro);
+  color: var(--cor-branco);
 }
 
-/* ==========================================================================
-   Responsivo
-   ========================================================================== */
 @media (max-width: 900px) {
   .paineis {
     flex-direction: column-reverse;
@@ -343,7 +319,6 @@ footer::before {
 
   .lado-esquerdo {
     border-right: none;
-    border-bottom: 1px solid var(--cor-linha-divisoria);
   }
 
   .lado-esquerdo,
