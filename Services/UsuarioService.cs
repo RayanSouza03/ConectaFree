@@ -193,7 +193,7 @@ namespace ConectaFree.Services
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(30),
+                expires: DateTime.UtcNow.AddDays(30), // sessao longa: so sai ao clicar em Sair
                 signingCredentials: creds
             );
 
@@ -201,7 +201,7 @@ namespace ConectaFree.Services
         }
         public async Task<List<PerfilPublicoDto>> FiltrarFreelancersAsync(FiltroFreelancerDto filtro)
         {
-
+            
             var query = _context.Usuarios
                 .Include(u => u.Endereco)
                 .Include(u => u.Habilidades)

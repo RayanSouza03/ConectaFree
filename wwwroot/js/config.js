@@ -1,4 +1,5 @@
 const CONFIG = {
+  // Front servido pelo proprio ASP.NET: mesma origem da API.
   API_BASE_URL: "/api",
   LOGIN_ENDPOINT: "/Usuarios/login",
   CADASTRO_ENDPOINT: "/Usuarios/cadastro",
@@ -12,5 +13,6 @@ const CONFIG = {
   CEP_API_URL: "https://viacep.com.br/ws",
 };
 
+// Ids iguais ao seed de Habilidades no ConectaFreeDbContext
 const HABILIDADES = ["Design gráfico","Ilustração","Social media","Programação","Babá","Garçom","Marketing digital","Edição de vídeo","Fotografia","UI/UX Design","Desenvolvimento Web","Desenvolvimento Mobile","Consultoria","Contabilidade","Advocacia","Arquitetura","Engenharia","Professor particular","Cuidador de idosos","Pintor","Eletricista","Encanador","Cuidador de pet","Bartender","Jardineiro"]
   .map((nome, i) => ({ id: i + 1, nome }));

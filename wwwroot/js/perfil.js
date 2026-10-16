@@ -1,3 +1,9 @@
+/**
+ * Controla a interação da tela de perfil com o usuário.
+ * Delega as chamadas de rede para PerfilService (perfilService.js).
+ * CPF/CNPJ, e-mail e senha ficam de fora: serão editados em uma tela
+ * separada de segurança da conta.
+ */
 document.addEventListener("DOMContentLoaded", () => {
   const formulario = document.getElementById("form-perfil");
 
@@ -32,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let ehContratante = AuthService.obterTipoUsuario() === 1;
 
+  // Categoria principal: digita e escolhe entre as sugestões
   Autocomplete.criar(campoCategoria, {
     permitirCriar: true,
     itens: () => HABILIDADES.map((h) => ({ id: h.id, nome: h.nome })),
@@ -49,6 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
   inicializar();
   destacarSecaoPelaAncora();
 
+  /**
+   * Carrega os dados atuais do usuário e preenche o formulário.
+   */
   async function inicializar() {
     try {
       const perfil = await PerfilService.buscarPerfil();
@@ -86,12 +96,19 @@ document.addEventListener("DOMContentLoaded", () => {
     renderizarHabilidades();
   }
 
+  /* ==========================================================================
+     Bio
+     ========================================================================== */
   campoBio.addEventListener("input", atualizarContadorBio);
 
   function atualizarContadorBio() {
     contadorBio.textContent = campoBio.value.length;
   }
 
+  /**
+   * Quando o usuário chega em perfil.html#secao-bio (vindo do botão
+   * "Editar bio" da tela de visualização), rola até a seção e a destaca.
+   */
   function destacarSecaoPelaAncora() {
     if (window.location.hash !== "#secao-bio") {
       return;
@@ -103,6 +120,9 @@ document.addEventListener("DOMContentLoaded", () => {
     campoBio.focus();
   }
 
+  /* ==========================================================================
+     Máscaras
+     ========================================================================== */
   campoTelefone.addEventListener("input", () => {
     campoTelefone.value = mascararTelefone(campoTelefone.value);
   });
@@ -127,6 +147,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return numeros.replace(/(\d{5})(\d)/, "$1-$2");
   }
 
+  /* ==========================================================================
+     Busca de endereço por CEP (ViaCEP)
+     ========================================================================== */
   campoCep.addEventListener("blur", async () => {
     const cep = apenasNumeros(campoCep.value);
 
@@ -154,6 +177,9 @@ document.addEventListener("DOMContentLoaded", () => {
     statusCep.className = "status-cep" + (classe ? ` ${classe}` : "");
   }
 
+  /* ==========================================================================
+     Foto de perfil
+     ========================================================================== */
   inputFoto.addEventListener("change", () => {
     const arquivo = inputFoto.files[0];
     if (!arquivo) {
@@ -183,6 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
     previewFoto.src = "https://via.placeholder.com/120x120.png?text=Foto";
   });
 
+  /* ==========================================================================
+     Habilidades (tags)
+     ========================================================================== */
   inputHabilidade.addEventListener("keydown", (evento) => {
     if (evento.key === "Enter" || evento.key === ",") {
       evento.preventDefault();
@@ -238,6 +267,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  /* ==========================================================================
+     Envio do formulário
+     ========================================================================== */
   formulario.addEventListener("submit", async (evento) => {
     evento.preventDefault();
     limparMensagens();
@@ -285,6 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     };
 
+    // Contratante nao pode ter habilidades (o back rejeita).
     if (!ehContratante) {
       dados.habilidadeIds = campoCategoria.dataset.id ? [Number(campoCategoria.dataset.id)] : [];
       dados.outraHabilidade = listaHabilidades.join(", ").slice(0, 200);

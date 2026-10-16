@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/menu-lateral.css">
   <link rel="stylesheet" href="css/vagas.css">
   <link rel="stylesheet" href="css/tema.css">
+  <link rel="stylesheet" href="css/profissional.css">
 </head>
 <body class="pagina-vagas tem-menu" data-menu-ativo="vagas.html">
 
@@ -35,6 +36,7 @@
         </button>
       </div>
 
+      <!-- TELA 1: formulário de cards (criar / editar) -->
       <form class="cartao-formulario" id="formVaga" novalidate>
         <div class="cartao-campo largura-total">
           <div class="campo">
@@ -80,6 +82,65 @@
           </div>
         </div>
 
+        <fieldset class="cartao-campo largura-total bloco-servico" id="blocoServico">
+          <legend>Quando e onde</legend>
+
+          <div class="campo campo-data">
+            <label for="dataServico">Dia do serviço</label>
+            <input type="date" id="dataServico" required>
+            <p class="mensagem-erro" id="erroData">Informe o dia em que o serviço será feito.</p>
+          </div>
+
+          <div class="campo campo-local">
+            <span class="rotulo-grupo" id="rotuloLocal">Endereço do serviço</span>
+            <div class="opcoes-local" role="radiogroup" aria-labelledby="rotuloLocal">
+              <label class="opcao-local" id="opcaoEmpresa">
+                <input type="radio" name="localServico" value="empresa" checked>
+                <span class="opcao-titulo">Endereço da empresa</span>
+                <span class="opcao-detalhe" id="resumoEmpresa">Carregando endereço…</span>
+              </label>
+              <label class="opcao-local" id="opcaoOutro">
+                <input type="radio" name="localServico" value="outro">
+                <span class="opcao-titulo">Outro endereço</span>
+                <span class="opcao-detalhe">O serviço será feito em outro lugar</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="endereco-outro" id="enderecoOutro" hidden>
+            <div class="campo c-cep">
+              <label for="localCep">CEP</label>
+              <input type="text" id="localCep" inputmode="numeric" maxlength="9" placeholder="00000-000" autocomplete="postal-code">
+              <p class="auxiliar" id="statusLocalCep" role="status" aria-live="polite"></p>
+            </div>
+            <div class="campo c-rua">
+              <label for="localLogradouro">Rua</label>
+              <input type="text" id="localLogradouro" maxlength="150" autocomplete="off">
+            </div>
+            <div class="campo c-num">
+              <label for="localNumero">Número</label>
+              <input type="text" id="localNumero" maxlength="20" autocomplete="off">
+            </div>
+            <div class="campo c-comp">
+              <label for="localComplemento">Complemento</label>
+              <input type="text" id="localComplemento" maxlength="100" autocomplete="off" placeholder="Opcional">
+            </div>
+            <div class="campo c-bairro">
+              <label for="localBairro">Bairro</label>
+              <input type="text" id="localBairro" maxlength="100" autocomplete="off">
+            </div>
+            <div class="campo c-cidade">
+              <label for="localCidade">Cidade</label>
+              <input type="text" id="localCidade" maxlength="100" autocomplete="off">
+            </div>
+            <div class="campo c-uf">
+              <label for="localEstado">UF</label>
+              <input type="text" id="localEstado" maxlength="2" autocomplete="off" style="text-transform:uppercase">
+            </div>
+            <p class="mensagem-erro" id="erroLocal">Preencha CEP, rua, número, bairro, cidade e UF.</p>
+          </div>
+        </fieldset>
+
         <div class="cartao-campo largura-total">
           <div class="campo">
             <label for="descricaoVaga">Descrição</label>
@@ -95,6 +156,7 @@
         </div>
       </form>
 
+      <!-- TELA 2: cards das vagas já postadas -->
       <section id="telaLista" hidden>
         <ul class="lista-vagas" id="listaVagas"></ul>
         <div class="estado-vazio" id="estadoVazioVagas" hidden>
@@ -106,6 +168,7 @@
         </div>
       </section>
 
+      <!-- TELA 3: detalhe da vaga + candidatos -->
       <section id="telaDetalhe" hidden></section>
   </main>
 
@@ -123,6 +186,7 @@
   </footer>
 </div>
 
+  <script src="js/perfilService.js"></script>
   <script src="js/autocomplete.js"></script>
   <script src="js/vagas.js"></script>
   <script src="js/tema.js"></script>

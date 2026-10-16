@@ -17,6 +17,8 @@ const AuthService = {
       throw new Error("A API nao retornou o token de autenticacao.");
     }
 
+    // O backend devolve TipoUsuario como enum numerico:
+    // 0 = Freelancer, 1 = Contratante, 2 = Admin.
     localStorage.setItem("token", dados.token);
     localStorage.setItem("usuarioNome", dados.nome || "");
     localStorage.setItem("usuarioEmail", dados.email || "");
@@ -25,6 +27,7 @@ const AuthService = {
     return dados;
   },
 
+  // Le o payload do JWT (sem validar assinatura: quem valida e o servidor).
   _payload() {
     try {
       const token = localStorage.getItem("token");
@@ -43,6 +46,7 @@ const AuthService = {
     const valor = localStorage.getItem("tipoUsuario");
     if (valor !== null && valor !== "" && !Number.isNaN(Number(valor))) return Number(valor);
 
+    // Se o tipo sumiu do storage mas o token existe, recupera pelo papel dentro do token.
     const p = this._payload();
     const papel = p && (p["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || p.role);
     const mapa = { Freelancer: 0, Contratante: 1, Admin: 2 };
@@ -53,6 +57,7 @@ const AuthService = {
     return localStorage.getItem("token");
   },
 
+  // Logado = token presente e ainda dentro da validade. F5 nao desloga.
   estaAutenticado() {
     const token = this.obterToken();
     if (!token) return false;
@@ -64,11 +69,13 @@ const AuthService = {
     return true;
   },
 
+  // Unico caminho de logout (botao Sair).
   sair() {
     this.limparSessao();
     window.location.href = "index.html";
   },
 
+  // Na tela de login: quem ja esta logado vai direto para a sua tela.
   redirecionarSeLogado() {
     if (!this.estaAutenticado()) return false;
     try {
@@ -112,12 +119,14 @@ const AuthService = {
     return this.obterTipoUsuario() === 1 ? "contratante.html" : "inicio.html";
   },
 
+  // Protege a tela: sem login (ou tipo errado) volta para o login.
   exigirTipo(tipoPermitido) {
     if (!this.estaAutenticado()) {
       window.location.replace("index.html");
       return false;
     }
     if (this.obterTipoUsuario() !== tipoPermitido) {
+      // Logado, mas na tela do outro perfil: manda para a tela certa (nao para o login).
       window.location.replace(this.paginaInicial());
       return false;
     }

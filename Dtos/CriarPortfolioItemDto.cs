@@ -14,8 +14,10 @@ namespace ConectaFree.Dtos
         [MaxLength(2000)]
         public string? Descricao { get; set; }
 
+        // Obrigatório só quando Tipo == Foto
         public IFormFile? Foto { get; set; }
 
+        // Obrigatório só quando Tipo == Vaga
         public int? AnuncioId { get; set; }
     }
 }

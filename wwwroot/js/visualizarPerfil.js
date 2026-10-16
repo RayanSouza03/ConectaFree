@@ -1,3 +1,9 @@
+/**
+ * Busca os dados do usuário logado e preenche a tela de visualização do perfil.
+ * Campos sem valor exibem um placeholder cinza claro, indicando o local
+ * onde a informação vai aparecer quando o usuário preencher o perfil.
+ * A edição em si acontece em perfil.html (formulário completo).
+ */
 document.addEventListener("DOMContentLoaded", async () => {
   const fotoUsuario = document.getElementById("foto-usuario");
   const fotoUsuarioPlaceholder = document.getElementById("foto-usuario-placeholder");
@@ -32,6 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     [infoDocumento, infoEmail, infoTelefone].forEach((dd) => {
       dd.closest(".linha-info").style.display = "none";
     });
+    // Perfil de outra pessoa: nada de "Editar perfil", "Editar bio" ou "Editar portfólio".
     document.querySelectorAll(".btn-editar").forEach((b) => {
       if (b.id !== "linkPortfolioCompleto") b.closest(".rodape-painel").style.display = "none";
     });
@@ -74,6 +81,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const habilidades = (perfil.habilidades || []).map((h) => h.nome);
     const nomeCategoria = habilidades[0] || "";
 
+    // Contratante não tem categoria nem habilidades: esconde essas linhas
+    const ehContratante = perfil.tipoUsuario === 1;
+    [infoCategoria, infoHabilidades].forEach((el) => { const l = el.closest(".linha-info"); if (l) l.hidden = ehContratante; });
+    categoriaUsuario.hidden = ehContratante;
+
     definirFoto(perfil.fotoUrl);
     definirTexto(nomeUsuario, perfil.nome, "placeholder-medio placeholder-claro");
     definirTexto(categoriaUsuario, nomeCategoria, "placeholder-curto placeholder-claro");
@@ -94,6 +106,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     definirBio(perfil.bio);
   }
 
+  /**
+   * Preenche um <dd> com o valor, ou com um placeholder cinza caso vazio.
+   */
   function definirCampoInfo(elemento, valor, classesPlaceholder) {
     if (valor && String(valor).trim()) {
       elemento.textContent = valor;
@@ -102,6 +117,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     elemento.innerHTML = `<span class="placeholder-campo ${classesPlaceholder}"></span>`;
   }
 
+  /**
+   * Preenche um texto simples (nome/categoria no cabeçalho), com placeholder
+   * translúcido quando vazio (fundo roxo).
+   */
   function definirTexto(elemento, valor, classesPlaceholder) {
     if (valor && String(valor).trim()) {
       elemento.textContent = valor;

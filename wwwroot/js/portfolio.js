@@ -1,14 +1,17 @@
+/* Portfólio integrado a /api/Portfolio (lista, adicionar e remover) */
 const $ = (id) => document.getElementById(id);
 const ICONE_FOTO = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5.5-5.5L7 19"/></svg>';
 const ICONE_LIXO = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
 
 function idDoToken(){
+  // O id do usuario esta no claim NameIdentifier do JWT
   try{
     const carga = JSON.parse(atob(AuthService.obterToken().split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
     return carga['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || carga.nameid || carga.sub;
   }catch{ return null; }
 }
 
+/* ===================== LISTA ===================== */
 const lista = $('listaExperiencias');
 if(lista){
   const outroId = new URLSearchParams(location.search).get('usuario');
@@ -66,6 +69,7 @@ if(lista){
   renderizar();
 }
 
+/* ===================== ADICIONAR ===================== */
 const formulario = $('formExperiencia');
 if(formulario){
   const tipo = $('tipo');

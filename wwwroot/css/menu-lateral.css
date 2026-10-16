@@ -1,3 +1,7 @@
+/* ==========================================================================
+   Menu lateral retrátil (compartilhado entre as telas)
+   Usa as variáveis de cor definidas em login.css.
+   ========================================================================== */
 body.tem-menu {
   flex-direction: row;
   align-items: stretch;
@@ -143,6 +147,8 @@ body.tem-menu {
   .conteudo-pagina { min-height: auto; }
 }
 
+
+/* Navegacao da area autenticada */
 .bloco-navegacao {
   flex: 1;
   overflow-y: auto;

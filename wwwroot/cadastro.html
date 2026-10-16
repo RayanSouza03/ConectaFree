@@ -7,23 +7,26 @@
   <link rel="stylesheet" href="css/login.css">
   <link rel="stylesheet" href="css/cadastro.css">
   <link rel="stylesheet" href="css/tema.css">
+  <link rel="stylesheet" href="css/profissional.css">
 </head>
 <body class="pagina-cadastro">
 
   <main class="area-cadastro">
     <div class="cadastro-container">
       <div class="logo-cadastro">
-        <img src="img/logo-cadastro.png" alt="ConectaFree" class="logo">
+        <img src="img/logo-cadastro-verde.png" alt="ConectaFree" class="logo">
       </div>
 
         <h2>Criar Conta</h2>
 
+        <!-- Seletor Principal -->
         <div class="tipo-conta-toggle">
             <button type="button" id="btnProfissional" class="toggle-btn active">Profissional</button>
             <button type="button" id="btnEmpresa" class="toggle-btn">Empresa</button>
         </div>
 
         <form id="formCadastro">
+            <!-- Seletor Compacto CPF/CNPJ (Empresa) -->
             <div id="opcaoDocEmpresa" class="doc-toggle-container hidden">
                 <div class="doc-toggle">
                     <button type="button" id="btnCNPJ" class="doc-toggle-btn active">CNPJ</button>
@@ -31,19 +34,21 @@
                 </div>
             </div>
 
+            <!-- Nome / Razão Social -->
             <div class="input-group">
                 <label for="nome" id="labelNome">Nome Completo</label>
                 <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required>
             </div>
 
+            <!-- CPF / CNPJ -->
             <div class="input-group">
                 <label for="documento" id="labelDocumento">CPF</label>
-                <input
-                    type="text"
-                    id="documento"
-                    name="documento"
-                    placeholder="000.000.000-00"
-                    maxlength="14"
+                <input 
+                    type="text" 
+                    id="documento" 
+                    name="documento" 
+                    placeholder="000.000.000-00" 
+                    maxlength="14" 
                     required>
                 <span id="erroDocumento" class="error-message"></span>
             </div>
@@ -58,6 +63,7 @@
                 <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" maxlength="15" required>
             </div>
 
+            <!-- Senha -->
             <div class="input-group">
                 <label for="senha">Senha</label>
                 <div class="password-wrapper">
@@ -71,6 +77,7 @@
                 </div>
             </div>
 
+            <!-- Confirmar Senha -->
             <div class="input-group">
                 <label for="confirmarSenha">Confirmar Senha</label>
                 <div class="password-wrapper">

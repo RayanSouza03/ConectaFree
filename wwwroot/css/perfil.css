@@ -1,3 +1,6 @@
+/* ==========================================================================
+   Layout geral da página de perfil
+   ========================================================================== */
 .pagina-perfil {
   background-image: var(--cor-gradiente);
 }
@@ -35,20 +38,23 @@
 }
 
 .subtitulo-perfil {
-  color: var(--cor-cinza-claro);
+  color: #3C5249;
   font-size: 14px;
   margin-top: -10px;
 }
 
+/* ==========================================================================
+   Cartões de seção
+   ========================================================================== */
 .secao-cartao {
   background: var(--cor-branco);
   border-radius: 14px;
   padding: 24px;
-  box-shadow: 0 10px 30px -12px rgba(42, 8, 69, 0.35);
+  box-shadow: 0 10px 30px -12px rgba(41, 51, 48, 0.35);
   display: flex;
   flex-direction: column;
   gap: 16px;
-  border: 1px solid #E9E0F0;
+  border: 1px solid #CFE3DB;
 }
 
 .titulo-secao {
@@ -56,7 +62,7 @@
   font-weight: 700;
   color: var(--cor-roxo-bem-escuro);
   padding-bottom: 4px;
-  border-bottom: 1px solid #f0eaf4;
+  border-bottom: 1px solid #EEF7F3;
 }
 
 .grupo-campo {
@@ -79,13 +85,13 @@
 
 .dica-campo {
   font-size: 12px;
-  color: var(--cor-cinza-claro);
+  color: #3C5249;
 }
 
 .aviso-info {
   font-size: 12px;
   color: var(--cor-roxo);
-  background: #f6f0fe;
+  background: #EEF7F3;
   border-radius: 8px;
   padding: 10px 12px;
   margin-top: 4px;
@@ -104,7 +110,7 @@ select {
 
 select:focus {
   border-color: var(--cor-roxo);
-  box-shadow: 0 0 0 3px rgba(155, 92, 246, 0.12);
+  box-shadow: 0 0 0 3px rgba(155, 201, 184, 0.12);
 }
 
 textarea {
@@ -123,7 +129,7 @@ textarea {
 
 textarea:focus {
   border-color: var(--cor-roxo);
-  box-shadow: 0 0 0 3px rgba(155, 92, 246, 0.12);
+  box-shadow: 0 0 0 3px rgba(155, 201, 184, 0.12);
 }
 
 .secao-cartao.destaque-ancora {
@@ -131,10 +137,13 @@ textarea:focus {
 }
 
 @keyframes piscarDestaque {
-  0%, 100% { box-shadow: 0 10px 30px -12px rgba(42, 8, 69, 0.35); }
-  30% { box-shadow: 0 0 0 3px var(--cor-roxo-clarinho), 0 10px 30px -12px rgba(42, 8, 69, 0.35); }
+  0%, 100% { box-shadow: 0 10px 30px -12px rgba(41, 51, 48, 0.35); }
+  30% { box-shadow: 0 0 0 3px var(--cor-roxo-clarinho), 0 10px 30px -12px rgba(41, 51, 48, 0.35); }
 }
 
+/* ==========================================================================
+   Seção de foto
+   ========================================================================== */
 .secao-foto {
   flex-direction: row;
   align-items: center;
@@ -187,7 +196,7 @@ textarea:focus {
 
 .foto-dica {
   font-size: 12px;
-  color: var(--cor-cinza-claro);
+  color: #3C5249;
 }
 
 .btn-link-remover {
@@ -202,6 +211,9 @@ textarea:focus {
   text-decoration: underline;
 }
 
+/* ==========================================================================
+   Habilidades (tags)
+   ========================================================================== */
 .campo-habilidades {
   display: flex;
   flex-wrap: wrap;
@@ -215,7 +227,7 @@ textarea:focus {
 
 .campo-habilidades:focus-within {
   border-color: var(--cor-roxo);
-  box-shadow: 0 0 0 3px rgba(155, 92, 246, 0.12);
+  box-shadow: 0 0 0 3px rgba(155, 201, 184, 0.12);
 }
 
 .campo-habilidades input {
@@ -231,7 +243,7 @@ textarea:focus {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #f6f0fe;
+  background: #EEF7F3;
   color: var(--cor-roxo-bem-escuro);
   border-radius: 999px;
   padding: 5px 8px 5px 12px;
@@ -249,6 +261,9 @@ textarea:focus {
   padding: 2px;
 }
 
+/* ==========================================================================
+   Senha (mostrar/ocultar)
+   ========================================================================== */
 .campo-senha-wrapper {
   position: relative;
   display: flex;
@@ -265,11 +280,14 @@ textarea:focus {
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: var(--cor-cinza-claro);
+  color: #3C5249;
   cursor: pointer;
   display: flex;
 }
 
+/* ==========================================================================
+   CEP
+   ========================================================================== */
 .linha-cep {
   align-items: flex-end;
 }
@@ -288,7 +306,7 @@ textarea:focus {
 
 .status-cep {
   font-size: 13px;
-  color: var(--cor-cinza-claro);
+  color: #3C5249;
   padding-bottom: 14px;
 }
 
@@ -300,8 +318,11 @@ textarea:focus {
   color: #ed4956;
 }
 
+/* ==========================================================================
+   Mensagens e ações finais
+   ========================================================================== */
 .mensagem-sucesso {
-  color: #1e8e4f;
+  color: #293330;
   font-size: 13px;
   min-height: 16px;
 }
@@ -328,6 +349,9 @@ textarea:focus {
   text-decoration: underline;
 }
 
+/* ==========================================================================
+   Responsivo
+   ========================================================================== */
 @media (max-width: 700px) {
   .linha-campos {
     flex-direction: column;

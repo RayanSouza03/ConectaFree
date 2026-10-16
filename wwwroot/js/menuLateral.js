@@ -1,3 +1,10 @@
+/**
+ * Menu lateral compartilhado entre as telas.
+ * Fica em um único lugar: para mudar os links, edite a lista ITENS abaixo.
+ *
+ * Uso: coloque este script logo depois de <body> e informe a tela atual em
+ * <body data-menu-ativo="pagina.html">. A tela de cadastro não usa o menu.
+ */
 (function () {
   const ICONES = {
     login: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/>',
@@ -46,7 +53,7 @@
   menu.innerHTML = `
     <div class="cabecalho-menu">
       <a class="logo-marca" href="${HOME}">
-        <img src="img/logo.png" alt="ConectaFree">
+        <img src="img/logo-verde.png" alt="ConectaFree">
         <span class="logo-texto">ConectaFree</span>
       </a>
       <button class="botao-retrair" id="botaoRetrair" type="button" aria-label="Recolher menu" aria-expanded="true">
@@ -63,7 +70,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 19V5a2 2 0 0 0-2-2h-4"/>
         </svg>
-        <span class="rotulo">Sair</span>
+        <span class="rotulo">Sair da conta</span>
       </button>
     </div>
 
@@ -71,6 +78,7 @@
 
   script.parentNode.insertBefore(menu, script);
 
+  /* Retrair / expandir (o estado fica salvo entre as telas) */
   const botao = document.getElementById("botaoRetrair");
 
   function aplicar(fechado) {
@@ -81,7 +89,7 @@
 
   try {
     aplicar(localStorage.getItem("menuFechado") === "1");
-  } catch {  }
+  } catch { /* sem storage disponível */ }
 
   const btnSair = document.getElementById("btnSairMenu");
   if (btnSair) {
@@ -91,6 +99,6 @@
   botao.addEventListener("click", () => {
     const fechado = !menu.classList.contains("fechado");
     aplicar(fechado);
-    try { localStorage.setItem("menuFechado", fechado ? "1" : "0"); } catch {  }
+    try { localStorage.setItem("menuFechado", fechado ? "1" : "0"); } catch { /* ignora */ }
   });
 })();

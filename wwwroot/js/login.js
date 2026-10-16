@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const dados = await AuthService.login(email, senha);
 
+      // A decisao da tela vem do enum retornado pelo backend.
       AuthService.redirecionarPorTipo(dados.tipoUsuario);
     } catch (erro) {
       exibirErro(erro.message);

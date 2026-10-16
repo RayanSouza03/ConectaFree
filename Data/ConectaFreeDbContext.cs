@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ConectaFree.Models;
 
+
 namespace ConectaFree.Data
 {
 

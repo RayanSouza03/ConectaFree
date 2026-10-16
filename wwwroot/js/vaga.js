@@ -10,14 +10,15 @@
     const podeCandidatar = v.status === "Aberta" && !v.minhaCandidatura;
     alvo.innerHTML = `
       <div class="cartao-detalhe">
-        <div class="linha-topo"><h2>${Util.esc(v.titulo)}${v.urgente ? " 🔥" : ""}</h2>
+        <div class="linha-topo"><h2>${Util.esc(v.titulo)}${v.urgente ? '<span class="selo-urgente">URGENTE</span>' : ""}</h2>
           <span class="selo-status ${cls(v.status)}">${rotulo(v.status)}</span></div>
         <div class="grade-meta">
+          <div class="meta-detalhe destaque-data"><small>Dia do serviço</small><strong>${v.dataServico ? Util.dataServico(v.dataServico) : "A combinar"}</strong></div>
+          <div class="meta-detalhe meta-local"><small>Local</small><strong>${Util.esc(Util.localDaVaga(v))}</strong></div>
           <div class="meta-detalhe"><small>Categoria</small><strong>${Util.esc(v.habilidade.nome)}</strong></div>
           <div class="meta-detalhe"><small>Valor</small><strong>${Util.valor(v.valorProposto)}</strong></div>
-          <div class="meta-detalhe"><small>Local</small><strong>${Util.esc(Util.local(v.contratante.endereco))}</strong></div>
-          <div class="meta-detalhe"><small>Publicação</small><strong>${Util.data(v.dataCriacao)}</strong></div>
         </div>
+        <p class="publicada-detalhe">Publicada em ${Util.data(v.dataCriacao)}</p>
         <h4>Contratante</h4>
         <div style="display:flex;align-items:center;gap:12px;margin:6px 0 14px">
           ${v.contratante.fotoUrl ? `<img class="avatar-foto" src="${Util.esc(v.contratante.fotoUrl)}" alt="">` : `<div class="avatar-inicial">${Util.esc(Util.iniciais(v.contratante.nome))}</div>`}

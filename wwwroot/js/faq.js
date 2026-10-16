@@ -1,3 +1,4 @@
+/* Base de perguntas e respostas — tudo em front-end */
 const FAQ = [
   {c:"Sobre a plataforma", p:"O que é o ConectaFree?", r:"O ConectaFree é um ecossistema digital centralizado que conecta profissionais autônomos (freelancers) a contratantes para facilitar a busca e a oferta de serviços de curta duração ou urgentes."},
   {c:"Sobre a plataforma", p:"Quais são as principais funcionalidades disponíveis na plataforma?", r:"Atualmente o sistema conta com ferramentas essenciais de busca, filtros, edição de perfil e portfólio."},
@@ -81,5 +82,6 @@ function renderizar(){
   else mostrarResposta(selecionada);
 }
 
+/* A cada tecla digitada, a lista de perguntas abaixo do campo de busca é atualizada em tempo real */
 campo.addEventListener('input', renderizar);
 renderizar();

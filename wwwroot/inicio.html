@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/menu-lateral.css">
   <link rel="stylesheet" href="css/inicio.css">
   <link rel="stylesheet" href="css/tema.css">
+  <link rel="stylesheet" href="css/profissional.css">
 </head>
 <body class="pagina-inicio tem-menu" data-menu-ativo="inicio.html">
 
@@ -30,14 +31,16 @@
       <p class="resumo-busca" id="resumoBusca"></p>
     </section>
 
-    <section class="jobs-section" id="secaoUrgentes" hidden>
-      <h2>Vagas urgentes</h2>
-      <div class="lista-vagas-i" id="listaUrgentes"></div>
-    </section>
-
     <section class="jobs-section">
-      <h2 id="tituloRecentes">Vagas recentes</h2>
-      <div class="lista-vagas-i" id="listaRecentes"></div>
+      <div class="barra-lista">
+        <div class="tabs-vagas" id="tabsVagas" role="tablist">
+          <button type="button" class="active" data-aba="recentes" role="tab">Recentes <span class="contagem" id="contRecentes">0</span></button>
+          <button type="button" data-aba="urgentes" role="tab">Urgentes <span class="contagem" id="contUrgentes">0</span></button>
+        </div>
+        <p class="resumo-busca" id="resumoBusca"></p>
+      </div>
+      <h2 id="tituloLista">Vagas recentes</h2>
+      <div class="lista-vagas-i" id="listaVagas"></div>
     </section>
   </main>
 

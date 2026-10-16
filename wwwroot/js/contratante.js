@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <p class="local">${u.endereco ? esc(u.endereco.cidade) + " - " + esc(u.endereco.estado) : "Local não informado"}</p>
           <p class="bio">${esc(u.bio || "")}</p>
           <div>${(u.habilidades || []).map((h) => `<span class="tag-c">${esc(h.nome)}</span>`).join("")}${u.outraHabilidade ? `<span class="tag-c">${esc(u.outraHabilidade)}</span>` : ""}</div>
-          <p style="margin-top:10px"><a class="tag-c" style="text-decoration:none;color:#fff" href="visualizar-perfil.html?id=${u.id}">Ver perfil</a></p>
+          <p style="margin-top:12px"><a class="tag-c" style="text-decoration:none" href="visualizar-perfil.html?id=${u.id}">Ver perfil</a></p>
         </article>`).join("");
     } catch (e) {
       status.textContent = e.message;

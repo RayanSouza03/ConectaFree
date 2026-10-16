@@ -1,3 +1,4 @@
+/** Camada de acesso a API de perfil (usa Api de api.js). */
 const PerfilService = {
   buscarPerfil() {
     return Api.get(CONFIG.PERFIL_ENDPOINT);

@@ -75,12 +75,14 @@ namespace ConectaFree.Services
             return $"{url}/storage/v1/object/public/{bucket}/{caminho}";
         }
 
+        // Chave nova (sb_secret_...) vai só em "apikey"; chave legada (JWT eyJ...) também em Authorization.
         private static void AplicarChave(HttpRequestMessage req, string chave)
         {
             req.Headers.Add("apikey", chave);
             if (!chave.StartsWith("sb_")) req.Headers.Add("Authorization", $"Bearer {chave}");
         }
 
+        // Cria o bucket público na primeira vez (se já existir, o Supabase apenas recusa e seguimos).
         private async Task GarantirBucketAsync(string url, string chave, string bucket)
         {
             if (_bucketGarantido) return;
@@ -91,10 +93,11 @@ namespace ConectaFree.Services
                 req.Content = new StringContent($"{{\"id\":\"{bucket}\",\"name\":\"{bucket}\",\"public\":true}}", System.Text.Encoding.UTF8, "application/json");
                 await _http.SendAsync(req);
             }
-            catch {  }
+            catch { /* segue: o upload mostrará o erro real se houver */ }
             _bucketGarantido = true;
         }
 
+        // Sem Supabase configurado: grava em wwwroot/uploads e serve pelo próprio site.
         private async Task<string> SalvarLocalAsync(IFormFile arquivo, string pasta, string extensao)
         {
             var raiz = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");

@@ -1,6 +1,10 @@
+/* ==========================================================================
+   Portfólio, Adicionar experiência e Vagas
+   Usa as variáveis de cor de login.css (fundo em gradiente + cards brancos).
+   ========================================================================== */
 .pagina-vagas,
 .pagina-portfolio {
-
+  
 }
 
 .container-pagina {
@@ -43,6 +47,7 @@
 .link-voltar:hover { color: var(--texto); text-decoration: underline; }
 .link-voltar svg { stroke: currentColor; }
 
+/* ---------- Botões principais (sobre o fundo em gradiente) ---------- */
 .botao-nova-experiencia,
 .botao-suas-vagas {
   display: inline-flex;
@@ -95,7 +100,7 @@
 .botao-secundario {
   background: none;
   color: var(--cor-roxo-bem-escuro);
-  border: 1.5px solid #e7dbea;
+  border: 1.5px solid #EEF7F3;
   font-family: inherit;
   font-size: 15.5px;
   font-weight: 600;
@@ -111,7 +116,7 @@
 .botao-perigo {
   margin-right: auto;
   background: none;
-  border: 1.5px solid rgba(255, 190, 205, 0.7);
+  border: 1.5px solid rgba(207, 227, 219, 0.7);
   color: #ffc2d0;
   font-family: inherit;
   font-size: 15px;
@@ -120,8 +125,9 @@
   border-radius: 30px;
   cursor: pointer;
 }
-.botao-perigo:hover { background: #F3EEF7; }
+.botao-perigo:hover { background: #EEF7F3; }
 
+/* Ações do formulário ficam direto sobre o gradiente */
 .acoes-formulario {
   display: flex;
   justify-content: flex-end;
@@ -130,10 +136,11 @@
   grid-column: 1 / -1;
 }
 .acoes-formulario .botao-primario { background: var(--cor-branco); color: var(--cor-roxo-bem-escuro); }
-.acoes-formulario .botao-primario:hover { background: #f6f0fe; }
+.acoes-formulario .botao-primario:hover { background: #EEF7F3; }
 .acoes-formulario .botao-secundario { color: var(--texto); border-color: rgba(255, 255, 255, 0.55); }
-.acoes-formulario .botao-secundario:hover { border-color: var(--cor-branco); color: var(--texto); background: #F3EEF7; }
+.acoes-formulario .botao-secundario:hover { border-color: var(--cor-branco); color: var(--texto); background: #EEF7F3; }
 
+/* ---------- Portfólio ---------- */
 .rotulo-secao {
   color: var(--texto);
   font-size: 20px;
@@ -156,8 +163,8 @@
   display: flex;
   gap: 22px;
   align-items: flex-start;
-  box-shadow: 0 10px 30px -12px rgba(42, 8, 69, 0.45);
-  border: 1px solid #E9E0F0;
+  box-shadow: 0 10px 30px -12px rgba(41, 51, 48, 0.45);
+  border: 1px solid #CFE3DB;
 }
 
 .miniatura-experiencia {
@@ -165,7 +172,7 @@
   width: 96px;
   height: 96px;
   border-radius: 14px;
-  background: #f1e6f2;
+  background: #EEF7F3;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -194,7 +201,7 @@
   margin-top: 10px;
   font-size: 12.5px;
   color: var(--cor-roxo-escuro);
-  background: #f1e6f2;
+  background: #EEF7F3;
   padding: 5px 10px;
   border-radius: 20px;
 }
@@ -214,7 +221,7 @@
   align-items: center;
   gap: 5px;
 }
-.botao-remover:hover { color: var(--cor-roxo); background: #f6eef8; }
+.botao-remover:hover { color: var(--cor-roxo); background: #EEF7F3; }
 .botao-remover svg { stroke: currentColor; }
 
 .estado-vazio {
@@ -224,18 +231,18 @@
   margin: 56px auto 0;
   padding: 48px 40px;
   text-align: center;
-  box-shadow: 0 10px 30px -12px rgba(42, 8, 69, 0.45);
+  box-shadow: 0 10px 30px -12px rgba(41, 51, 48, 0.45);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 14px;
-  border: 1px solid #E9E0F0;
+  border: 1px solid #CFE3DB;
 }
 .estado-vazio .icone-vazio {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #f1e6f2;
+  background: #EEF7F3;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -244,6 +251,7 @@
 .estado-vazio .titulo-vazio { font-size: 20px; font-weight: 700; color: var(--cor-roxo-bem-escuro); }
 .estado-vazio .texto-vazio { font-size: 15px; line-height: 1.6; color: var(--cor-cinza-escuro); max-width: 36ch; }
 
+/* ---------- Formulários (nova experiência / vaga) ---------- */
 .cartao-formulario {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -255,11 +263,11 @@
   background: var(--cor-branco);
   border-radius: 20px;
   padding: 26px 28px;
-  box-shadow: 0 10px 30px -12px rgba(42, 8, 69, 0.45);
+  box-shadow: 0 10px 30px -12px rgba(41, 51, 48, 0.45);
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border: 1px solid #E9E0F0;
+  border: 1px solid #CFE3DB;
 }
 .cartao-campo.largura-total { grid-column: 1 / -1; }
 
@@ -273,8 +281,8 @@
   font-family: inherit;
   font-size: 15px;
   color: var(--cor-texto);
-  background: #faf6fb;
-  border: 1.5px solid #e7dbea;
+  background: #EEF7F3;
+  border: 1.5px solid #EEF7F3;
   border-radius: 12px;
   padding: 12px 16px;
   outline: none;
@@ -284,8 +292,8 @@
 .campo select:focus,
 .campo textarea:focus {
   border-color: var(--cor-roxo);
-  background: #faf6fb;
-  box-shadow: 0 0 0 3px rgba(144, 28, 96, 0.15);
+  background: #EEF7F3;
+  box-shadow: 0 0 0 3px rgba(41, 51, 48, 0.15);
 }
 .campo textarea { width: 100%; resize: vertical; min-height: 120px; line-height: 1.5; }
 .campo select {
@@ -293,7 +301,7 @@
   appearance: none;
   cursor: pointer;
   padding-right: 40px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23901C60' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23293330' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
 }
@@ -302,9 +310,9 @@
 
 .dropzone {
   position: relative;
-  border: 2px dashed #d9c3de;
+  border: 2px dashed #CFE3DB;
   border-radius: 16px;
-  background: #faf5fb;
+  background: #EEF7F3;
   min-height: 168px;
   display: flex;
   flex-direction: column;
@@ -328,7 +336,7 @@
   position: absolute;
   bottom: 0; left: 0; right: 0;
   z-index: 2;
-  background: rgba(42, 8, 69, 0.62);
+  background: rgba(41, 51, 48, 0.62);
   color: #fff;
   padding: 6px 8px;
   font-weight: 500;
@@ -338,6 +346,7 @@
 .cartao-formulario .mensagem-erro { color: #b3123a; font-size: 13.5px; margin-top: -4px; min-height: 0; display: none; }
 .cartao-formulario .mensagem-erro.visivel { display: block; }
 
+/* ---------- Vagas ---------- */
 .topo-vagas { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; max-width: 960px; }
 .topo-vagas .cabecalho-pagina { margin-bottom: 26px; }
 
@@ -347,7 +356,7 @@
   border: none;
   border-radius: 20px;
   padding: 22px;
-  box-shadow: 0 10px 30px -12px rgba(42, 8, 69, 0.45);
+  box-shadow: 0 10px 30px -12px rgba(41, 51, 48, 0.45);
   cursor: pointer;
   text-align: left;
   font-family: inherit;
@@ -358,7 +367,7 @@
   transition: transform 0.15s, box-shadow 0.15s;
 }
 .card-vaga:hover,
-.card-vaga:focus-visible { transform: translateY(-3px); box-shadow: 0 16px 34px -12px rgba(42, 8, 69, 0.6); outline: none; }
+.card-vaga:focus-visible { transform: translateY(-3px); box-shadow: 0 16px 34px -12px rgba(41, 51, 48, 0.6); outline: none; }
 .card-vaga .linha-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .card-vaga h3 { font-size: 18px; color: var(--cor-roxo-bem-escuro); line-height: 1.3; }
 .card-vaga .meta { font-size: 13.5px; color: var(--cor-cinza-escuro); display: flex; flex-direction: column; gap: 5px; }
@@ -369,7 +378,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid #efeaf3;
+  border-top: 1px solid #EEF7F3;
   padding-top: 12px;
   margin-top: 2px;
   font-size: 13.5px;
@@ -380,7 +389,7 @@
 .selo-status { font-size: 12px; font-weight: 600; padding: 4px 11px; border-radius: 20px; white-space: nowrap; }
 .selo-status.aberta { background: #e6f5ec; color: #1e7a45; }
 .selo-status.pausada { background: #fdf1dc; color: #9a6408; }
-.selo-status.encerrada { background: #eceaf0; color: #5b4a5f; }
+.selo-status.encerrada { background: #EEF7F3; color: #5b4a5f; }
 .selo-status.emandamento, .selo-status.pendente { background: #fdf1dc; color: #9a6408; }
 .selo-status.concluida, .selo-status.aceita { background: #e6f5ec; color: #1e7a45; }
 .selo-status.cancelada, .selo-status.recusada { background: #fbe4e9; color: #b3123a; }
@@ -395,14 +404,14 @@
   background: var(--cor-branco);
   border-radius: 20px;
   padding: 28px;
-  box-shadow: 0 10px 30px -12px rgba(42, 8, 69, 0.45);
+  box-shadow: 0 10px 30px -12px rgba(41, 51, 48, 0.45);
   max-width: 960px;
-  border: 1px solid #E9E0F0;
+  border: 1px solid #CFE3DB;
 }
 .cartao-detalhe .linha-topo { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
 .cartao-detalhe h2 { font-size: 24px; color: var(--cor-roxo-bem-escuro); line-height: 1.25; }
 .grade-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin: 20px 0; }
-.meta-detalhe { background: #faf6fb; border-radius: 14px; padding: 14px 16px; }
+.meta-detalhe { background: #EEF7F3; border-radius: 14px; padding: 14px 16px; }
 .meta-detalhe small { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--cor-cinza-escuro); margin-bottom: 4px; }
 .meta-detalhe strong { font-size: 15.5px; color: var(--cor-roxo-bem-escuro); }
 .cartao-detalhe h4 { font-size: 14.5px; color: var(--cor-roxo-bem-escuro); margin-bottom: 6px; }
@@ -412,17 +421,17 @@
 .botao-editar svg { stroke: currentColor; }
 
 .titulo-candidatos { max-width: 960px; margin: 34px 0 16px; display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 600; color: var(--texto); }
-.titulo-candidatos span { background: #F3EEF7; color: var(--texto); font-size: 13px; padding: 3px 11px; border-radius: 20px; }
+.titulo-candidatos span { background: #EEF7F3; color: var(--texto); font-size: 13px; padding: 3px 11px; border-radius: 20px; }
 .lista-candidatos { list-style: none; display: flex; flex-direction: column; gap: 14px; max-width: 960px; }
 .card-candidato {
   background: var(--cor-branco);
   border-radius: 18px;
   padding: 18px 20px;
-  box-shadow: 0 10px 30px -12px rgba(42, 8, 69, 0.45);
+  box-shadow: 0 10px 30px -12px rgba(41, 51, 48, 0.45);
   display: flex;
   gap: 16px;
   align-items: flex-start;
-  border: 1px solid #E9E0F0;
+  border: 1px solid #CFE3DB;
 }
 .avatar-candidato {
   flex: none;
@@ -461,6 +470,7 @@
   .data-candidatura { width: 100%; }
 }
 
+/* Botão WhatsApp nos candidatos */
 .acoes-candidato a.btn-whatsapp { display: inline-flex; align-items: center; gap: 7px; background: #25D366; border-color: #25D366; color: #fff; }
 .acoes-candidato a.btn-whatsapp:hover { background: #1ebe5a; border-color: #1ebe5a; }
 .acoes-candidato a.btn-whatsapp svg { flex: none; }
@@ -469,4 +479,5 @@
 .botao-excluir-vaga { padding: 10px 18px; border-radius: 12px; border: 1.5px solid #D92D20; background: #fff; color: #D92D20; font-weight: 600; cursor: pointer; }
 .botao-excluir-vaga:hover, .botao-excluir-vaga.destaque { background: #D92D20; color: #fff; }
 .acoes-detalhe { display: flex; gap: 10px; flex-wrap: wrap; }
+/* formulário e listas ocupam a tela inteira */
 .container-pagina, .topo-vagas, .lista-vagas, .lista-experiencias, .card-experiencia, .cartao-detalhe, .titulo-candidatos, .lista-candidatos, .formulario-vaga, .cartao-formulario { max-width: none !important; }

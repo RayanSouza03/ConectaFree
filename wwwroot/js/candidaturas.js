@@ -9,6 +9,7 @@
         <div class="linha-topo"><h3>${Util.esc(c.anuncio.titulo)}</h3>
           <span class="selo-status ${Util.classeCandidatura(c.status, c.anuncio.status)}">${Util.rotuloCandidatura(c.status, c.anuncio.status)}</span></div>
         <div class="meta"><span>${Util.esc(c.anuncio.habilidade.nome)}</span>
+          <span>${Util.esc(Util.localDaVaga(c.anuncio))}</span>
           <span>Vaga: ${Util.ROTULO_STATUS[c.anuncio.status] || c.anuncio.status}</span>
           <span>Enviada em ${Util.data(c.dataCriacao)}</span></div>
         <div class="rodape-card"><span class="valor">${Util.valor(c.anuncio.valorProposto)}</span>

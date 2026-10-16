@@ -1,3 +1,4 @@
+/* Janela de detalhes de um item do portfólio (foto ou arquivo). */
 const PortfolioUI = {
   ehPdf(url) { return /\.pdf($|\?)/i.test(url || ""); },
 
@@ -23,13 +24,13 @@ const PortfolioUI = {
     let topo = "";
     let acoes = "";
     if (it.fotoUrl && this.ehPdf(it.fotoUrl)) {
-      topo = '<div class="modal-arquivo"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#901C60" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><polyline points="14 3 14 8 19 8"/></svg></div>';
+      topo = '<div class="modal-arquivo"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#293330" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><polyline points="14 3 14 8 19 8"/></svg></div>';
       acoes = `<a href="${esc(it.fotoUrl)}" target="_blank" rel="noopener noreferrer">Abrir arquivo</a>`;
     } else if (it.fotoUrl) {
       topo = `<img class="modal-foto" src="${esc(it.fotoUrl)}" alt="${esc(it.titulo)}">`;
       acoes = `<a href="${esc(it.fotoUrl)}" target="_blank" rel="noopener noreferrer">Abrir foto em tamanho real</a>`;
     } else {
-      topo = '<div class="modal-arquivo"><strong style="color:#901C60;font-size:20px">Vaga concluída pela plataforma</strong></div>';
+      topo = '<div class="modal-arquivo"><strong style="color:#293330;font-size:20px">Vaga concluída pela plataforma</strong></div>';
     }
     if (it.anuncioId && AuthService.obterTipoUsuario() === 0) {
       acoes += `<a href="vaga.html?id=${it.anuncioId}">Ver vaga</a>`;

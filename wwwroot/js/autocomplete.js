@@ -1,3 +1,4 @@
+/* Campo de texto com sugestões enquanto digita (sem acento/maiúscula, com radical e sinônimos). */
 const Autocomplete = {
   SINONIMOS: {
     programador: ["Programação", "Desenvolvimento Web", "Desenvolvimento Mobile"],
@@ -28,6 +29,7 @@ const Autocomplete = {
     return String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   },
 
+  // A consulta combina com o texto?
   combina(consulta, texto) {
     const q = this.norm(consulta);
     if (!q) return true;

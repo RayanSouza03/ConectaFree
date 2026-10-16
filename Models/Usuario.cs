@@ -8,7 +8,7 @@ namespace ConectaFree.Models
         public List<Habilidade> Habilidades { get; set; } = new();
 
         [MaxLength(200)]
-        public string? OutraHabilidade { get; set; }
+        public string? OutraHabilidade { get; set; }  
         public int Id { get; set; }
 
         [MaxLength(100)]

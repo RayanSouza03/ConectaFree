@@ -21,7 +21,7 @@ namespace ConectaFree.Services
                 .Include(a => a.Habilidade)
                 .Include(a => a.Contratante).ThenInclude(c => c.Endereco);
 
-        private async Task<List<AnuncioRespostaDto>> MontarAsync(List<Anuncio> lista, int? freelancerId = null)
+        private async Task<List<AnuncioRespostaDto>> MontarAsync(List<Anuncio> lista, int? freelancerId = null, bool completo = false)
         {
             var ids = lista.Select(a => a.Id).ToList();
 
@@ -42,7 +42,7 @@ namespace ConectaFree.Services
             return lista.Select(a => Mapeamento.ParaAnuncio(
                 a,
                 totais.TryGetValue(a.Id, out var t) ? t : 0,
-                minhas.TryGetValue(a.Id, out var m) ? m : null)).ToList();
+                minhas.TryGetValue(a.Id, out var m) ? m : null, completo)).ToList();
         }
 
         public async Task<List<AnuncioRespostaDto>> FiltrarAsync(FiltroVagaDto filtro)
@@ -58,9 +58,19 @@ namespace ConectaFree.Services
             if (filtro.Urgente.HasValue)
                 query = query.Where(a => a.Urgente == filtro.Urgente.Value);
             if (!string.IsNullOrWhiteSpace(filtro.Cidade))
-                query = query.Where(a => a.Contratante.Endereco != null && EF.Functions.ILike(a.Contratante.Endereco.Cidade, "%" + filtro.Cidade.Trim().Replace("%", "").Replace("_", "") + "%"));
+                {
+                var termo = "%" + filtro.Cidade.Trim().Replace("%", "").Replace("_", "") + "%";
+                query = query.Where(a => a.UsarEnderecoEmpresa
+                    ? a.Contratante.Endereco != null && EF.Functions.ILike(a.Contratante.Endereco.Cidade, termo)
+                    : a.LocalCidade != null && EF.Functions.ILike(a.LocalCidade, termo));
+            }
             if (!string.IsNullOrWhiteSpace(filtro.Estado))
-                query = query.Where(a => a.Contratante.Endereco != null && EF.Functions.ILike(a.Contratante.Endereco.Estado, filtro.Estado.Trim().Replace("%", "").Replace("_", "")));
+                {
+                var uf = filtro.Estado.Trim().Replace("%", "").Replace("_", "");
+                query = query.Where(a => a.UsarEnderecoEmpresa
+                    ? a.Contratante.Endereco != null && EF.Functions.ILike(a.Contratante.Endereco.Estado, uf)
+                    : a.LocalEstado != null && EF.Functions.ILike(a.LocalEstado, uf));
+            }
 
             var lista = await query
                 .OrderByDescending(a => a.Urgente)
@@ -70,12 +80,12 @@ namespace ConectaFree.Services
             return await MontarAsync(lista);
         }
 
-        public async Task<AnuncioRespostaDto> ObterAsync(int id, int? freelancerId)
+        public async Task<AnuncioRespostaDto> ObterAsync(int id, int? freelancerId, bool completo = false)
         {
             var anuncio = await Base().FirstOrDefaultAsync(a => a.Id == id)
                 ?? throw new KeyNotFoundException("Vaga não encontrada.");
 
-            return (await MontarAsync(new List<Anuncio> { anuncio }, freelancerId))[0];
+            return (await MontarAsync(new List<Anuncio> { anuncio }, freelancerId, completo))[0];
         }
 
         public async Task<List<AnuncioRespostaDto>> ListarDoContratanteAsync(int contratanteId)
@@ -85,7 +95,39 @@ namespace ConectaFree.Services
                 .OrderByDescending(a => a.DataCriacao)
                 .ToListAsync();
 
-            return await MontarAsync(lista);
+            return await MontarAsync(lista, null, completo: true);
+        }
+
+        // Valida data e local e grava no anúncio (criação e edição usam o mesmo caminho)
+        private static void AplicarServico(Anuncio anuncio, AnuncioDto dto)
+        {
+            if (dto.DataServico is null)
+                throw new InvalidOperationException("Informe o dia em que o serviço será realizado.");
+            if (dto.DataServico < DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-3)) && dto.DataServico != anuncio.DataServico)
+                throw new InvalidOperationException("O dia do serviço não pode estar no passado.");
+
+            anuncio.DataServico = dto.DataServico;
+            anuncio.UsarEnderecoEmpresa = dto.UsarEnderecoEmpresa;
+
+            if (dto.UsarEnderecoEmpresa)
+            {
+                anuncio.LocalCep = anuncio.LocalLogradouro = anuncio.LocalNumero = anuncio.LocalComplemento = null;
+                anuncio.LocalBairro = anuncio.LocalCidade = anuncio.LocalEstado = null;
+                return;
+            }
+
+            var l = dto.LocalVaga ?? throw new InvalidOperationException("Informe o endereço do serviço.");
+            string? T(string? v) => string.IsNullOrWhiteSpace(v) ? null : v.Trim();
+            if (T(l.Cep) is null || T(l.Logradouro) is null || T(l.Numero) is null || T(l.Bairro) is null || T(l.Cidade) is null || T(l.Estado) is null)
+                throw new InvalidOperationException("Preencha CEP, rua, número, bairro, cidade e estado do serviço.");
+
+            anuncio.LocalCep = T(l.Cep);
+            anuncio.LocalLogradouro = T(l.Logradouro);
+            anuncio.LocalNumero = T(l.Numero);
+            anuncio.LocalComplemento = T(l.Complemento);
+            anuncio.LocalBairro = T(l.Bairro);
+            anuncio.LocalCidade = T(l.Cidade);
+            anuncio.LocalEstado = T(l.Estado)!.ToUpperInvariant();
         }
 
         private static StatusAnuncio LerStatus(string? texto, StatusAnuncio padrao)
@@ -111,11 +153,12 @@ namespace ConectaFree.Services
                 ContratanteId = contratanteId,
                 Status = LerStatus(dto.Status, StatusAnuncio.Aberta)
             };
+            AplicarServico(anuncio, dto);
 
             _context.Anuncios.Add(anuncio);
             await _context.SaveChangesAsync();
 
-            return await ObterAsync(anuncio.Id, null);
+            return await ObterAsync(anuncio.Id, null, completo: true);
         }
 
         public async Task<AnuncioRespostaDto> AtualizarAsync(int contratanteId, int id, AnuncioDto dto)
@@ -132,9 +175,10 @@ namespace ConectaFree.Services
             anuncio.HabilidadeId = dto.HabilidadeId;
             anuncio.Urgente = dto.Urgente;
             anuncio.Status = LerStatus(dto.Status, anuncio.Status);
+            AplicarServico(anuncio, dto);
 
             await _context.SaveChangesAsync();
-            return await ObterAsync(id, null);
+            return await ObterAsync(id, null, completo: true);
         }
 
         public async Task ExcluirAsync(int contratanteId, int id)

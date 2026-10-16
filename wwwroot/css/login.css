@@ -1,19 +1,26 @@
+/* ==========================================================================
+   Variáveis globais
+   ========================================================================== */
 :root {
 
   --cor-branco:#fff;
-  --cor-roxo: #901C60;
-  --cor-roxo-claro: #ca2987;
-  --cor-roxo-clarinho: #ff34ab;
-  --cor-roxo-escuro: #641349;
-  --cor-roxo-bem-escuro: #2A0845;
-  --cor-gradiente: linear-gradient(135deg, #2A0845 0%, #641349 50%,#901C60 100%);
-  --cor-texto: #262626;
-  --cor-cinza-escuro: #3d3d3d;
-  --cor-cinza-claro: #c4c4c4;
+  --cor-roxo: #293330;
+  --cor-roxo-claro: #9BC9B8;
+  --cor-roxo-clarinho: #9BC9B8;
+  --cor-roxo-escuro: #293330;
+  --cor-roxo-bem-escuro: #293330;
+  --cor-gradiente: linear-gradient(135deg, #293330 0%, #293330 50%,#293330 100%);
+  --cor-texto: #293330;
+  --cor-cinza-escuro: #293330;
+  --cor-cinza-claro: #9BC9B8;
   --largura-menu: 260px;
   --largura-menu-fechado: 84px;
 }
 
+
+/* ==========================================================================
+   Reset básico
+   ========================================================================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -34,6 +41,9 @@ body {
   flex-direction: column;
 }
 
+/* ==========================================================================
+   Layout principal — painéis de tela cheia
+   ========================================================================== */
 .paineis {
   flex: 1;
   display: flex;
@@ -56,7 +66,7 @@ body {
   right: 0;
   transform: translateY(-50%);
   width: 2px;
-  height: 80%;
+  height: 80%; 
   background: var(--cor-branco);
 }
 
@@ -68,6 +78,10 @@ body {
   padding: 60px 50px;
 }
 
+
+/* ==========================================================================
+   Lado esquerdo — hero
+   ========================================================================== */
 .conteudo-esquerdo {
   width: 100%;
   max-width: 540px;
@@ -83,6 +97,10 @@ body {
   max-width: 540px;
   color: var(--cor-branco);
 }
+
+/* ==========================================================================
+   Mockups (cartões flutuantes)
+   ========================================================================== */
 
 .imagem-central {
   position: relative;
@@ -117,6 +135,9 @@ body {
   display: block;
 }
 
+/* ==========================================================================
+   Lado direito — formulário de login
+   ========================================================================== */
 .conteudo-direito {
   width: 100%;
   max-width: 340px;
@@ -165,7 +186,7 @@ input {
 input:focus {
   border-color: var(--cor-roxo);
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(155, 92, 246, 0.12);
+  box-shadow: 0 0 0 3px rgba(155, 201, 184, 0.12);
 }
 
 input::placeholder {
@@ -188,7 +209,7 @@ input::placeholder {
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  box-shadow: 0 0 0 2px #fff, 0 6px 16px -6px rgba(155, 92, 246, 0.5);
+  box-shadow: 0 0 0 2px #fff, 0 6px 16px -6px rgba(155, 201, 184, 0.5);
   transition: filter 0.15s ease, transform 0.15s ease;
 }
 
@@ -251,7 +272,7 @@ input::placeholder {
 }
 
 .btn-criar-conta:hover {
-  background: #f6f0fe;
+  background: #EEF7F3;
 }
 
 .marca-conecta {
@@ -265,6 +286,9 @@ input::placeholder {
   margin-top: 8px;
 }
 
+/* ==========================================================================
+   Rodapé
+   ========================================================================== */
 footer {
   position: relative;
   background: var(--cor-roxo);
@@ -312,6 +336,9 @@ footer::before {
   color: var(--cor-branco);
 }
 
+/* ==========================================================================
+   Responsivo
+   ========================================================================== */
 @media (max-width: 900px) {
   .paineis {
     flex-direction: column-reverse;

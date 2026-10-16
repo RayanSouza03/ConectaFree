@@ -1,3 +1,6 @@
+/* ==========================================================================
+   Tela inicial (vagas recentes e urgentes)
+   ========================================================================== */
 .pagina-inicio { background-image: var(--cor-gradiente); }
 
 .container-inicio {
@@ -7,6 +10,7 @@
     overflow-x: hidden;
 }
 
+/* Busca */
 .search-section {
     margin-bottom: 35px;
 }
@@ -17,7 +21,7 @@
     padding: 6px;
     border-radius: 30px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e1e1e1;
+    border: 1px solid #CFE3DB;
 }
 
 .search-box input {
@@ -31,17 +35,17 @@
 
 .category-select {
     border: none;
-    border-left: 1px solid #ddd;
+    border-left: 1px solid #CFE3DB;
     outline: none;
     padding: 0 15px;
     font-size: 14px;
-    color: #555;
+    color: #293330;
     background: transparent;
     cursor: pointer;
 }
 
 .btn-search {
-    background: linear-gradient(90deg, #641349 0%, #901C60 100%);
+    background: linear-gradient(90deg, #293330 0%, #293330 100%);
     border: none;
     color: white;
     width: 46px;
@@ -58,6 +62,7 @@
     opacity: 0.9;
 }
 
+/* Carrossel de Vagas */
 .jobs-section {
     margin-bottom: 40px;
 }
@@ -91,12 +96,13 @@
     display: none;
 }
 
+/* Card Base */
 .job-card {
     background: #ffffff;
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-    border: 1px solid #eaeaea;
+    border: 1px solid #CFE3DB;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -112,21 +118,22 @@
     flex-shrink: 0;
 }
 
+/* Card Central em Destaque */
 .job-card.active {
     filter: blur(0px);
     opacity: 1;
     transform: scale(1.08);
     z-index: 10;
-    box-shadow: 0 10px 25px rgba(100, 19, 73, 0.18);
-    border-color: #901C60;
+    box-shadow: 0 10px 25px rgba(41, 51, 48, 0.18);
+    border-color: #293330;
     cursor: default;
 }
 
 .job-tag {
     font-size: 12px;
     font-weight: 600;
-    color: #901C60;
-    background: #f8e8f2;
+    color: #293330;
+    background: #EEF7F3;
     padding: 4px 10px;
     border-radius: 12px;
     align-self: flex-start;
@@ -134,13 +141,13 @@
 
 .job-card h3 {
     font-size: 16px;
-    color: #333;
+    color: #293330;
     margin: 8px 0 4px 0;
 }
 
 .job-desc {
     font-size: 13px;
-    color: #666;
+    color: #9BC9B8;
     line-height: 1.4;
 }
 
@@ -148,20 +155,20 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid #EEF7F3;
     padding-top: 10px;
 }
 
 .job-price {
     font-weight: bold;
-    color: #2A0845;
+    color: #293330;
     font-size: 15px;
 }
 
 .btn-apply {
     background: transparent;
-    border: 1px solid #641349;
-    color: #641349;
+    border: 1px solid #293330;
+    color: #293330;
     padding: 6px 14px;
     border-radius: 6px;
     font-size: 13px;
@@ -171,13 +178,14 @@
 }
 
 .btn-apply:hover {
-    background: #641349;
+    background: #293330;
     color: #ffffff;
 }
 
+/* Vagas Urgentes */
 .job-card.urgent {
     border: 1px solid #ffccd5;
-    background: #fffdfd;
+    background: #EEF7F3;
 }
 
 .badge-urgent {
@@ -193,10 +201,11 @@
     text-transform: uppercase;
 }
 
+/* Botões laterais */
 .carousel-btn {
     background: #ffffff;
-    border: 1px solid #ddd;
-    color: #2A0845;
+    border: 1px solid #CFE3DB;
+    color: #293330;
     width: 42px;
     height: 42px;
     border-radius: 50%;
@@ -220,16 +229,19 @@
 }
 
 .carousel-btn:hover {
-    background: #641349;
+    background: #293330;
     color: #ffffff;
-    border-color: #641349;
+    border-color: #293330;
 }
 
+
+/* o campo de busca não deve herdar o visual dos inputs do login */
 .search-box input:focus {
     box-shadow: none;
     background: transparent;
 }
 
+/* Responsividade */
 @media (max-width: 768px) {
     .container-inicio { padding: 20px; }
 
@@ -243,7 +255,7 @@
 
     .category-select {
         border-left: none;
-        border-top: 1px solid #ddd;
+        border-top: 1px solid #CFE3DB;
         padding: 10px 15px 0;
     }
 
@@ -252,6 +264,7 @@
         border-radius: 8px;
     }
 }
+
 
 .boas-vindas {
   margin-bottom: 24px;

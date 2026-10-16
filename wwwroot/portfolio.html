@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/menu-lateral.css">
   <link rel="stylesheet" href="css/vagas.css">
   <link rel="stylesheet" href="css/tema.css">
+  <link rel="stylesheet" href="css/profissional.css">
 </head>
 <body class="pagina-portfolio tem-menu" data-menu-ativo="portfolio.html">
 
@@ -15,6 +16,7 @@
 <script src="js/authService.js"></script>
 <script src="js/api.js"></script>
 <script>
+  // ?usuario=ID = portfólio de outra pessoa (somente leitura, qualquer usuário logado)
   if (new URLSearchParams(location.search).get("usuario")) { if (!AuthService.estaAutenticado()) location.replace("index.html"); }
   else if (!AuthService.exigirTipo(0)) throw new Error("redirect");
 </script>

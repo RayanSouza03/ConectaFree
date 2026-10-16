@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// Swagger com botão "Authorize" (cole apenas o token JWT, sem a palavra Bearer)
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "ConectaFree API", Version = "v1" });
@@ -30,6 +31,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// Banco (Supabase / PostgreSQL)
 builder.Services.AddDbContext<ConectaFreeDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("SupabaseConnection")));
 
@@ -39,6 +41,7 @@ builder.Services.AddScoped<IPortfolioService, PortfolioService>();
 builder.Services.AddScoped<IAnuncioService, AnuncioService>();
 builder.Services.AddScoped<IStorageService, StorageService>();
 
+// CORS só é necessário se o front for servido em outra origem (Vite, Live Server...)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("DevCors", policy =>
@@ -49,6 +52,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+// JWT
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("Configure Jwt:Key no appsettings.");
 
@@ -69,6 +73,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
+// Cria/atualiza as tabelas automaticamente ao iniciar (inclui a tabela Candidaturas)
 using (var scope = app.Services.CreateScope())
 {
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
@@ -94,9 +99,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// app.UseHttpsRedirection(); // desativado: problema de certificado no Linux
+
 app.UseDefaultFiles();
 app.UseStaticFiles(new StaticFileOptions
 {
+    // Evita o navegador usar JS/CSS antigo em cache durante o desenvolvimento
     OnPrepareResponse = ctx =>
     {
         if (app.Environment.IsDevelopment())
@@ -105,7 +113,7 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseCors("DevCors");
-app.UseAuthentication();
+app.UseAuthentication(); // antes de UseAuthorization
 app.UseAuthorization();
 
 app.MapControllers();

@@ -1,3 +1,6 @@
+/* ==========================================================================
+   FAQ — usa as variáveis de cor de login.css
+   ========================================================================== */
 .pagina-faq { background-image: var(--cor-gradiente); }
 
 .container-faq {
@@ -28,7 +31,7 @@
   padding: 12px 20px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
   max-width: 520px;
-  border: 1px solid #E9E0F0;
+  border: 1px solid #CFE3DB;
 }
 
 .busca svg { flex: none; stroke: var(--cor-roxo); }
@@ -44,7 +47,7 @@
   padding: 0;
 }
 
-.busca input::placeholder { color: var(--cor-cinza-claro); }
+.busca input::placeholder { color: #3C5249; }
 .busca:focus-within { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.45); }
 
 .grade-faq {
@@ -55,7 +58,7 @@
   flex: 1;
 }
 
-.rotulo-lista { color: var(--cor-cinza-claro); font-size: 14px; margin-bottom: 14px; }
+.rotulo-lista { color: #3C5249; font-size: 14px; margin-bottom: 14px; }
 
 .grade-faq ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
 
@@ -90,10 +93,10 @@
   color: var(--cor-roxo-escuro);
   font-size: 15px;
   line-height: 1.5;
-  border: 1px solid #E9E0F0;
+  border: 1px solid #CFE3DB;
 }
 
-.contador { margin-top: 14px; color: var(--cor-cinza-claro); font-size: 13px; }
+.contador { margin-top: 14px; color: #3C5249; font-size: 13px; }
 
 .card-resposta {
   background: var(--cor-branco);
@@ -117,7 +120,7 @@
   color: var(--cor-roxo-bem-escuro);
 }
 
-.card-resposta .divisor { height: 2px; background: #efe3f1; border-radius: 2px; }
+.card-resposta .divisor { height: 2px; background: #EEF7F3; border-radius: 2px; }
 .card-resposta p { color: var(--cor-roxo-escuro); font-size: 17px; line-height: 1.7; max-width: 60ch; }
 .card-resposta .rodape-card { margin-top: auto; color: var(--cor-roxo); font-size: 14px; }
 .card-resposta .rodape-card a { color: var(--cor-roxo); font-weight: 600; }

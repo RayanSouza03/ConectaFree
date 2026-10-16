@@ -4,8 +4,10 @@ using System.Text.RegularExpressions;
 
 namespace ConectaFree.Services
 {
+    /// <summary>Bloqueia nomes de categorias/habilidades ofensivos.</summary>
     public static class FiltroPalavras
     {
+        // Comparação sempre sem acento, minúscula e com "leetspeak" normalizado.
         private static readonly string[] Longas =
         {
             "porra", "caralho", "buceta", "bosta", "merda", "foder", "fodase", "fodido", "punheta", "puta", "putaria",
@@ -17,6 +19,7 @@ namespace ConectaFree.Services
             "traficante", "assassino", "assassinato", "sexo", "porn", "pornografia", "prostituta", "prostituicao"
         };
 
+        // Palavras curtas só valem como palavra inteira (evita falso positivo, ex.: "curso").
         private static readonly HashSet<string> Curtas = new() { "cu", "pau", "pica", "tnc", "kct", "fdp" };
 
         private static string Normalizar(string texto)
@@ -48,6 +51,7 @@ namespace ConectaFree.Services
             return false;
         }
 
+        // Nome de categoria válido: 2 a 40 caracteres, letras/números/espaço e alguns símbolos.
         public static string? ValidarCategoria(string? nome)
         {
             var n = (nome ?? "").Trim();

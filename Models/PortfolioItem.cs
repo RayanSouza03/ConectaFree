@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ConectaFree.Models
 {
+    // Define o que esse slot do portfólio representa
     public enum TipoPortfolioItem
     {
         Foto,
@@ -23,9 +24,11 @@ namespace ConectaFree.Models
         [MaxLength(2000)]
         public string? Descricao { get; set; }
 
+        // Preenchido só quando Tipo == Foto
         [MaxLength(500)]
         public string? FotoUrl { get; set; }
 
+        // Preenchido só quando Tipo == Vaga
         public int? AnuncioId { get; set; }
         public Anuncio? Anuncio { get; set; }
 

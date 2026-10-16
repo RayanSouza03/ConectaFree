@@ -1,3 +1,4 @@
+/* Cliente unico da API: token, JSON, erros e expiracao de sessao (401). */
 const Api = {
   async requisitar(caminho, { metodo = "GET", corpo, formData } = {}) {
     const headers = { ...AuthService.montarCabecalhos() };
@@ -32,7 +33,7 @@ const Api = {
       if (d.erro) return d.erro;
       if (d.errors) return Object.values(d.errors).flat().join(" ");
       if (d.title) return d.title;
-    } catch {  }
+    } catch { /* corpo vazio */ }
     return "Não foi possível concluir a operação.";
   },
 
@@ -43,6 +44,7 @@ const Api = {
   enviar: (c, formData) => Api.requisitar(c, { metodo: "POST", formData }),
 };
 
+/* Utilitarios compartilhados */
 const Util = {
   esc(v) {
     return String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -56,8 +58,32 @@ const Util = {
     const d = new Date(iso);
     return Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString("pt-BR");
   },
+  /* Data sem horário (yyyy-MM-dd): evita o deslocamento de fuso de new Date("2026-10-20") */
+  dataServico(iso) {
+    if (!iso) return "—";
+    const [a, m, d] = String(iso).slice(0, 10).split("-");
+    return a && m && d ? `${d}/${m}/${a}` : "—";
+  },
+  diaServico(iso) {
+    if (!iso) return null;
+    const [a, m, d] = String(iso).slice(0, 10).split("-").map(Number);
+    if (!a) return null;
+    const dt = new Date(a, m - 1, d);
+    const mes = dt.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "").toUpperCase();
+    const sem = dt.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "");
+    return { dia: String(d).padStart(2, "0"), mes, sem, passou: dt < new Date(new Date().setHours(0, 0, 0, 0)) };
+  },
+  /* Local onde o serviço acontece (endereço da vaga ou da empresa) */
+  localDaVaga(v) {
+    return Util.localVaga(v.local && (v.local.cidade || v.local.bairro) ? v.local : v.contratante.endereco);
+  },
   local(e) {
     return e && (e.cidade || e.estado) ? [e.cidade, e.estado].filter(Boolean).join(" - ") : "Local não informado";
+  },
+  localVaga(e) {
+    if (!e) return "Local não informado";
+    const cidade = [e.cidade, e.estado].filter(Boolean).join(" - ");
+    return [e.bairro, cidade].filter(Boolean).join(", ") || "Local não informado";
   },
   iniciais(nome) {
     const p = String(nome || "").trim().split(/\s+/);
@@ -66,6 +92,7 @@ const Util = {
   ROTULO_STATUS: { Aberta: "Aberta", EmAndamento: "Em andamento", Concluida: "Concluída", Cancelada: "Cancelada", Pendente: "Pendente", Aceita: "Aceita", Recusada: "Recusada" },
 };
 
+/* Categorias: lista vem do banco; novas categorias são criadas (com filtro de palavras) */
 const Categorias = {
   async carregar() {
     try {
@@ -73,9 +100,10 @@ const Categorias = {
       if (Array.isArray(lista) && lista.length) {
         HABILIDADES.splice(0, HABILIDADES.length, ...lista.map((h) => ({ id: h.id, nome: h.nome })));
       }
-    } catch {  }
+    } catch { /* mantém a lista padrão do config.js */ }
   },
 
+  // Devolve o id da categoria digitada; cria se ainda não existir.
   async resolver(texto) {
     const nome = String(texto || "").trim();
     const ex = HABILIDADES.find((h) => h.nome.toLowerCase() === nome.toLowerCase());

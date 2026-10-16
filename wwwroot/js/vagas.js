@@ -1,4 +1,6 @@
+/* Tela de vagas do contratante — integrada a /api/Anuncio */
 const ICONES = {
+  tag: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg>',
   pin: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
   cal: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   cash: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>',
@@ -8,6 +10,7 @@ const ICONES = {
 
 const ICONE_WHATS = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" fill="#fff"/></svg>';
 
+// Monta o link direto para a conversa no WhatsApp (DDI 55 se faltar) com mensagem pronta.
 function linkWhatsApp(telefone, nome, tituloVaga){
   let n = String(telefone || '').replace(/\D/g, '');
   if(n.length < 10) return null;
@@ -20,6 +23,7 @@ function linkWhatsApp(telefone, nome, tituloVaga){
 const $ = (id) => document.getElementById(id);
 const esc = Util.esc;
 const fmtData = Util.data;
+const fmtDataServico = Util.dataServico;
 const fmtValor = Util.valor;
 const rotulo = (st) => Util.ROTULO_STATUS[st] || st;
 const classeStatus = (st) => String(st).toLowerCase();
@@ -31,6 +35,7 @@ function lerValor(texto){
   return isNaN(n) ? 0 : n;
 }
 
+/* ---------- elementos ---------- */
 const form = $('formVaga');
 const telaLista = $('telaLista');
 const telaDetalhe = $('telaDetalhe');
@@ -55,7 +60,7 @@ $('categoriaVaga').addEventListener('input', () => {
 
 let vagas = [];
 let editandoId = null;
-let tela = 'form';
+let tela = 'form'; // form | lista | detalhe
 
 function erroGeral(msg){ $('erroGeralVaga').textContent = msg || ''; }
 
@@ -64,6 +69,99 @@ async function recarregarVagas(){
   contadorVagas.textContent = vagas.length;
 }
 
+/* ---------- quando e onde ---------- */
+const campoData = $('dataServico');
+const blocoOutro = $('enderecoOutro');
+const CAMPOS_LOCAL = { cep: 'localCep', logradouro: 'localLogradouro', numero: 'localNumero', complemento: 'localComplemento', bairro: 'localBairro', cidade: 'localCidade', estado: 'localEstado' };
+let enderecoEmpresa = null; // endereço cadastrado no perfil (null = não cadastrado)
+
+function hojeISO(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function modoLocal(){ return document.querySelector('input[name="localServico"]:checked').value; }
+
+function definirModoLocal(modo){
+  document.querySelector('input[name="localServico"][value="' + modo + '"]').checked = true;
+  blocoOutro.hidden = modo !== 'outro';
+  $('opcaoEmpresa').classList.toggle('ativa', modo === 'empresa');
+  $('opcaoOutro').classList.toggle('ativa', modo === 'outro');
+  $('erroLocal').classList.remove('visivel');
+}
+
+function textoEnderecoEmpresa(e){
+  if(!e) return null;
+  const rua = [e.logradouro, e.numero].filter(Boolean).join(', ');
+  const cidade = [e.cidade, e.estado].filter(Boolean).join(' - ');
+  return [rua, e.bairro, cidade].filter(Boolean).join(' · ');
+}
+
+async function carregarEnderecoEmpresa(){
+  const resumo = $('resumoEmpresa');
+  try{
+    const perfil = await PerfilService.buscarPerfil();
+    enderecoEmpresa = perfil && perfil.endereco ? perfil.endereco : null;
+  }catch{
+    enderecoEmpresa = null;
+  }
+  const texto = textoEnderecoEmpresa(enderecoEmpresa);
+  if(texto){
+    resumo.textContent = texto;
+  }else{
+    resumo.innerHTML = 'Nenhum endereço no perfil. <a href="perfil.html">Cadastrar</a>';
+    $('opcaoEmpresa').classList.add('indisponivel');
+    $('opcaoEmpresa').querySelector('input').disabled = true;
+    if(modoLocal() === 'empresa') definirModoLocal('outro');
+  }
+}
+
+document.querySelectorAll('input[name="localServico"]').forEach(r =>
+  r.addEventListener('change', () => definirModoLocal(modoLocal())));
+
+function mascaraCep(v){
+  const n = v.replace(/\D/g, '').slice(0, 8);
+  return n.length > 5 ? n.slice(0, 5) + '-' + n.slice(5) : n;
+}
+
+$(CAMPOS_LOCAL.cep).addEventListener('input', (e) => { e.target.value = mascaraCep(e.target.value); });
+$(CAMPOS_LOCAL.cep).addEventListener('blur', async (e) => {
+  const digitos = e.target.value.replace(/\D/g, '');
+  const status = $('statusLocalCep');
+  if(digitos.length !== 8){ status.textContent = digitos ? 'CEP incompleto.' : ''; return; }
+  status.textContent = 'Buscando endereço…';
+  try{
+    const r = await PerfilService.buscarEnderecoPorCep(digitos);
+    if(r.logradouro) $(CAMPOS_LOCAL.logradouro).value = r.logradouro;
+    if(r.bairro) $(CAMPOS_LOCAL.bairro).value = r.bairro;
+    if(r.cidade) $(CAMPOS_LOCAL.cidade).value = r.cidade;
+    if(r.estado) $(CAMPOS_LOCAL.estado).value = r.estado;
+    status.textContent = 'Endereço encontrado.';
+    $(CAMPOS_LOCAL.numero).focus();
+  }catch{
+    status.textContent = 'Não encontramos esse CEP. Preencha manualmente.';
+  }
+});
+
+function preencherLocal(vaga){
+  Object.values(CAMPOS_LOCAL).forEach(id => { $(id).value = ''; });
+  $('statusLocalCep').textContent = '';
+  const l = vaga && vaga.local;
+  if(vaga && l && !l.enderecoDaEmpresa){
+    Object.entries(CAMPOS_LOCAL).forEach(([chave, id]) => { $(id).value = l[chave] || ''; });
+    definirModoLocal('outro');
+  }else{
+    definirModoLocal($('opcaoEmpresa').classList.contains('indisponivel') ? 'outro' : 'empresa');
+  }
+}
+
+function lerLocal(){
+  const dados = {};
+  Object.entries(CAMPOS_LOCAL).forEach(([chave, id]) => { dados[chave] = $(id).value.trim(); });
+  return dados;
+}
+
+/* ---------- navegação entre telas ---------- */
 function mostrar(nova){
   tela = nova;
   form.hidden = nova !== 'form';
@@ -84,6 +182,9 @@ function irParaForm(id){
   $('urgenteVaga').checked = vaga ? vaga.urgente : false;
   $('valorVaga').value = vaga && vaga.valorProposto ? fmtValor(vaga.valorProposto) : '';
   $('descricaoVaga').value = vaga ? vaga.descricao : '';
+  campoData.min = vaga && vaga.dataServico && vaga.dataServico < hojeISO() ? vaga.dataServico : hojeISO();
+  campoData.value = vaga && vaga.dataServico ? vaga.dataServico : '';
+  preencherLocal(vaga);
   tituloPagina.textContent = vaga ? 'Editar vaga' : 'Postar vaga';
   subtituloPagina.textContent = vaga
     ? 'Atualize as informações da vaga e salve as alterações.'
@@ -129,6 +230,14 @@ async function irParaDetalhe(id){
   }
 }
 
+/* ---------- lista ---------- */
+function blocoDia(v){
+  const d = Util.diaServico(v.dataServico);
+  if(!d) return '<div class="bloco-dia sem-data" title="Data a combinar"><span class="dia">—</span><span class="mes">a combinar</span></div>';
+  return '<div class="bloco-dia' + (d.passou ? ' passou' : '') + '" title="Dia do serviço: ' + fmtDataServico(v.dataServico) + '">' +
+    '<span class="sem">' + d.sem + '</span><span class="dia">' + d.dia + '</span><span class="mes">' + d.mes + '</span></div>';
+}
+
 function renderizarLista(){
   const ul = $('listaVagas');
   ul.innerHTML = '';
@@ -138,26 +247,38 @@ function renderizarLista(){
     const qtd = v.totalCandidaturas;
     li.innerHTML =
       '<button type="button" class="card-vaga" data-id="' + v.id + '">' +
-        '<div class="linha-topo"><h3>' + esc(v.titulo) + (v.urgente ? ' 🔥' : '') + '</h3>' +
-        '<span class="selo-status ' + classeStatus(v.status) + '">' + rotulo(v.status) + '</span></div>' +
-        '<div class="meta"><span>' + ICONES.pin + esc(v.habilidade.nome) + '</span>' +
-        '<span>' + ICONES.cal + 'Publicada em ' + fmtData(v.dataCriacao) + '</span></div>' +
+        '<div class="corpo-card">' + blocoDia(v) +
+          '<div class="texto-card"><div class="linha-topo"><h3>' + esc(v.titulo) + (v.urgente ? '<span class="selo-urgente">URGENTE</span>' : '') + '</h3>' +
+          '<span class="selo-status ' + classeStatus(v.status) + '">' + rotulo(v.status) + '</span></div>' +
+          '<div class="meta"><span>' + ICONES.tag + esc(v.habilidade.nome) + '</span>' +
+          '<span>' + ICONES.pin + esc(Util.localDaVaga(v)) + '</span></div></div></div>' +
         '<div class="rodape-card"><span class="valor">' + fmtValor(v.valorProposto) + '</span>' +
         '<span>' + qtd + (qtd === 1 ? ' candidato' : ' candidatos') + '</span></div>' +
+        '<p class="publicada">publicada em ' + fmtData(v.dataCriacao) + '</p>' +
       '</button>';
     ul.appendChild(li);
   });
 }
 
+/* ---------- detalhe ---------- */
+function enderecoCompleto(v){
+  const l = v.local;
+  if(!l) return Util.localDaVaga(v);
+  const rua = [l.logradouro, l.numero].filter(Boolean).join(', ') + (l.complemento ? ' — ' + l.complemento : '');
+  const cidade = [l.cidade, l.estado].filter(Boolean).join(' - ');
+  return [rua, l.bairro, cidade].filter(Boolean).join(', ') || Util.localDaVaga(v);
+}
+
 function renderizarDetalhe(v, cands){
   let html =
     '<div class="cartao-detalhe">' +
-      '<div class="linha-topo"><h2>' + esc(v.titulo) + '</h2>' +
+      '<div class="linha-topo"><h2>' + esc(v.titulo) + (v.urgente ? '<span class="selo-urgente">URGENTE</span>' : '') + '</h2>' +
       '<span class="selo-status ' + classeStatus(v.status) + '">' + rotulo(v.status) + '</span></div>' +
       '<div class="grade-meta">' +
-        '<div class="meta-detalhe"><small>' + ICONES.pin + 'Categoria</small><strong>' + esc(v.habilidade.nome) + '</strong></div>' +
+        '<div class="meta-detalhe"><small>' + ICONES.tag + 'Categoria</small><strong>' + esc(v.habilidade.nome) + '</strong></div>' +
+        '<div class="meta-detalhe destaque-data"><small>' + ICONES.cal + 'Dia do serviço</small><strong>' + (v.dataServico ? fmtDataServico(v.dataServico) : 'A combinar') + '</strong></div>' +
+        '<div class="meta-detalhe meta-local"><small>' + ICONES.pin + (v.local && v.local.enderecoDaEmpresa === false ? 'Local (outro endereço)' : 'Local (endereço da empresa)') + '</small><strong>' + esc(enderecoCompleto(v)) + '</strong></div>' +
         '<div class="meta-detalhe"><small>' + ICONES.cash + 'Valor</small><strong>' + fmtValor(v.valorProposto) + '</strong></div>' +
-        '<div class="meta-detalhe"><small>' + ICONES.cal + 'Publicação</small><strong>' + fmtData(v.dataCriacao) + '</strong></div>' +
         '<div class="meta-detalhe"><small>' + ICONES.users + 'Candidatos</small><strong>' + cands.length + '</strong></div>' +
       '</div>' +
       '<h4>Descrição</h4>' +
@@ -165,6 +286,7 @@ function renderizarDetalhe(v, cands){
       '<div class="acoes-detalhe"><button type="button" class="botao-primario botao-editar" id="botaoEditar" data-id="' + v.id + '">' +
         ICONES.edit + 'Editar vaga</button>' +
         '<button type="button" class="botao-excluir-vaga' + (v.status === 'Cancelada' ? ' destaque' : '') + '" id="botaoExcluirDetalhe" data-id="' + v.id + '">Excluir vaga</button></div>' +
+      '<p class="publicada-detalhe">Publicada em ' + fmtData(v.dataCriacao) + '</p>' +
       (v.status === 'Cancelada' ? '<p class="msg-inline">Esta vaga está cancelada. Você pode excluí-la definitivamente.</p>' : '') +
     '</div>' +
     '<div class="titulo-candidatos">Candidatos <span>' + cands.length + '</span></div>';
@@ -209,8 +331,9 @@ function renderizarDetalhe(v, cands){
   telaDetalhe.innerHTML = html + '<p class="msg-inline erro" id="erroDetalhe"></p>';
 }
 
+/* ---------- formulário ---------- */
 function limparErros(){
-  ['erroNome', 'erroCategoria'].forEach(id => $(id).classList.remove('visivel'));
+  ['erroNome', 'erroCategoria', 'erroData', 'erroLocal'].forEach(id => $(id).classList.remove('visivel'));
 }
 
 $('valorVaga').addEventListener('blur', (e) => {
@@ -229,6 +352,16 @@ form.addEventListener('submit', async (e) => {
   if(!textoCategoria){ $('erroCategoria').classList.add('visivel'); ok = false; }
   if(!ok){ (titulo ? $('categoriaVaga') : $('nomeVaga')).focus(); return; }
 
+  if(!campoData.value){ $('erroData').classList.add('visivel'); campoData.focus(); return; }
+  const usarEmpresa = modoLocal() === 'empresa';
+  const local = lerLocal();
+  if(!usarEmpresa && ['cep', 'logradouro', 'numero', 'bairro', 'cidade', 'estado'].some(k => !local[k])){
+    $('erroLocal').classList.add('visivel');
+    const faltando = Object.entries(CAMPOS_LOCAL).find(([k]) => k !== 'complemento' && !local[k]);
+    $(faltando[1]).focus();
+    return;
+  }
+
   let habilidadeId = categoriaId;
   const botaoSalvar = $('botaoSalvar');
   botaoSalvar.disabled = true;
@@ -246,7 +379,10 @@ form.addEventListener('submit', async (e) => {
     status: $('statusVaga').value,
     urgente: $('urgenteVaga').checked,
     valorProposto: lerValor($('valorVaga').value),
-    descricao: $('descricaoVaga').value.trim()
+    descricao: $('descricaoVaga').value.trim(),
+    dataServico: campoData.value,
+    usarEnderecoEmpresa: usarEmpresa,
+    localVaga: usarEmpresa ? null : local
   };
 
   const botao = botaoSalvar;
@@ -280,6 +416,7 @@ $('botaoExcluir').addEventListener('click', async () => {
   }
 });
 
+/* ---------- eventos gerais ---------- */
 botaoTopo.addEventListener('click', () => {
   if(tela === 'form') irParaLista();
   else irParaForm(null);
@@ -319,7 +456,7 @@ telaDetalhe.addEventListener('click', async (e) => {
     try{
       await Api.put(CONFIG.ANUNCIO_ENDPOINT + '/candidaturas/' + acao.dataset.cand + '/status', { status: acao.dataset.status });
       const idVaga = Number(document.getElementById('botaoEditar').dataset.id);
-      await recarregarVagas();
+      await recarregarVagas(); // aceitar muda o status da vaga para Em andamento
       await irParaDetalhe(idVaga);
     }catch(erro){
       acao.disabled = false;
@@ -329,7 +466,9 @@ telaDetalhe.addEventListener('click', async (e) => {
   }
 });
 
+/* ---------- início ---------- */
 (async () => {
+  carregarEnderecoEmpresa().then(() => { if(tela === 'form' && !editandoId) preencherLocal(null); });
   try{
     await recarregarVagas();
     if(vagas.length) irParaLista(); else irParaForm(null);

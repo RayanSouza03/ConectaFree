@@ -26,6 +26,7 @@ namespace ConectaFree.Controllers
             catch (InvalidOperationException ex) { return BadRequest(new { erro = ex.Message }); }
         }
 
+        // ---------- freelancer ----------
         [HttpGet("filtrar")]
         public async Task<IActionResult> Filtrar([FromQuery] FiltroVagaDto filtro) =>
             Ok(await _service.FiltrarAsync(filtro));
@@ -53,6 +54,7 @@ namespace ConectaFree.Controllers
         public async Task<IActionResult> MinhasConcluidas() =>
             Ok(await _service.VagasConcluidasDoFreelancerAsync(UsuarioId));
 
+        // ---------- contratante ----------
         [Authorize(Roles = "Contratante")]
         [HttpGet("minhas")]
         public async Task<IActionResult> Minhas() =>

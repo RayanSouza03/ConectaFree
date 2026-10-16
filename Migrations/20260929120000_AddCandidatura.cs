@@ -8,10 +8,12 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ConectaFree.Migrations
 {
+    /// <inheritdoc />
     [DbContext(typeof(ConectaFreeDbContext))]
     [Migration("20260929120000_AddCandidatura")]
     public partial class AddCandidatura : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -55,6 +57,7 @@ namespace ConectaFree.Migrations
                 column: "FreelancerId");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
