@@ -15,3 +15,8 @@
 .filtros-c input,.filtros-c select{background:#fff;color:var(--texto)}
 .card-c{background:#fff;color:var(--texto);border:1px solid var(--borda-lilas,#CFE3DB)}
 .card-c .local,.card-c .bio{color:var(--texto-suave)}
+
+/* autocomplete de cidade/UF: a lista abre embaixo do próprio campo */
+.filtros-c .campo-ac{position:relative}
+.filtros-c .campo-uf input{min-width:0;width:110px}
+.filtros-c .campo-uf .ac-lista{right:auto;min-width:230px}

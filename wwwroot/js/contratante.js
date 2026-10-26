@@ -17,11 +17,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
   const esc = Util.esc;
 
+  // Cidade e UF oficiais do IBGE: "sao paulo" e "parana" funcionam sem acento
+  const campoCidade = document.getElementById("filtroCidade");
+  const campoUf = document.getElementById("filtroEstado");
+  Localidades.vincularUf(campoUf, { aoEscolher: () => buscar() });
+  Localidades.vincular({ cidade: campoCidade, uf: campoUf, aoMudar: () => buscar() });
+
   async function buscar() {
     const params = new URLSearchParams();
     if (habilidadeId) params.set("habilidadeId", habilidadeId);
-    const cidade = document.getElementById("filtroCidade").value.trim();
-    const uf = document.getElementById("filtroEstado").value.trim().toUpperCase();
+
+    let cidade = campoCidade.value.trim();
+    let uf = Localidades.ufValida(campoUf.value);
+    if (cidade) {
+      // "sao paulo" -> "São Paulo" (o filtro do servidor diferencia acento)
+      const oficial = await Localidades.resolverCidade(cidade, uf);
+      if (oficial) {
+        cidade = oficial.nome;
+        campoCidade.value = oficial.nome;
+        if (!uf) { uf = oficial.uf; campoUf.value = oficial.uf; }
+      }
+    }
     if (cidade) params.set("cidade", cidade);
     if (uf) params.set("estado", uf);
 

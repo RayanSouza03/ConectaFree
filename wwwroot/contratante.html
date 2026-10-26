@@ -27,8 +27,8 @@
 
     <section class="filtros-c">
       <input type="text" id="filtroHabilidade" placeholder="Habilidade: programação, design..." autocomplete="off">
-      <input type="text" id="filtroCidade" placeholder="Cidade">
-      <input type="text" id="filtroEstado" placeholder="UF" maxlength="2">
+      <div class="campo-ac"><input type="text" id="filtroCidade" placeholder="Cidade" autocomplete="off"></div>
+      <div class="campo-ac campo-uf"><input type="text" id="filtroEstado" placeholder="UF" autocomplete="off"></div>
       <button type="button" id="btnBuscar">Buscar</button>
     </section>
 
@@ -42,6 +42,7 @@
 </div>
 
 <script src="js/autocomplete.js"></script>
+<script src="js/localidades.js"></script>
 <script src="js/contratante.js"></script>
   <script src="js/tema.js"></script>
 </body>

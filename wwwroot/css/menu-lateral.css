@@ -89,6 +89,10 @@ body.tem-menu {
 .menu-lateral.fechado .cabecalho-menu { flex-direction: column; gap: 16px; }
 .menu-lateral.fechado .botao-retrair svg { transform: rotate(180deg); }
 
+/* Recolhido: só a logo (clicar nela expande o menu) */
+.menu-lateral.fechado .botao-retrair { display: none; }
+.menu-lateral.fechado .logo-marca { cursor: pointer; justify-content: center; width: 100%; }
+
 .nav-lateral {
   display: flex;
   flex-direction: column;
@@ -140,6 +144,12 @@ body.tem-menu {
     border-bottom: 1px solid rgba(255, 255, 255, 0.22);
   }
   .menu-lateral.fechado { width: 100%; padding: 14px 20px; }
+  .menu-lateral.fechado .nav-lateral .rotulo,
+  .menu-lateral.fechado .link-sair .rotulo { display: inline; }
+  .menu-lateral.fechado .logo-texto { display: inline; }
+  .menu-lateral.fechado .cabecalho-menu { flex-direction: row; }
+  .menu-lateral.fechado .nav-lateral a { justify-content: flex-start; padding: 11px 12px; }
+  .menu-lateral.fechado .logo-marca { width: auto; cursor: pointer; }
   .cabecalho-menu { margin-bottom: 0; }
   .botao-retrair, .rodape-menu { display: none; }
   .bloco-navegacao { flex: 1 1 100%; }
@@ -181,3 +191,6 @@ body.tem-menu {
 .menu-lateral.fechado .link-sair {
   justify-content: center;
 }
+
+/* Recolhido: o botão Sair mostra só o ícone (o texto quebrava em 3 linhas) */
+.menu-lateral.fechado .link-sair .rotulo { display: none; }

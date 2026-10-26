@@ -53,6 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("grupo-habilidades").hidden = true;
   }
 
+  // Cidade com sugestões oficiais do IBGE (filtradas pela UF escolhida; aceita "sao paulo" sem acento)
+  Localidades.vincular({ cidade: campoCidade, uf: campoEstado });
+
   inicializar();
   destacarSecaoPelaAncora();
 

@@ -17,7 +17,8 @@
         <img src="img/logo-cadastro-verde.png" alt="ConectaFree" class="logo">
       </div>
 
-        <h2>Criar Conta</h2>
+        <h2 id="tituloCadastro">Criar Conta</h2>
+        <p id="avisoGoogle" class="aviso-google hidden"></p>
 
         <!-- Seletor Principal -->
         <div class="tipo-conta-toggle">
@@ -51,6 +52,14 @@
                     maxlength="14" 
                     required>
                 <span id="erroDocumento" class="error-message"></span>
+                <span id="statusDocumento" class="status-documento" role="status" aria-live="polite"></span>
+            </div>
+
+            <!-- Dados da empresa vindos da Receita Federal (BrasilAPI) -->
+            <div id="cardEmpresa" class="card-empresa hidden" aria-live="polite">
+                <p class="card-empresa-titulo" id="empresaRazao"></p>
+                <p class="card-empresa-linha" id="empresaSituacao"></p>
+                <p class="card-empresa-linha" id="empresaEndereco"></p>
             </div>
 
             <div class="input-group">
@@ -64,7 +73,7 @@
             </div>
 
             <!-- Senha -->
-            <div class="input-group">
+            <div class="input-group" id="grupoSenha">
                 <label for="senha">Senha</label>
                 <div class="password-wrapper">
                     <input type="password" id="senha" name="senha" placeholder="Sua senha" required>
@@ -78,7 +87,7 @@
             </div>
 
             <!-- Confirmar Senha -->
-            <div class="input-group">
+            <div class="input-group" id="grupoConfirmarSenha">
                 <label for="confirmarSenha">Confirmar Senha</label>
                 <div class="password-wrapper">
                     <input type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Confirme sua senha" required>
@@ -94,7 +103,7 @@
 
             <div class="input-group">
                 <label style="display:flex;gap:8px;align-items:center;font-weight:400">
-                    <input type="checkbox" id="termos" required style="width:auto"> Li e aceito os Termos de Uso
+                    <input type="checkbox" id="termos" required style="width:auto"> Li e aceito os <a href="termos.html" target="_blank" rel="noopener">Termos de Uso e a Política de Privacidade</a>
                 </label>
                 <span id="erroGeral" class="error-message"></span>
             </div>
@@ -110,8 +119,8 @@
     <nav class="rodape-links">
       <a href="#">Sobre</a>
       <a href="#">Ajuda</a>
-      <a href="#">Privacidade</a>
-      <a href="#">Termos</a>
+      <a href="termos.html#privacidade">Privacidade</a>
+      <a href="termos.html">Termos</a>
     </nav>
     <div class="rodape-baixo">
       <span>Português (Brasil)</span>
@@ -120,6 +129,7 @@
   </footer>
 
   <script src="js/config.js"></script>
+  <script src="js/authService.js"></script>
   <script src="js/cadastro.js"></script>
   <script src="js/tema.js"></script>
 </body>

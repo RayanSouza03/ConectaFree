@@ -1,0 +1,77 @@
+/* =====================================================================
+   Janela de aceite (aparece no login) e página termos.html
+   Página independente: não usa tema.css/tema.js para não herdar o fundo escuro
+   ===================================================================== */
+
+/* ---------- Janela de aceite (login) ---------- */
+.termos-fundo { position: fixed; inset: 0; z-index: 1000; background: rgba(20, 28, 25, .78); display: grid; place-items: center; padding: 16px; }
+.termos-modal { background: #fff; color: #1B2420; width: min(540px, 100%); max-height: 92vh; overflow-y: auto; border-radius: 20px; padding: 30px; box-shadow: 0 24px 60px rgba(0, 0, 0, .4); text-align: left; }
+.termos-modal h2 { margin: 0 0 12px; font-size: 26px; color: #1B2420; }
+.termos-modal h2 .termos-acento { color: #0B7A57; }
+.termos-modal p, .termos-modal li { font-size: 15px; line-height: 1.55; color: #1B2420; }
+.termos-modal ul { padding-left: 20px; margin: 12px 0; }
+.termos-modal a { color: #0B7A57 !important; font-weight: 700; text-decoration: none !important; }
+.termos-modal a:hover { background: #E3F5EE; }
+.termos-check { display: flex; gap: 10px; align-items: flex-start; margin: 16px 0 6px; font-size: 15px; color: #1B2420; cursor: pointer; }
+.termos-check input { width: 18px; height: 18px; margin-top: 2px; flex: none; accent-color: #0B7A57; }
+.termos-erro { color: #B3261E; min-height: 18px; margin: 4px 0 0; font-size: 14px; }
+.termos-acoes { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 12px; }
+.termos-btn, .termos-btn-sec { border: 0; border-radius: 999px; padding: 13px 24px; font-size: 15px; font-weight: 700; cursor: pointer; }
+.termos-btn { background: #00EDA4; color: #12201B; }
+.termos-btn:disabled { opacity: .4; cursor: not-allowed; }
+.termos-btn-sec { background: #EAF0ED; color: #1B2420; }
+
+/* ---------- Página termos.html ---------- */
+.pagina-termos { margin: 0; background: #F2F6F4; color: #1B2420; font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 1.7; }
+.pagina-termos * { box-sizing: border-box; }
+
+/* Faixa de topo escura, com texto branco bem legível */
+.termos-hero { background: #1E2926; color: #fff; padding: 28px 20px 36px; }
+.termos-hero-in { max-width: 1120px; margin: 0 auto; }
+.termos-voltar { display: inline-block; color: #BFE9D9; font-weight: 600; text-decoration: none; margin-bottom: 18px; }
+.termos-voltar:hover { color: #fff; }
+.termos-hero h1 { margin: 0; font-size: clamp(32px, 5vw, 52px); font-weight: 800; line-height: 1.1; letter-spacing: -.02em; color: #fff; }
+.termos-hero .acento { color: #00EDA4; }   /* só muda a cor da letra, sem marca-texto */
+.termos-hero .versao { margin: 12px 0 20px; color: #BFD0C9; font-size: 15px; }
+.atalhos { display: flex; flex-wrap: wrap; gap: 10px; }
+.atalhos a { background: #00EDA4; color: #12201B; font-weight: 700; padding: 10px 18px; border-radius: 999px; text-decoration: none; font-size: 15px; }
+.atalhos a:hover { background: #fff; }
+
+/* Índice lateral + conteúdo */
+.termos-layout { max-width: 1120px; margin: 0 auto; padding: 28px 20px 72px; display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 28px; align-items: start; }
+.termos-indice { position: sticky; top: 16px; background: #fff; border: 1px solid #D5E2DC; border-radius: 16px; padding: 18px; max-height: calc(100vh - 32px); overflow-y: auto; font-size: 14px; line-height: 1.4; }
+.termos-indice strong { display: block; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #4B5F57; }
+.termos-indice ol { list-style: none; margin: 0; padding: 0; }
+.termos-indice li a { display: block; padding: 6px 8px; border-radius: 8px; color: #1B2420; text-decoration: none; }
+.termos-indice li a:hover { background: #E3F5EE; color: #0B5F44; }
+.termos-indice .nivel-1 a { font-weight: 700; margin-top: 8px; color: #0B5F44; }
+.termos-indice .nivel-2 a { padding-left: 16px; color: #3A4A44; }
+
+.termos-doc { min-width: 0; }
+.termos-doc .aviso { margin: 0 0 20px; background: #E3F5EE; border: 1px solid #B6E3D1; border-radius: 16px; padding: 18px 20px; color: #123B2D; font-size: 17px; }
+.cartao { background: #fff; border: 1px solid #D5E2DC; border-radius: 20px; padding: 28px clamp(18px, 4vw, 36px); margin-bottom: 20px; box-shadow: 0 2px 10px rgba(30, 41, 38, .05); }
+.termos-doc h2 { margin: 0 0 6px; font-size: 28px; font-weight: 800; color: #12201B; padding-bottom: 12px; border-bottom: 3px solid #00EDA4; display: inline-block; }
+.termos-doc h3 { margin: 26px 0 6px; font-size: 19px; font-weight: 700; color: #0B5F44; }
+.termos-doc p, .termos-doc li { color: #26332E; }
+.termos-doc ul { padding-left: 22px; margin: 8px 0; }
+.termos-doc li { margin: 6px 0; }
+.termos-doc strong { color: #12201B; }
+.termos-doc a { color: #0B5F44; font-weight: 700; text-decoration: none; }
+.termos-doc a:hover { background: #E3F5EE; }
+
+/* Tabela de dados (rola na horizontal no celular) */
+.termos-doc table { display: block; overflow-x: auto; width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14.5px; border: 1px solid #D5E2DC; border-radius: 12px; }
+.termos-doc thead th { background: #1E2926; color: #fff; text-align: left; padding: 12px 14px; font-weight: 600; white-space: nowrap; }
+.termos-doc td { padding: 12px 14px; border-top: 1px solid #E3ECE8; vertical-align: top; min-width: 160px; }
+.termos-doc tbody tr:nth-child(even) td { background: #F7FAF9; }
+
+/* Trechos a preencher (nome, e-mail, comarca) */
+.termos-doc mark { background: #FFE27A; color: #3A2E00; padding: 1px 6px; border-radius: 4px; font-weight: 600; }
+
+html { scroll-behavior: smooth; }
+.termos-doc h2, .termos-doc h3 { scroll-margin-top: 16px; }
+
+@media (max-width: 860px) {
+  .termos-layout { grid-template-columns: 1fr; }
+  .termos-indice { display: none; }   /* no celular, os botões do topo bastam */
+}

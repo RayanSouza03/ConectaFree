@@ -481,3 +481,6 @@
 .acoes-detalhe { display: flex; gap: 10px; flex-wrap: wrap; }
 /* formulário e listas ocupam a tela inteira */
 .container-pagina, .topo-vagas, .lista-vagas, .lista-experiencias, .card-experiencia, .cartao-detalhe, .titulo-candidatos, .lista-candidatos, .formulario-vaga, .cartao-formulario { max-width: none !important; }
+
+/* sugestões de UF (campo estreito): a lista abre mais larga que o campo */
+.endereco-outro .c-uf .ac-lista { right: auto; min-width: 230px; }

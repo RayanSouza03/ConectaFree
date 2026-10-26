@@ -45,7 +45,8 @@ const Autocomplete = {
     return false;
   },
 
-  criar(input, { itens, aoEscolher, max = 8, ancora = null, permitirCriar = false }) {
+  // casar(consulta, item) e valor(item) são opcionais: permitem casar por mais de um campo (ex.: sigla e nome do estado)
+  criar(input, { itens, aoEscolher, max = 8, ancora = null, permitirCriar = false, casar = null, valor = null }) {
     const wrap = ancora || input.parentElement;
     if (getComputedStyle(wrap).position === "static") wrap.classList.add("ac-wrap");
     const ul = document.createElement("ul");
@@ -68,9 +69,9 @@ const Autocomplete = {
       const q = input.value;
       const base = typeof itens === "function" ? itens() : itens;
       const qn = this.norm(q);
-      lista = base
-        .filter((it) => this.combina(q, it.nome))
-        .sort((a, b) => (this.norm(b.nome).startsWith(qn) ? 1 : 0) - (this.norm(a.nome).startsWith(qn) ? 1 : 0))
+      const achados = base.filter((it) => (casar ? casar(q, it) : this.combina(q, it.nome)));
+      // Sem texto não há o que priorizar (evita ordenar milhares de cidades ao focar o campo)
+      lista = (qn ? achados.sort((a, b) => (this.norm(b.nome).startsWith(qn) ? 1 : 0) - (this.norm(a.nome).startsWith(qn) ? 1 : 0)) : achados)
         .slice(0, max);
       const digitado = q.trim();
       if (permitirCriar && digitado.length >= 2 && !base.some((it) => this.norm(it.nome) === qn)) {
@@ -86,7 +87,7 @@ const Autocomplete = {
     };
 
     const escolher = (it) => {
-      input.value = it.nome;
+      input.value = valor ? valor(it) : it.nome;
       ul.hidden = true;
       if (aoEscolher) aoEscolher(it);
     };

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recuperar senha - ConectaFree</title>
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/cadastro.css">
+  <link rel="stylesheet" href="css/tema.css">
+  <link rel="stylesheet" href="css/profissional.css">
+</head>
+<body class="pagina-cadastro">
+
+  <main class="area-cadastro">
+    <div class="cadastro-container">
+      <div class="logo-cadastro">
+        <img src="img/logo-cadastro-verde.png" alt="ConectaFree" class="logo">
+      </div>
+
+      <!-- Passo 1: pedir o link por e-mail -->
+      <section id="passoEmail">
+        <h2>Esqueci minha senha</h2>
+        <p class="texto-apoio">Informe o e-mail da sua conta e enviaremos um link para criar uma nova senha.</p>
+
+        <form id="formEmail" novalidate>
+          <div class="input-group">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" placeholder="seu@email.com" autocomplete="email" required>
+            <span id="erroEmail" class="error-message"></span>
+            <span id="okEmail" class="mensagem-ok" role="status"></span>
+          </div>
+          <button type="submit" class="btn-cadastrar" id="btnEnviarLink">Enviar link</button>
+        </form>
+      </section>
+
+      <!-- Passo 2: o link do e-mail traz ?token=... -->
+      <section id="passoSenha" class="hidden">
+        <h2>Criar nova senha</h2>
+        <p class="texto-apoio">Escolha uma senha com pelo menos 6 caracteres.</p>
+
+        <form id="formSenha" novalidate>
+          <div class="input-group">
+            <label for="novaSenha">Nova senha</label>
+            <input type="password" id="novaSenha" name="novaSenha" placeholder="Nova senha" autocomplete="new-password" minlength="6" required>
+          </div>
+          <div class="input-group">
+            <label for="confirmarNovaSenha">Confirmar nova senha</label>
+            <input type="password" id="confirmarNovaSenha" name="confirmarNovaSenha" placeholder="Repita a nova senha" autocomplete="new-password" required>
+            <span id="erroSenha" class="error-message"></span>
+            <span id="okSenha" class="mensagem-ok" role="status"></span>
+          </div>
+          <button type="submit" class="btn-cadastrar" id="btnSalvarSenha">Salvar nova senha</button>
+        </form>
+      </section>
+
+      <p class="link-login"><a href="index.html">Voltar para o login</a></p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="rodape-baixo">
+      <span>Português (Brasil)</span>
+      <span>© 2026</span>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/recuperarSenha.js"></script>
+  <script src="js/tema.js"></script>
+</body>
+</html>

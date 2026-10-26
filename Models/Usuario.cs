@@ -39,8 +39,20 @@ namespace ConectaFree.Models
         public bool AceitouTermos  { get; set; } = false;
         public DateTime? DataAceiteTermos { get; set; }
 
+        // Versão dos termos que a pessoa aceitou (comparada com TermosDeUso.Versao no login)
+        [JsonIgnore]
+        [MaxLength(20)]
+        public string? VersaoTermosAceita { get; set; }
+
         public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
         public DateTime? DataAtualizacao { get; set; }
+
+        // Defesa contra brute force: conta senhas erradas seguidas; ao passar do limite, bloqueia o login por um tempo
+        [JsonIgnore]
+        public int TentativasLogin { get; set; } = 0;
+
+        [JsonIgnore]
+        public DateTime? BloqueadoAte { get; set; }
 
         public Endereco? Endereco { get; set; }
 

@@ -9,11 +9,19 @@ namespace ConectaFree.Services
     public class AnuncioService : IAnuncioService
     {
         private readonly ConectaFreeDbContext _context;
+        private readonly IEmailService _email;
+        private readonly IConfiguration _config;
+        private readonly ILogger<AnuncioService> _log;
 
-        public AnuncioService(ConectaFreeDbContext context)
+        public AnuncioService(ConectaFreeDbContext context, IEmailService email, IConfiguration config, ILogger<AnuncioService> log)
         {
             _context = context;
+            _email = email;
+            _config = config;
+            _log = log;
         }
+
+        private string BaseUrl => (_config["App:BaseUrl"] ?? "http://localhost:5153").TrimEnd('/');
 
         private IQueryable<Anuncio> Base() =>
             _context.Anuncios
@@ -219,6 +227,34 @@ namespace ConectaFree.Services
             });
 
             await _context.SaveChangesAsync();
+
+            await NotificarNovoCandidatoAsync(anuncio, freelancerId);
+        }
+
+        // E-mail ao contratante. A candidatura já foi salva: se o aviso falhar, não derruba a requisição.
+        private async Task NotificarNovoCandidatoAsync(Anuncio anuncio, int freelancerId)
+        {
+            try
+            {
+                var contratante = await _context.Usuarios.AsNoTracking()
+                    .Where(u => u.Id == anuncio.ContratanteId)
+                    .Select(u => new { u.Nome, u.Email })
+                    .FirstOrDefaultAsync();
+                var freelancer = await _context.Usuarios.AsNoTracking()
+                    .Where(u => u.Id == freelancerId)
+                    .Select(u => u.Nome)
+                    .FirstOrDefaultAsync();
+
+                if (contratante == null || freelancer == null) return;
+
+                _email.Enfileirar(contratante.Email, contratante.Nome,
+                    $"Novo candidato na vaga \"{anuncio.Titulo}\"",
+                    EmailTemplates.NovoCandidato(contratante.Nome, anuncio.Titulo, freelancer, $"{BaseUrl}/vagas.html"));
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "Falha ao avisar o contratante sobre o novo candidato (vaga {AnuncioId}).", anuncio.Id);
+            }
         }
 
         public async Task<List<MinhaCandidaturaDto>> MinhasCandidaturasAsync(int freelancerId)
@@ -263,16 +299,34 @@ namespace ConectaFree.Services
                 throw new InvalidOperationException("Status inválido. Use Aceita ou Recusada.");
 
             var candidatura = await _context.Candidaturas
-                .Include(c => c.Anuncio)
+                .Include(c => c.Anuncio).ThenInclude(a => a.Contratante)
+                .Include(c => c.Freelancer)
                 .FirstOrDefaultAsync(c => c.Id == candidaturaId && c.Anuncio.ContratanteId == contratanteId)
                 ?? throw new KeyNotFoundException("Candidatura não encontrada.");
 
+            var jaEstavaAceita = candidatura.Status == StatusCandidatura.Aceita;
             candidatura.Status = novo;
 
             if (novo == StatusCandidatura.Aceita && candidatura.Anuncio.Status == StatusAnuncio.Aberta)
                 candidatura.Anuncio.Status = StatusAnuncio.EmAndamento;
 
             await _context.SaveChangesAsync();
+
+            // Avisa o freelancer só na transição para "Aceita" (clicar de novo não reenvia)
+            if (novo == StatusCandidatura.Aceita && !jaEstavaAceita)
+            {
+                try
+                {
+                    _email.Enfileirar(candidatura.Freelancer.Email, candidatura.Freelancer.Nome,
+                        $"Sua candidatura foi aceita: {candidatura.Anuncio.Titulo}",
+                        EmailTemplates.CandidaturaAceita(candidatura.Freelancer.Nome, candidatura.Anuncio.Titulo,
+                            candidatura.Anuncio.Contratante.Nome, $"{BaseUrl}/candidaturas.html"));
+                }
+                catch (Exception ex)
+                {
+                    _log.LogError(ex, "Falha ao avisar o freelancer sobre candidatura aceita ({CandidaturaId}).", candidaturaId);
+                }
+            }
         }
 
         public async Task<List<AnuncioRespostaDto>> VagasConcluidasDoFreelancerAsync(int freelancerId)

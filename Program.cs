@@ -2,6 +2,7 @@ using System.Text;
 using ConectaFree.Data;
 using ConectaFree.Interfaces;
 using ConectaFree.Services;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -36,6 +37,10 @@ builder.Services.AddDbContext<ConectaFreeDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("SupabaseConnection")));
 
 builder.Services.AddHttpClient();
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<IEmailService, EmailService>();
+builder.Services.AddScoped<ICnpjService, CnpjService>();
+builder.Services.AddScoped<ILocalidadesService, LocalidadesService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IPortfolioService, PortfolioService>();
 builder.Services.AddScoped<IAnuncioService, AnuncioService>();
@@ -70,6 +75,36 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
         };
     });
+
+// Rate limiting por IP (middleware nativo do .NET). Passou do limite => 429 até a janela renovar.
+// Em produção atrás de proxy/Nginx, configure UseForwardedHeaders para o IP real não ser o do proxy.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    // Resposta em JSON { erro } para o front exibir a mensagem como nos outros erros
+    options.OnRejected = async (ctx, ct) =>
+    {
+        if (ctx.Lease.TryGetMetadata(MetadataName.RetryAfter, out var espera))
+            ctx.HttpContext.Response.Headers.RetryAfter = ((int)espera.TotalSeconds).ToString();
+        ctx.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        await ctx.HttpContext.Response.WriteAsJsonAsync(
+            new { erro = "Muitas tentativas. Aguarde alguns minutos e tente novamente." }, ct);
+    };
+
+    // Cria uma política em que cada IP tem o seu próprio contador
+    static RateLimitPartition<string> PorIp(HttpContext ctx, int limite, TimeSpan janela) =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            ctx.Connection.RemoteIpAddress?.ToString() ?? "desconhecido",
+            _ => new FixedWindowRateLimiterOptions { PermitLimit = limite, Window = janela, QueueLimit = 0 });
+
+    // Login (e login Google): 10 tentativas a cada 5 minutos por IP
+    options.AddPolicy("login", ctx => PorIp(ctx, 10, TimeSpan.FromMinutes(5)));
+    // Esqueci/redefinir senha: 5 por 15 minutos por IP (evita spam de e-mail e chute de token)
+    options.AddPolicy("recuperacao", ctx => PorIp(ctx, 5, TimeSpan.FromMinutes(15)));
+    // Consulta de CNPJ (rota pública): 20 por minuto por IP (protege a cota da BrasilAPI)
+    options.AddPolicy("consulta", ctx => PorIp(ctx, 20, TimeSpan.FromMinutes(1)));
+});
 
 var app = builder.Build();
 
@@ -113,6 +148,7 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseCors("DevCors");
+app.UseRateLimiter(); // antes de mapear os controllers
 app.UseAuthentication(); // antes de UseAuthorization
 app.UseAuthorization();
 

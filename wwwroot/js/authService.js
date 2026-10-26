@@ -11,20 +11,42 @@ const AuthService = {
       throw new Error(erro);
     }
 
-    const dados = await resposta.json();
+    return this.salvarSessao(await resposta.json());
+  },
 
-    if (!dados.token) {
+  // Guarda a sessão devolvida pelo backend (login normal ou Google).
+  // TipoUsuario vem como enum numerico: 0 = Freelancer, 1 = Contratante, 2 = Admin.
+  salvarSessao(dados) {
+    if (!dados || !dados.token) {
       throw new Error("A API nao retornou o token de autenticacao.");
     }
 
-    // O backend devolve TipoUsuario como enum numerico:
-    // 0 = Freelancer, 1 = Contratante, 2 = Admin.
     localStorage.setItem("token", dados.token);
     localStorage.setItem("usuarioNome", dados.nome || "");
     localStorage.setItem("usuarioEmail", dados.email || "");
     localStorage.setItem("tipoUsuario", String(dados.tipoUsuario));
+    // Marca que ainda falta aceitar os termos: as telas internas não abrem até o aceite
+    if (dados.precisaAceitarTermos) localStorage.setItem("termosPendentes", "1");
+    else localStorage.removeItem("termosPendentes");
 
     return dados;
+  },
+
+  // Envia o ID token do Google. Devolve a sessão (já salva) ou { precisaCadastro, nome, email }
+  // quando o e-mail ainda não tem conta; nesse caso reenvie com tipoUsuario, telefone, documento e aceitouTermos.
+  async loginGoogle(credential, extras = {}) {
+    const resposta = await fetch(`${CONFIG.API_BASE_URL}${CONFIG.GOOGLE_ENDPOINT}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ credential, ...extras }),
+    });
+
+    if (!resposta.ok) {
+      throw new Error(await this._extrairMensagemErro(resposta, "Não foi possível entrar com o Google."));
+    }
+
+    const dados = await resposta.json();
+    return dados.token ? this.salvarSessao(dados) : dados;
   },
 
   // Le o payload do JWT (sem validar assinatura: quem valida e o servidor).
@@ -78,6 +100,7 @@ const AuthService = {
   // Na tela de login: quem ja esta logado vai direto para a sua tela.
   redirecionarSeLogado() {
     if (!this.estaAutenticado()) return false;
+    if (this.termosPendentes()) return false; // fica no login para mostrar o aceite
     try {
       this.redirecionarPorTipo(this.obterTipoUsuario());
       return true;
@@ -91,6 +114,21 @@ const AuthService = {
     localStorage.removeItem("usuarioNome");
     localStorage.removeItem("usuarioEmail");
     localStorage.removeItem("tipoUsuario");
+    localStorage.removeItem("termosPendentes");
+  },
+
+  termosPendentes() {
+    return localStorage.getItem("termosPendentes") === "1";
+  },
+
+  // Registra o aceite no servidor e libera a sessão
+  async aceitarTermos() {
+    const resposta = await fetch(`${CONFIG.API_BASE_URL}${CONFIG.ACEITAR_TERMOS_ENDPOINT}`, {
+      method: "POST",
+      headers: this.montarCabecalhos(),
+    });
+    if (!resposta.ok) throw new Error("Não foi possível registrar o aceite. Tente novamente.");
+    localStorage.removeItem("termosPendentes");
   },
 
   redirecionarPorTipo(tipoUsuario) {
@@ -125,6 +163,11 @@ const AuthService = {
       window.location.replace("index.html");
       return false;
     }
+    if (this.termosPendentes()) {
+      // Sessão salva sem aceite (ex.: fechou a janela): volta ao login, que pede o aceite
+      window.location.replace("index.html");
+      return false;
+    }
     if (this.obterTipoUsuario() !== tipoPermitido) {
       // Logado, mas na tela do outro perfil: manda para a tela certa (nao para o login).
       window.location.replace(this.paginaInicial());
@@ -133,10 +176,12 @@ const AuthService = {
     return true;
   },
 
-  async _extrairMensagemErro(resposta) {
+  async _extrairMensagemErro(resposta, padrao = "Email ou senha invalidos.") {
     try {
       const dados = await resposta.json();
-      return dados.erro || dados.mensagem || dados.message || "Email ou senha invalidos.";
+      if (dados.erro || dados.mensagem || dados.message) return dados.erro || dados.mensagem || dados.message;
+      if (dados.errors) return Object.values(dados.errors).flat().join(" ");
+      return padrao;
     } catch {
       return "Nao foi possivel entrar. Tente novamente.";
     }

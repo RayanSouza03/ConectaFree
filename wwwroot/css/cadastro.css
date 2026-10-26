@@ -214,3 +214,39 @@
 .input-group input:focus {
     box-shadow: none;
 }
+
+
+/* ---------- validação de CNPJ (BrasilAPI) ---------- */
+.status-documento { font-size: 12px; margin-top: 5px; min-height: 0; }
+.status-documento:empty { display: none; }
+.status-documento.info { color: #5D7A70; }
+.status-documento.ok { color: #1F7A5A; font-weight: 600; }
+.status-documento.erro { color: #e74c3c; }
+
+.card-empresa {
+    background: #EEF7F3;
+    border: 1px solid #CFE3DB;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: -6px 0 18px;
+    font-size: 13px;
+    color: #293330;
+}
+.card-empresa-titulo { font-weight: 700; margin-bottom: 4px; }
+.card-empresa-linha { color: #4A5E57; line-height: 1.4; }
+
+/* ---------- cadastro / recuperação de senha ---------- */
+.aviso-google {
+    background: #EEF7F3;
+    border: 1px solid #CFE3DB;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    color: #293330;
+    text-align: center;
+}
+.mensagem-ok { color: #1F7A5A; font-size: 13px; margin-top: 8px; display: none; }
+.mensagem-ok.visible { display: block; }
+.texto-apoio { font-size: 14px; color: #4A5E57; margin-bottom: 18px; text-align: center; line-height: 1.45; }
+input[readonly] { background: #F1F5F3; color: #4A5E57; }

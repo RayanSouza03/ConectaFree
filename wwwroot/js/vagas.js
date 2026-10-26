@@ -75,6 +75,10 @@ const blocoOutro = $('enderecoOutro');
 const CAMPOS_LOCAL = { cep: 'localCep', logradouro: 'localLogradouro', numero: 'localNumero', complemento: 'localComplemento', bairro: 'localBairro', cidade: 'localCidade', estado: 'localEstado' };
 let enderecoEmpresa = null; // endereço cadastrado no perfil (null = não cadastrado)
 
+// Cidade/UF com sugestões oficiais do IBGE (o CEP continua preenchendo sozinho)
+Localidades.vincularUf($(CAMPOS_LOCAL.estado));
+Localidades.vincular({ cidade: $(CAMPOS_LOCAL.cidade), uf: $(CAMPOS_LOCAL.estado) });
+
 function hojeISO(){
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');

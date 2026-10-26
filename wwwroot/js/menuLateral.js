@@ -41,7 +41,7 @@
   const links = ITENS.map((item) => {
     const atual = item.href === ativo ? ' class="ativo" aria-current="page"' : "";
     return `
-        <a href="${item.href}"${atual}>
+        <a href="${item.href}"${atual} title="${item.rotulo}">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICONES[item.icone]}</svg>
           <span class="rotulo">${item.rotulo}</span>
         </a>`;
@@ -66,7 +66,7 @@
     </div>
 
     <div class="acoes-menu">
-      <button type="button" class="link-sair" id="btnSairMenu">
+      <button type="button" class="link-sair" id="btnSairMenu" title="Sair da conta" aria-label="Sair da conta">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M21 19V5a2 2 0 0 0-2-2h-4"/>
         </svg>
@@ -81,10 +81,20 @@
   /* Retrair / expandir (o estado fica salvo entre as telas) */
   const botao = document.getElementById("botaoRetrair");
 
+  const logo = menu.querySelector(".logo-marca");
+
   function aplicar(fechado) {
     menu.classList.toggle("fechado", fechado);
     botao.setAttribute("aria-expanded", String(!fechado));
     botao.setAttribute("aria-label", fechado ? "Expandir menu" : "Recolher menu");
+    // Recolhido: só a logo aparece e ela vira o botão de expandir
+    logo.title = fechado ? "Expandir menu" : "";
+    logo.setAttribute("aria-label", fechado ? "Expandir menu" : "ConectaFree");
+  }
+
+  function alternar(fechado) {
+    aplicar(fechado);
+    try { localStorage.setItem("menuFechado", fechado ? "1" : "0"); } catch { /* ignora */ }
   }
 
   try {
@@ -96,9 +106,11 @@
     btnSair.addEventListener("click", () => AuthService.sair());
   }
 
-  botao.addEventListener("click", () => {
-    const fechado = !menu.classList.contains("fechado");
-    aplicar(fechado);
-    try { localStorage.setItem("menuFechado", fechado ? "1" : "0"); } catch { /* ignora */ }
+  botao.addEventListener("click", () => alternar(!menu.classList.contains("fechado")));
+
+  logo.addEventListener("click", (e) => {
+    if (!menu.classList.contains("fechado")) return; // aberto: a logo leva para o início
+    e.preventDefault();
+    alternar(false);
   });
 })();

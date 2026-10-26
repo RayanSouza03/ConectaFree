@@ -16,8 +16,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputConfirmarSenha = document.getElementById('confirmarSenha');
     const erroSenha = document.getElementById('erroSenha');
 
+    const statusDocumento = document.getElementById('statusDocumento');
+    const cardEmpresa = document.getElementById('cardEmpresa');
+    const inputEmail = document.getElementById('email');
+    const inputTelefone = document.getElementById('telefone');
+
     let tipoConta = 'profissional'; // 'profissional' ou 'empresa'
     let tipoDocEmpresa = 'cnpj';    // 'cnpj' ou 'cpf'
+
+    let cnpjValidado = null;        // dados da Receita para o CNPJ digitado (null = ainda não validado)
+    let nomePreenchidoPelaReceita = false;
+    let consultaAtual = 0;          // descarta respostas de consultas antigas
+
+    // Cadastro vindo do "Entrar com o Google": a conta só é criada aqui, com os dados que o Google não fornece
+    const params = new URLSearchParams(window.location.search);
+    const credencialGoogle = params.get('google') === '1' ? sessionStorage.getItem('googleCredential') : null;
+    if (params.get('google') === '1' && !credencialGoogle) {
+        window.location.replace('index.html'); // sessão do Google expirou: recomeça pelo login
+        return;
+    }
+    const modoGoogle = !!credencialGoogle;
+
+    const docAtual = () => (tipoConta === 'profissional' ? 'cpf' : tipoDocEmpresa);
 
     // SVGs dos ícones de senha
     const svgOlhoAberto = `<svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
@@ -49,6 +69,83 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     }
 
+    // Validação dos dígitos verificadores do CNPJ (a Receita confirma depois se existe e está ativo)
+    function validarCNPJ(cnpj) {
+        cnpj = cnpj.replace(/\D/g, '');
+        if (cnpj.length !== 14 || /^(\d)\1{13}$/.test(cnpj)) return false;
+
+        const dv = (pesos) => {
+            const soma = pesos.reduce((acc, p, i) => acc + Number(cnpj[i]) * p, 0);
+            const resto = soma % 11;
+            return resto < 2 ? 0 : 11 - resto;
+        };
+
+        return dv([5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]) === Number(cnpj[12])
+            && dv([6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]) === Number(cnpj[13]);
+    }
+
+    function definirStatusDocumento(texto, classe) {
+        statusDocumento.textContent = texto || '';
+        statusDocumento.className = 'status-documento' + (classe ? ' ' + classe : '');
+    }
+
+    function limparDadosEmpresa() {
+        consultaAtual++;
+        cnpjValidado = null;
+        cardEmpresa.classList.add('hidden');
+        definirStatusDocumento('');
+        if (nomePreenchidoPelaReceita) {
+            inputNome.value = '';
+            inputNome.readOnly = false;
+            nomePreenchidoPelaReceita = false;
+        }
+    }
+
+    function mostrarCardEmpresa(d) {
+        const e = d.endereco || {};
+        const rua = [e.logradouro, e.numero].filter(Boolean).join(', ');
+        const cidade = [e.cidade, e.estado].filter(Boolean).join('/');
+        // textContent: os dados vêm de uma API externa, nunca como HTML
+        document.getElementById('empresaRazao').textContent = d.razaoSocial + (d.nomeFantasia ? ` (${d.nomeFantasia})` : '');
+        document.getElementById('empresaSituacao').textContent = `Situação cadastral: ${d.situacao}`;
+        document.getElementById('empresaEndereco').textContent = [rua, e.bairro, cidade].filter(Boolean).join(' · ');
+        cardEmpresa.classList.remove('hidden');
+    }
+
+    // Consulta o CNPJ (BrasilAPI via nosso backend). Devolve os dados se estiver ativo, ou null.
+    async function consultarCnpj(digitos) {
+        const id = ++consultaAtual;
+        cnpjValidado = null;
+        cardEmpresa.classList.add('hidden');
+        definirStatusDocumento('Consultando a Receita Federal...', 'info');
+
+        try {
+            const resposta = await fetch(`${CONFIG.API_BASE_URL}${CONFIG.CNPJ_ENDPOINT}/${digitos}`);
+            const d = await resposta.json().catch(() => ({}));
+            if (id !== consultaAtual) return null; // o usuário já digitou outra coisa
+
+            if (!resposta.ok) {
+                definirStatusDocumento(d.erro || 'Não foi possível consultar o CNPJ.', 'erro');
+                return null;
+            }
+            if (!d.ativa) {
+                definirStatusDocumento(`CNPJ com situação "${d.situacao}". Só é possível cadastrar empresas ativas.`, 'erro');
+                return null;
+            }
+
+            cnpjValidado = d;
+            inputNome.value = d.razaoSocial;      // razão social vem da Receita
+            inputNome.readOnly = true;
+            nomePreenchidoPelaReceita = true;
+            mostrarCardEmpresa(d);
+            definirStatusDocumento('CNPJ ativo na Receita Federal.', 'ok');
+            return d;
+        } catch {
+            if (id === consultaAtual) definirStatusDocumento('Não foi possível consultar o CNPJ agora. Tente novamente.', 'erro');
+            return null;
+        }
+    }
+
     // Aplicação das máscaras
     function aplicarMascara(valor, tipo) {
         const apenasNumeros = valor.replace(/\D/g, '');
@@ -70,10 +167,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function atualizarCampos() {
         inputDocumento.value = '';
         erroDocumento.classList.remove('visible');
+        limparDadosEmpresa();
 
-        const docAtual = (tipoConta === 'profissional') ? 'cpf' : tipoDocEmpresa;
-
-        if (docAtual === 'cpf') {
+        if (docAtual() === 'cpf') {
             labelNome.textContent = 'Nome Completo';
             inputNome.placeholder = 'Digite seu nome completo';
             labelDocumento.textContent = 'CPF';
@@ -126,9 +222,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Máscara ao digitar
     inputDocumento.addEventListener('input', (e) => {
-        const docTipo = (tipoConta === 'profissional') ? 'cpf' : tipoDocEmpresa;
-        e.target.value = aplicarMascara(e.target.value, docTipo);
+        e.target.value = aplicarMascara(e.target.value, docAtual());
         erroDocumento.classList.remove('visible');
+
+        if (docAtual() !== 'cnpj') return;
+
+        const digitos = e.target.value.replace(/\D/g, '');
+        if (digitos.length < 14) {
+            limparDadosEmpresa();
+        } else if (!validarCNPJ(digitos)) {
+            limparDadosEmpresa();
+            definirStatusDocumento('CNPJ inválido. Confira os números.', 'erro');
+        } else if (!cnpjValidado || cnpjValidado.cnpj !== digitos) {
+            consultarCnpj(digitos);
+        }
     });
 
     // Alternar visibilidade da senha (SVG)
@@ -151,50 +258,103 @@ document.addEventListener('DOMContentLoaded', () => {
         erroSenha.classList.remove('visible');
     });
 
+    // Cadastro com Google: nome/e-mail vêm do Google, não tem senha
+    if (modoGoogle) {
+        let perfilGoogle = {};
+        try { perfilGoogle = JSON.parse(sessionStorage.getItem('googlePerfil') || '{}'); } catch { /* segue sem pré-preencher */ }
+
+        document.getElementById('tituloCadastro').textContent = 'Concluir cadastro';
+        const aviso = document.getElementById('avisoGoogle');
+        aviso.textContent = `Você entrou com o Google${perfilGoogle.email ? ' (' + perfilGoogle.email + ')' : ''}. Falta só completar alguns dados.`;
+        aviso.classList.remove('hidden');
+
+        inputEmail.value = perfilGoogle.email || '';
+        inputEmail.readOnly = true;
+        if (perfilGoogle.nome) inputNome.value = perfilGoogle.nome;
+
+        document.getElementById('grupoSenha').classList.add('hidden');
+        document.getElementById('grupoConfirmarSenha').classList.add('hidden');
+        inputSenha.required = false;
+        inputConfirmarSenha.required = false;
+        formCadastro.querySelector('.btn-cadastrar').textContent = 'Concluir cadastro';
+    }
+
     // Submissão do formulário
     formCadastro.addEventListener('submit', async (e) => {
-        let valido = true;
-        const docTipo = (tipoConta === 'profissional') ? 'cpf' : tipoDocEmpresa;
+        e.preventDefault();
 
-        if (docTipo === 'cpf') {
-            if (!validarCPF(inputDocumento.value)) {
-                e.preventDefault();
-                erroDocumento.textContent = 'CPF inválido. Por favor, verifique os números.';
-                erroDocumento.classList.add('visible');
-                valido = false;
-            }
-        }
+        const docTipo = docAtual();
+        const digitosDoc = inputDocumento.value.replace(/\D/g, '');
+        const botaoCadastrar = formCadastro.querySelector('.btn-cadastrar');
+        const erroGeral = document.getElementById('erroGeral');
+        const textoBotao = modoGoogle ? 'Concluir cadastro' : 'Cadastrar';
+        erroGeral.classList.remove('visible');
 
-        if (inputSenha.value !== inputConfirmarSenha.value) {
-            e.preventDefault();
-            erroSenha.textContent = 'As senhas não coincidem.';
-            erroSenha.classList.add('visible');
-            valido = false;
-        }
+        const falhar = (elemento, msg) => {
+            elemento.textContent = msg;
+            elemento.classList.add('visible');
+        };
 
-        if (!valido) {
-            e.preventDefault();
+        if (docTipo === 'cpf' && !validarCPF(inputDocumento.value)) {
+            falhar(erroDocumento, 'CPF inválido. Por favor, verifique os números.');
             return;
         }
 
-        e.preventDefault();
-        const botaoCadastrar = formCadastro.querySelector('.btn-cadastrar');
-        const erroGeral = document.getElementById('erroGeral');
-        erroGeral.classList.remove('visible');
+        if (docTipo === 'cnpj' && !validarCNPJ(digitosDoc)) {
+            falhar(erroDocumento, 'CNPJ inválido. Por favor, verifique os números.');
+            return;
+        }
+
+        if (!modoGoogle && inputSenha.value !== inputConfirmarSenha.value) {
+            falhar(erroSenha, 'As senhas não coincidem.');
+            return;
+        }
+
         botaoCadastrar.disabled = true;
-        botaoCadastrar.textContent = 'Criando conta...';
 
         try {
+            // Empresa com CNPJ: só segue se a Receita confirmou (o servidor confere de novo ao salvar)
+            if (docTipo === 'cnpj') {
+                botaoCadastrar.textContent = 'Validando CNPJ...';
+                const empresa = (cnpjValidado && cnpjValidado.cnpj === digitosDoc) ? cnpjValidado : await consultarCnpj(digitosDoc);
+                if (!empresa) {
+                    falhar(erroDocumento, statusDocumento.textContent || 'Não foi possível validar o CNPJ.');
+                    botaoCadastrar.disabled = false;
+                    botaoCadastrar.textContent = textoBotao;
+                    return;
+                }
+            }
+
+            botaoCadastrar.textContent = 'Criando conta...';
+            const tipoUsuario = tipoConta === 'profissional' ? 0 : 1; // 0 Freelancer, 1 Contratante
+
+            if (modoGoogle) {
+                const dados = await AuthService.loginGoogle(credencialGoogle, {
+                    nome: inputNome.value.trim(),
+                    tipoUsuario,
+                    telefone: inputTelefone.value.trim(),
+                    documento: digitosDoc,
+                    aceitouTermos: document.getElementById('termos').checked,
+                });
+                if (dados.precisaCadastro) throw new Error('Não foi possível concluir o cadastro. Confira os dados.');
+
+                sessionStorage.removeItem('googleCredential');
+                sessionStorage.removeItem('googlePerfil');
+                botaoCadastrar.textContent = 'Conta criada! Entrando...';
+                AuthService.redirecionarPorTipo(dados.tipoUsuario);
+                return;
+            }
+
             const resposta = await fetch(`${CONFIG.API_BASE_URL}${CONFIG.CADASTRO_ENDPOINT}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     nome: inputNome.value.trim(),
-                    email: document.getElementById('email').value.trim(),
+                    email: inputEmail.value.trim(),
                     senha: inputSenha.value,
-                    telefone: document.getElementById('telefone').value.trim(),
-                    documento: inputDocumento.value.replace(/\D/g, ''), // back aceita ate 14 caracteres
-                    tipoUsuario: tipoConta === 'profissional' ? 0 : 1,   // 0 Freelancer, 1 Contratante
+                    telefone: inputTelefone.value.trim(),
+                    documento: digitosDoc, // back aceita ate 14 caracteres
+                    tipoUsuario,
                     aceitouTermos: document.getElementById('termos').checked,
                 }),
             });
@@ -211,10 +371,9 @@ document.addEventListener('DOMContentLoaded', () => {
             botaoCadastrar.textContent = 'Conta criada! Redirecionando...';
             setTimeout(() => { window.location.href = 'index.html'; }, 1200);
         } catch (erro) {
-            erroGeral.textContent = erro.message;
-            erroGeral.classList.add('visible');
+            falhar(erroGeral, erro.message);
             botaoCadastrar.disabled = false;
-            botaoCadastrar.textContent = 'Cadastrar';
+            botaoCadastrar.textContent = textoBotao;
         }
     });
 });

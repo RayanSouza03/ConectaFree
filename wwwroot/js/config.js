@@ -11,6 +11,14 @@ const CONFIG = {
   ANUNCIO_ENDPOINT: "/Anuncio",
   PORTFOLIO_ENDPOINT: "/Portfolio",
   CEP_API_URL: "https://viacep.com.br/ws",
+  GOOGLE_ENDPOINT: "/Usuarios/google",
+  ESQUECI_SENHA_ENDPOINT: "/Usuarios/esqueci-senha",
+  REDEFINIR_SENHA_ENDPOINT: "/Usuarios/redefinir-senha",
+  ACEITAR_TERMOS_ENDPOINT: "/Usuarios/aceitar-termos",
+  CNPJ_ENDPOINT: "/Cnpj",
+  PUBLICO_CONFIG_ENDPOINT: "/Config",
+  ESTADOS_ENDPOINT: "/Localidades/estados",
+  CIDADES_ENDPOINT: "/Localidades/cidades",
 };
 
 // Ids iguais ao seed de Habilidades no ConectaFreeDbContext
