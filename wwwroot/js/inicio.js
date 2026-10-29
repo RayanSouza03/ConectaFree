@@ -22,11 +22,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const esc = Util.esc;
 
+  // Canhoto com o dia do serviço (a informação principal da vaga)
   function avatar(v) {
-    const c = v.contratante;
-    return c.fotoUrl
-      ? `<img class="avatar-foto" src="${esc(c.fotoUrl)}" alt="">`
-      : `<div class="avatar-inicial">${esc(Util.iniciais(c.nome))}</div>`;
+    const d = Util.diaServico(v.dataServico);
+    if (!d) return '<div class="bloco-dia sem-data" title="Data a combinar"><span class="dia">—</span><span class="mes">a combinar</span></div>';
+    return `<div class="bloco-dia${d.passou ? " passou" : ""}" title="Dia do serviço: ${Util.dataServico(v.dataServico)}"><span class="sem">${d.sem}</span><span class="dia">${d.dia}</span><span class="mes">${d.mes}</span></div>`;
   }
 
   function linha(v) {
