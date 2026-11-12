@@ -17,6 +17,7 @@
           <div class="meta-detalhe meta-local"><small>Local</small><strong>${Util.esc(Util.localDaVaga(v))}</strong></div>
           <div class="meta-detalhe"><small>Categoria</small><strong>${Util.esc(v.habilidade.nome)}</strong></div>
           <div class="meta-detalhe"><small>Valor</small><strong>${Util.valor(v.valorProposto)}</strong></div>
+          <div class="meta-detalhe"><small>Pessoas necessárias</small><strong>${v.quantidadePessoas}</strong></div>
         </div>
         <p class="publicada-detalhe">Publicada em ${Util.data(v.dataCriacao)}</p>
         <h4>Contratante</h4>

@@ -19,6 +19,9 @@ namespace ConectaFree.Models
         [MaxLength(2000)]
         public required string Descricao { get; set; }
         public decimal ValorProposto { get; set; }
+
+        // Quantas pessoas o contratante precisa para esta vaga. Quando todas forem aceitas, a vaga sai de "Aberta".
+        public int QuantidadePessoas { get; set; } = 1;
         public int HabilidadeId { get; set; }
         public Habilidade Habilidade { get; set; } = null!;
 

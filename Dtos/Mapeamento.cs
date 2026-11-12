@@ -44,11 +44,11 @@ namespace ConectaFree.Dtos
                 a.LocalBairro, a.LocalCidade, a.LocalEstado);
         }
 
-        public static AnuncioRespostaDto ParaAnuncio(Anuncio a, int total = 0, string? minhaCandidatura = null, bool completo = false) =>
+        public static AnuncioRespostaDto ParaAnuncio(Anuncio a, int total = 0, string? minhaCandidatura = null, bool completo = false, int aceitas = 0) =>
             new(a.Id, a.Titulo, a.Descricao, a.ValorProposto, a.Urgente, a.Status.ToString(), a.DataCriacao,
                 new HabilidadeDto(a.Habilidade.Id, a.Habilidade.Nome),
                 new ContratanteResumoDto(a.Contratante.Id, a.Contratante.Nome, a.Contratante.FotoUrl, ParaLocalVaga(a.Contratante.Endereco)),
-                total, minhaCandidatura, a.DataServico, ParaLocalServico(a, completo));
+                total, minhaCandidatura, a.DataServico, ParaLocalServico(a, completo), a.QuantidadePessoas, aceitas);
 
         public static PortfolioItemRespostaDto ParaPortfolio(PortfolioItem p) =>
             new(p.Id, p.Tipo.ToString(), p.Titulo, p.Descricao, p.FotoUrl, p.AnuncioId, p.DataCriacao);

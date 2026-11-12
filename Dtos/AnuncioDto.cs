@@ -17,6 +17,10 @@ namespace ConectaFree.Dtos
         [Required]
         public int HabilidadeId { get; set; }
 
+        // Quantas pessoas são necessárias para a vaga (mínimo 1)
+        [Range(1, 1000, ErrorMessage = "Informe quantas pessoas você precisa (de 1 a 1000).")]
+        public int QuantidadePessoas { get; set; } = 1;
+
         public bool Urgente { get; set; }
 
         // Dia do serviço (yyyy-MM-dd)

@@ -185,6 +185,8 @@ function irParaForm(id){
   $('statusVaga').value = vaga ? vaga.status : 'Aberta';
   $('urgenteVaga').checked = vaga ? vaga.urgente : false;
   $('valorVaga').value = vaga && vaga.valorProposto ? fmtValor(vaga.valorProposto) : '';
+  $('quantidadeVaga').value = vaga ? vaga.quantidadePessoas : 1;
+  $('quantidadeVaga').min = vaga && vaga.pessoasAceitas > 0 ? vaga.pessoasAceitas : 1;
   $('descricaoVaga').value = vaga ? vaga.descricao : '';
   campoData.min = vaga && vaga.dataServico && vaga.dataServico < hojeISO() ? vaga.dataServico : hojeISO();
   campoData.value = vaga && vaga.dataServico ? vaga.dataServico : '';
@@ -257,7 +259,8 @@ function renderizarLista(){
           '<div class="meta"><span>' + ICONES.tag + esc(v.habilidade.nome) + '</span>' +
           '<span>' + ICONES.pin + esc(Util.localDaVaga(v)) + '</span></div></div></div>' +
         '<div class="rodape-card"><span class="valor">' + fmtValor(v.valorProposto) + '</span>' +
-        '<span>' + qtd + (qtd === 1 ? ' candidato' : ' candidatos') + '</span></div>' +
+        '<span>' + v.pessoasAceitas + '/' + v.quantidadePessoas + (v.quantidadePessoas === 1 ? ' pessoa' : ' pessoas') + ' · ' +
+        qtd + (qtd === 1 ? ' candidato' : ' candidatos') + '</span></div>' +
         '<p class="publicada">publicada em ' + fmtData(v.dataCriacao) + '</p>' +
       '</button>';
     ul.appendChild(li);
@@ -283,6 +286,7 @@ function renderizarDetalhe(v, cands){
         '<div class="meta-detalhe destaque-data"><small>' + ICONES.cal + 'Dia do serviço</small><strong>' + (v.dataServico ? fmtDataServico(v.dataServico) : 'A combinar') + '</strong></div>' +
         '<div class="meta-detalhe meta-local"><small>' + ICONES.pin + (v.local && v.local.enderecoDaEmpresa === false ? 'Local (outro endereço)' : 'Local (endereço da empresa)') + '</small><strong>' + esc(enderecoCompleto(v)) + '</strong></div>' +
         '<div class="meta-detalhe"><small>' + ICONES.cash + 'Valor</small><strong>' + fmtValor(v.valorProposto) + '</strong></div>' +
+        '<div class="meta-detalhe"><small>' + ICONES.users + 'Pessoas aceitas</small><strong>' + v.pessoasAceitas + ' de ' + v.quantidadePessoas + '</strong></div>' +
         '<div class="meta-detalhe"><small>' + ICONES.users + 'Candidatos</small><strong>' + cands.length + '</strong></div>' +
       '</div>' +
       '<h4>Descrição</h4>' +
@@ -305,6 +309,7 @@ function renderizarDetalhe(v, cands){
       const f = c.freelancer;
       const tel = String(f.telefone || '').replace(/\D/g, '');
       const pendente = c.status === 'Pendente';
+      const completa = v.pessoasAceitas >= v.quantidadePessoas;
       html +=
         '<li class="card-candidato">' +
           (f.fotoUrl
@@ -323,7 +328,7 @@ function renderizarDetalhe(v, cands){
                 ? '<a class="btn-whatsapp" href="' + esc(linkWhatsApp(f.telefone, f.nome, v.titulo)) + '" target="_blank" rel="noopener noreferrer" title="Conversar no WhatsApp">' + ICONE_WHATS + 'WhatsApp</a>'
                 : '') +
               '<a href="visualizar-perfil.html?id=' + f.id + '">Ver perfil</a>' +
-              (pendente ? '<button type="button" class="aceitar" data-cand="' + c.id + '" data-status="Aceita">Aceitar</button>' +
+              (pendente ? (completa ? '' : '<button type="button" class="aceitar" data-cand="' + c.id + '" data-status="Aceita">Aceitar</button>') +
                           '<button type="button" data-cand="' + c.id + '" data-status="Recusada">Recusar</button>' : '') +
             '</div>' +
           '</div>' +
@@ -356,6 +361,13 @@ form.addEventListener('submit', async (e) => {
   if(!textoCategoria){ $('erroCategoria').classList.add('visivel'); ok = false; }
   if(!ok){ (titulo ? $('categoriaVaga') : $('nomeVaga')).focus(); return; }
 
+  const quantidade = parseInt($('quantidadeVaga').value, 10);
+  if(!Number.isInteger(quantidade) || quantidade < 1 || quantidade > 1000){
+    erroGeral('Informe quantas pessoas você precisa (de 1 a 1000).');
+    $('quantidadeVaga').focus();
+    return;
+  }
+
   if(!campoData.value){ $('erroData').classList.add('visivel'); campoData.focus(); return; }
   const usarEmpresa = modoLocal() === 'empresa';
   const local = lerLocal();
@@ -383,6 +395,7 @@ form.addEventListener('submit', async (e) => {
     status: $('statusVaga').value,
     urgente: $('urgenteVaga').checked,
     valorProposto: lerValor($('valorVaga').value),
+    quantidadePessoas: quantidade,
     descricao: $('descricaoVaga').value.trim(),
     dataServico: campoData.value,
     usarEnderecoEmpresa: usarEmpresa,
@@ -460,7 +473,7 @@ telaDetalhe.addEventListener('click', async (e) => {
     try{
       await Api.put(CONFIG.ANUNCIO_ENDPOINT + '/candidaturas/' + acao.dataset.cand + '/status', { status: acao.dataset.status });
       const idVaga = Number(document.getElementById('botaoEditar').dataset.id);
-      await recarregarVagas(); // aceitar muda o status da vaga para Em andamento
+      await recarregarVagas(); // ao completar a quantidade, a vaga passa para Em andamento
       await irParaDetalhe(idVaga);
     }catch(erro){
       acao.disabled = false;

@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ConectaFree</title>
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <link rel="shortcut icon" href="favicon.ico">
   <link rel="stylesheet" href="css/login.css">
   <link rel="stylesheet" href="css/menu-lateral.css">
   <link rel="stylesheet" href="css/vagas.css">
@@ -71,6 +73,14 @@
           <div class="campo">
             <label>Prioridade</label>
             <label class="campo-check"><input type="checkbox" id="urgenteVaga"> Vaga urgente</label>
+          </div>
+        </div>
+
+        <div class="cartao-campo">
+          <div class="campo">
+            <label for="quantidadeVaga">Quantas pessoas você precisa?</label>
+            <input type="number" id="quantidadeVaga" min="1" max="1000" step="1" value="1" inputmode="numeric">
+            <p class="auxiliar">Quando você aceitar essa quantidade de candidatos, a vaga entra em andamento e deixa de aparecer para os outros freelancers.</p>
           </div>
         </div>
 

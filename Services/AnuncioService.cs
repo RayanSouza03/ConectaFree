@@ -39,6 +39,12 @@ namespace ConectaFree.Services
                 .Select(g => new { g.Key, Total = g.Count() })
                 .ToDictionaryAsync(x => x.Key, x => x.Total);
 
+            var aceitos = await _context.Candidaturas
+                .Where(c => ids.Contains(c.AnuncioId) && c.Status == StatusCandidatura.Aceita)
+                .GroupBy(c => c.AnuncioId)
+                .Select(g => new { g.Key, Total = g.Count() })
+                .ToDictionaryAsync(x => x.Key, x => x.Total);
+
             var minhas = new Dictionary<int, string>();
             if (freelancerId.HasValue)
             {
@@ -50,7 +56,8 @@ namespace ConectaFree.Services
             return lista.Select(a => Mapeamento.ParaAnuncio(
                 a,
                 totais.TryGetValue(a.Id, out var t) ? t : 0,
-                minhas.TryGetValue(a.Id, out var m) ? m : null, completo)).ToList();
+                minhas.TryGetValue(a.Id, out var m) ? m : null, completo,
+                aceitos.TryGetValue(a.Id, out var ac) ? ac : 0)).ToList();
         }
 
         public async Task<List<AnuncioRespostaDto>> FiltrarAsync(FiltroVagaDto filtro)
@@ -156,6 +163,7 @@ namespace ConectaFree.Services
                 Titulo = dto.Titulo.Trim(),
                 Descricao = dto.Descricao?.Trim() ?? string.Empty,
                 ValorProposto = dto.ValorProposto,
+                QuantidadePessoas = dto.QuantidadePessoas,
                 HabilidadeId = dto.HabilidadeId,
                 Urgente = dto.Urgente,
                 ContratanteId = contratanteId,
@@ -179,11 +187,21 @@ namespace ConectaFree.Services
 
             anuncio.Titulo = dto.Titulo.Trim();
             anuncio.Descricao = dto.Descricao?.Trim() ?? string.Empty;
+            var aceitas = await ContarAceitasAsync(id);
+            if (dto.QuantidadePessoas < aceitas)
+                throw new InvalidOperationException(
+                    $"Você já aceitou {aceitas} {(aceitas == 1 ? "pessoa" : "pessoas")}. A quantidade não pode ser menor que isso.");
+
             anuncio.ValorProposto = dto.ValorProposto;
+            anuncio.QuantidadePessoas = dto.QuantidadePessoas;
             anuncio.HabilidadeId = dto.HabilidadeId;
             anuncio.Urgente = dto.Urgente;
             anuncio.Status = LerStatus(dto.Status, anuncio.Status);
             AplicarServico(anuncio, dto);
+
+            // Se a vaga já está com todas as pessoas aceitas, ela não pode continuar aberta
+            if (anuncio.Status == StatusAnuncio.Aberta && aceitas >= anuncio.QuantidadePessoas)
+                anuncio.Status = StatusAnuncio.EmAndamento;
 
             await _context.SaveChangesAsync();
             return await ObterAsync(id, null, completo: true);
@@ -207,6 +225,9 @@ namespace ConectaFree.Services
                 throw new InvalidOperationException("Esta vaga está no portfólio de um freelancer. Altere o status para Cancelada em vez de excluir.");
             }
         }
+
+        private Task<int> ContarAceitasAsync(int anuncioId) =>
+            _context.Candidaturas.CountAsync(c => c.AnuncioId == anuncioId && c.Status == StatusCandidatura.Aceita);
 
         public async Task CandidatarAsync(int freelancerId, int anuncioId, CandidatarDto dto)
         {
@@ -305,10 +326,31 @@ namespace ConectaFree.Services
                 ?? throw new KeyNotFoundException("Candidatura não encontrada.");
 
             var jaEstavaAceita = candidatura.Status == StatusCandidatura.Aceita;
+            var anuncio = candidatura.Anuncio;
+
+            // Aceitos de verdade hoje (esta candidatura só conta se já estava aceita)
+            var aceitas = await ContarAceitasAsync(anuncio.Id);
+
+            if (novo == StatusCandidatura.Aceita && !jaEstavaAceita && aceitas >= anuncio.QuantidadePessoas)
+                throw new InvalidOperationException(
+                    $"Esta vaga já tem as {anuncio.QuantidadePessoas} {(anuncio.QuantidadePessoas == 1 ? "pessoa necessária" : "pessoas necessárias")} aceitas.");
+
             candidatura.Status = novo;
 
-            if (novo == StatusCandidatura.Aceita && candidatura.Anuncio.Status == StatusAnuncio.Aberta)
-                candidatura.Anuncio.Status = StatusAnuncio.EmAndamento;
+            if (novo == StatusCandidatura.Aceita && !jaEstavaAceita)
+            {
+                aceitas++;
+                // Completou a quantidade: a vaga entra em andamento e deixa de aparecer para os outros freelancers
+                if (anuncio.Status == StatusAnuncio.Aberta && aceitas >= anuncio.QuantidadePessoas)
+                    anuncio.Status = StatusAnuncio.EmAndamento;
+            }
+            else if (novo == StatusCandidatura.Recusada && jaEstavaAceita)
+            {
+                aceitas--;
+                // Desfez um aceite e voltou a faltar gente: a vaga reabre
+                if (anuncio.Status == StatusAnuncio.EmAndamento && aceitas < anuncio.QuantidadePessoas)
+                    anuncio.Status = StatusAnuncio.Aberta;
+            }
 
             await _context.SaveChangesAsync();
 

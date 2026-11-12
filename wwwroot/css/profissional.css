@@ -228,3 +228,20 @@ footer::before { display: none; }
 .grade-meta + .publicada-detalhe { margin: -16px 0 28px; text-align: right; }
 .cartao-detalhe h4 + div, .cartao-detalhe h4 + p { margin-top: 0; }
 .cartao-detalhe .texto-descricao { margin-bottom: 22px; }
+
+/* ---------- alinhamento do conteúdo: sem faixa vazia ao lado do menu ---------- */
+/* Todas as telas com menu começam logo após a barra lateral, com o mesmo respiro. */
+body.tem-menu .conteudo-pagina > main {
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+}
+
+/* o link "ConectaFree" solto no topo duplicava a marca do menu e deslocava o conteúdo */
+body.tem-menu .cabecalho-perfil { display: none; }
+
+/* edição de perfil: formulário alinhado à esquerda, usando mais largura */
+.container-perfil { justify-content: flex-start !important; padding-top: 28px !important; }
+#form-perfil { max-width: 860px; }

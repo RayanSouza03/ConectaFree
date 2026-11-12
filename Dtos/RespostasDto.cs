@@ -19,7 +19,7 @@ namespace ConectaFree.Dtos
         int Id, string Titulo, string Descricao, decimal ValorProposto, bool Urgente,
         string Status, DateTime DataCriacao, HabilidadeDto Habilidade,
         ContratanteResumoDto Contratante, int TotalCandidaturas, string? MinhaCandidatura,
-        DateOnly? DataServico, LocalServicoDto Local);
+        DateOnly? DataServico, LocalServicoDto Local, int QuantidadePessoas, int PessoasAceitas);
 
     // Perfil completo: só devolvido ao próprio dono (GET/PUT /Usuarios/perfil)
     public record PerfilRespostaDto(
