@@ -168,6 +168,7 @@ function lerLocal(){
 /* ---------- navegação entre telas ---------- */
 function mostrar(nova){
   tela = nova;
+  $('carregandoVagas').hidden = true;
   form.hidden = nova !== 'form';
   telaLista.hidden = nova !== 'lista';
   telaDetalhe.hidden = nova !== 'detalhe';
@@ -488,9 +489,19 @@ telaDetalhe.addEventListener('click', async (e) => {
   carregarEnderecoEmpresa().then(() => { if(tela === 'form' && !editandoId) preencherLocal(null); });
   try{
     await recarregarVagas();
-    if(vagas.length) irParaLista(); else irParaForm(null);
   }catch(erro){
+    // não conseguiu buscar as vagas: mostra o formulário só como último recurso
     irParaForm(null);
     erroGeral(erro.message);
+    return;
+  }
+  if(!vagas.length){ irParaForm(null); return; }
+  try{
+    irParaLista();
+  }catch(erro){
+    console.error('Erro ao montar a lista de vagas:', erro);
+    // mantém o usuário na lista (vazia) em vez de cair no formulário de criação
+    $('carregandoVagas').hidden = false;
+    $('carregandoVagas').textContent = 'Não foi possível exibir suas vagas. Recarregue a página.';
   }
 })();

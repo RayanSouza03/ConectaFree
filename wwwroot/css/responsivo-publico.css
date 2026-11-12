@@ -5,6 +5,17 @@
 img, svg { max-width: 100%; }
 
 /* ---------- login ---------- */
+/* Logo do ConectaFree: aparece só no mobile (no desktop fica oculta) */
+.logo-login-mobile { display: none; }
+@media (max-width: 900px) {
+  .logo-login-mobile {
+    display: block;
+    width: 112px;
+    height: auto;
+    margin: 0 auto 8px;
+  }
+}
+
 .paineis { min-height: 100vh; }
 .lado-esquerdo, .lado-direito { min-width: 0; }
 

@@ -75,7 +75,7 @@ const Util = {
   },
   /* Local onde o serviço acontece (endereço da vaga ou da empresa) */
   localDaVaga(v) {
-    return Util.localVaga(v.local && (v.local.cidade || v.local.bairro) ? v.local : v.contratante.endereco);
+    return Util.localVaga(v.local && (v.local.cidade || v.local.bairro) ? v.local : (v.contratante && v.contratante.endereco));
   },
   local(e) {
     return e && (e.cidade || e.estado) ? [e.cidade, e.estado].filter(Boolean).join(" - ") : "Local não informado";

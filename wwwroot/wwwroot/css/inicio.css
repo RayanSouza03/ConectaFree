@@ -1,0 +1,278 @@
+/* ==========================================================================
+   Tela inicial (vagas recentes e urgentes)
+   ========================================================================== */
+.pagina-inicio { background-image: var(--cor-gradiente); }
+
+.container-inicio {
+    flex: 1;
+    min-width: 0;
+    padding: 35px 40px 48px;
+    overflow-x: hidden;
+}
+
+/* Busca */
+.search-section {
+    margin-bottom: 35px;
+}
+
+.search-box {
+    display: flex;
+    background: #ffffff;
+    padding: 6px;
+    border-radius: 30px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+    border: 1px solid #CFE3DB;
+}
+
+.search-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 12px 20px;
+    font-size: 15px;
+    background: transparent;
+}
+
+.category-select {
+    border: none;
+    border-left: 1px solid #CFE3DB;
+    outline: none;
+    padding: 0 15px;
+    font-size: 14px;
+    color: #293330;
+    background: transparent;
+    cursor: pointer;
+}
+
+.btn-search {
+    background: linear-gradient(90deg, #293330 0%, #293330 100%);
+    border: none;
+    color: white;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-search:hover {
+    opacity: 0.9;
+}
+
+/* Carrossel de Vagas */
+.jobs-section {
+    margin-bottom: 40px;
+}
+
+.jobs-section h2 {
+    font-size: 20px;
+    color: var(--texto);
+    margin-bottom: 20px;
+}
+
+.carousel-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.carousel-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 280px;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    padding: 20px 40%;
+}
+
+.carousel-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Card Base */
+.job-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    border: 1px solid #CFE3DB;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 280px;
+    max-width: 280px;
+    height: 230px;
+    position: relative;
+    transition: all 0.4s ease;
+    filter: blur(4px);
+    opacity: 0.4;
+    transform: scale(0.85);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* Card Central em Destaque */
+.job-card.active {
+    filter: blur(0px);
+    opacity: 1;
+    transform: scale(1.08);
+    z-index: 10;
+    box-shadow: 0 10px 25px rgba(41, 51, 48, 0.18);
+    border-color: #293330;
+    cursor: default;
+}
+
+.job-tag {
+    font-size: 12px;
+    font-weight: 600;
+    color: #293330;
+    background: #EEF7F3;
+    padding: 4px 10px;
+    border-radius: 12px;
+    align-self: flex-start;
+}
+
+.job-card h3 {
+    font-size: 16px;
+    color: #293330;
+    margin: 8px 0 4px 0;
+}
+
+.job-desc {
+    font-size: 13px;
+    color: #9BC9B8;
+    line-height: 1.4;
+}
+
+.job-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #EEF7F3;
+    padding-top: 10px;
+}
+
+.job-price {
+    font-weight: bold;
+    color: #293330;
+    font-size: 15px;
+}
+
+.btn-apply {
+    background: transparent;
+    border: 1px solid #293330;
+    color: #293330;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-apply:hover {
+    background: #293330;
+    color: #ffffff;
+}
+
+/* Vagas Urgentes */
+.job-card.urgent {
+    border: 1px solid #ffccd5;
+    background: #EEF7F3;
+}
+
+.badge-urgent {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #e74c3c;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+}
+
+/* Botões laterais */
+.carousel-btn {
+    background: #ffffff;
+    border: 1px solid #CFE3DB;
+    color: #293330;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    transition: all 0.2s ease;
+    position: absolute;
+}
+
+.carousel-btn.prev {
+    left: -10px;
+}
+
+.carousel-btn.next {
+    right: -10px;
+}
+
+.carousel-btn:hover {
+    background: #293330;
+    color: #ffffff;
+    border-color: #293330;
+}
+
+
+/* o campo de busca não deve herdar o visual dos inputs do login */
+.search-box input:focus {
+    box-shadow: none;
+    background: transparent;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container-inicio { padding: 20px; }
+
+    .carousel-container { padding: 20px 10%; }
+
+    .search-box {
+        flex-direction: column;
+        border-radius: 12px;
+        gap: 10px;
+    }
+
+    .category-select {
+        border-left: none;
+        border-top: 1px solid #CFE3DB;
+        padding: 10px 15px 0;
+    }
+
+    .btn-search {
+        width: 100%;
+        border-radius: 8px;
+    }
+}
+
+
+.boas-vindas {
+  margin-bottom: 24px;
+}
+.boas-vindas h1 {
+  margin: 0 0 6px;
+}
+.boas-vindas p {
+  margin: 0;
+  opacity: .75;
+}
