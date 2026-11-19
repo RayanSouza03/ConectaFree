@@ -5,7 +5,6 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace ConectaFree.Services
 {
-    // Consulta o CNPJ na BrasilAPI (dados da Receita Federal)
     public class CnpjService : ICnpjService
     {
         private readonly IHttpClientFactory _factory;
@@ -24,12 +23,10 @@ namespace ConectaFree.Services
             var digitos = DocumentoValidador.Digitos(cnpj);
             if (!DocumentoValidador.CnpjValido(digitos)) return null;
 
-            // A tela consulta ao digitar e o cadastro consulta de novo ao salvar: cache curto evita a segunda chamada
             if (_cache.TryGetValue($"cnpj:{digitos}", out DadosCnpj? emCache)) return emCache;
 
             var http = _factory.CreateClient();
             http.Timeout = TimeSpan.FromSeconds(10);
-            // HttpClient não manda User-Agent por padrão e a BrasilAPI (Cloudflare) pode barrar com 403
             http.DefaultRequestHeaders.UserAgent.ParseAdd("ConectaFree/1.0");
             http.DefaultRequestHeaders.Accept.ParseAdd("application/json");
 
@@ -85,7 +82,6 @@ namespace ConectaFree.Services
             }
         }
 
-        // Lê string ou número do JSON (a BrasilAPI às vezes manda o CEP/número como número)
         private static string Txt(JsonElement e, string nome)
         {
             if (!e.TryGetProperty(nome, out var v)) return string.Empty;
@@ -100,7 +96,6 @@ namespace ConectaFree.Services
         private static string Cortar(string texto, int max) =>
             texto.Length <= max ? texto : texto[..max];
 
-        // A Receita devolve tudo em MAIÚSCULAS: "RUA CARLOS DE CARVALHO" -> "Rua Carlos de Carvalho"
         private static readonly HashSet<string> Minusculas = new(StringComparer.OrdinalIgnoreCase)
             { "de", "da", "do", "das", "dos", "e" };
 

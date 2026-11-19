@@ -8,7 +8,6 @@ namespace ConectaFree.Interfaces
         string Cnpj, string RazaoSocial, string? NomeFantasia,
         string Situacao, bool Ativa, EnderecoCnpj Endereco);
 
-    // Lançada quando a BrasilAPI está fora do ar / lenta (diferente de "CNPJ não existe")
     public class CnpjIndisponivelException : Exception
     {
         public CnpjIndisponivelException() : base("Serviço de consulta de CNPJ indisponível.") { }
@@ -16,7 +15,6 @@ namespace ConectaFree.Interfaces
 
     public interface ICnpjService
     {
-        // null = CNPJ não encontrado na Receita
         Task<DadosCnpj?> ConsultarAsync(string cnpj, CancellationToken ct = default);
     }
 }

@@ -1,29 +1,16 @@
-#!/usr/bin/env bash
-# Copyright (c) .NET Foundation and contributors. All rights reserved.
-# Licensed under the MIT license. See LICENSE file in the project root for full license information.
-#
 
-# Stop script on NZEC
 set -e
-# Stop script if unbound variable found (use ${var:-} if intentional)
+
 set -u
-# By default cmd1 | cmd2 returns exit code of cmd2 regardless of cmd1 success
-# This is causing it to fail
+
 set -o pipefail
 
-# Use in the the functions: eval $invocation
 invocation='say_verbose "Calling: ${yellow:-}${FUNCNAME[0]} ${green:-}$*${normal:-}"'
 
-# standard output may be used as a return value in the functions
-# we need a way to write text on the screen in the functions so that
-# it won't interfere with the return value.
-# Exposing stream 3 as a pipe to standard output of the script itself
 exec 3>&1
 
-# Setup some colors to use. These need to work in fairly limited shells, like the Ubuntu Docker container where there are only 8 colors.
-# See if stdout is a terminal
 if [ -t 1 ] && command -v tput > /dev/null; then
-    # see if it supports colors
+  
     ncolors=$(tput colors || echo 0)
     if [ -n "$ncolors" ] && [ $ncolors -ge 8 ]; then
         bold="$(tput bold       || echo)"
@@ -48,8 +35,7 @@ say_err() {
 }
 
 say() {
-    # using stream 3 (defined in the beginning) to not interfere with stdout of functions
-    # which may be used as return value
+    
     printf "%b\n" "${cyan:-}dotnet-install:${normal:-} $1" >&3
 }
 
@@ -59,9 +45,6 @@ say_verbose() {
     fi
 }
 
-# This platform list is finite - if the SDK/Runtime has supported Linux distribution-specific assets,
-#   then and only then should the Linux distribution appear in this list.
-# Adding a Linux distribution to this list does not imply distribution-specific support.
 get_legacy_os_name_from_platform() {
     eval $invocation
 
@@ -243,42 +226,29 @@ check_min_reqs() {
     return 0
 }
 
-# args:
-# input - $1
 to_lowercase() {
-    #eval $invocation
 
     echo "$1" | tr '[:upper:]' '[:lower:]'
     return 0
 }
 
-# args:
-# input - $1
 remove_trailing_slash() {
-    #eval $invocation
 
     local input="${1:-}"
     echo "${input%/}"
     return 0
 }
 
-# args:
-# input - $1
 remove_beginning_slash() {
-    #eval $invocation
-
+ 
     local input="${1:-}"
     echo "${input#/}"
     return 0
 }
 
-# args:
-# root_path - $1
-# child_path - $2 - this parameter can be empty
 combine_paths() {
     eval $invocation
 
-    # TODO: Consider making it work with any number of paths. For now:
     if [ ! -z "${3:-}" ]; then
         say_err "combine_paths: Function takes two parameters."
         return 1
@@ -308,7 +278,6 @@ get_machine_architecture() {
             ;;
         aarch64|arm64)
             if [ "$(getconf LONG_BIT)" -lt 64 ]; then
-                # This is 32-bit OS running on 64-bit CPU (for example Raspberry Pi OS)
                 echo "arm"
                 return 0
             fi
@@ -338,13 +307,10 @@ get_machine_architecture() {
         esac
     fi
 
-    # Always default to 'x64'
     echo "x64"
     return 0
 }
 
-# args:
-# architecture - $1
 get_normalized_architecture_from_architecture() {
     eval $invocation
 
@@ -392,10 +358,6 @@ get_normalized_architecture_from_architecture() {
     return 1
 }
 
-# args:
-# version - $1
-# channel - $2
-# architecture - $3
 get_normalized_architecture_for_specific_sdk_version() {
     eval $invocation
 
@@ -405,7 +367,7 @@ get_normalized_architecture_for_specific_sdk_version() {
     local osname="$(get_current_os_name)"
 
     if [ "$osname" == "osx" ] && [ "$architecture" == "arm64" ] && { [ "$is_version_support_arm64" = false ] || [ "$is_channel_support_arm64" = false ]; }; then
-        #check if rosetta is installed
+
         if [ "$(/usr/bin/pgrep oahd >/dev/null 2>&1;echo $?)" -eq 0 ]; then 
             say_verbose "Changing user architecture from '$architecture' to 'x64' because .NET SDKs prior to version 6.0 do not support arm64." 
             echo "x64"
@@ -420,14 +382,10 @@ get_normalized_architecture_for_specific_sdk_version() {
     return 0
 }
 
-# args:
-# version or channel - $1
 is_arm64_supported() {
-    # Extract the major version by splitting on the dot
     major_version="${1%%.*}"
 
-    # Check if the major version is a valid number and less than 6
-    case "$major_version" in
+     case "$major_version" in
         [0-9]*)  
             if [ "$major_version" -lt 6 ]; then
                 echo false
@@ -440,8 +398,6 @@ is_arm64_supported() {
     return 0
 }
 
-# args:
-# user_defined_os - $1
 get_normalized_os() {
     eval $invocation
 
@@ -469,8 +425,6 @@ get_normalized_os() {
     return 0
 }
 
-# args:
-# quality - $1
 get_normalized_quality() {
     eval $invocation
 
@@ -482,7 +436,6 @@ get_normalized_quality() {
                 return 0
                 ;;
             ga)
-                #ga quality is available without specifying quality, so normalizing it to empty
                 return 0
                 ;;
             *)
@@ -494,8 +447,6 @@ get_normalized_quality() {
     return 0
 }
 
-# args:
-# channel - $1
 get_normalized_channel() {
     eval $invocation
 
@@ -533,8 +484,6 @@ get_normalized_channel() {
     return 0
 }
 
-# args:
-# runtime - $1
 get_normalized_product() {
     eval $invocation
 
@@ -551,15 +500,7 @@ get_normalized_product() {
     return 0
 }
 
-# The version text returned from the feeds is a 1-line or 2-line string:
-# For the SDK and the dotnet runtime (2 lines):
-# Line 1: # commit_hash
-# Line 2: # 4-part version
-# For the aspnetcore runtime (1 line):
-# Line 1: # 4-part version
 
-# args:
-# version_text - stdin
 get_version_from_latestversion_file_content() {
     eval $invocation
 
@@ -567,10 +508,6 @@ get_version_from_latestversion_file_content() {
     return 0
 }
 
-# args:
-# install_root - $1
-# relative_path_to_package - $2
-# specific_version - $3
 is_dotnet_package_installed() {
     eval $invocation
 
@@ -588,9 +525,6 @@ is_dotnet_package_installed() {
     fi
 }
 
-# args:
-# downloaded file - $1
-# remote_file_size - $2
 validate_remote_local_file_sizes() 
 {
     eval $invocation
@@ -602,7 +536,7 @@ validate_remote_local_file_sizes()
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         file_size="$(stat -c '%s' "$downloaded_file")"
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-        # hardcode in order to avoid conflicts with GNU stat
+        
         file_size="$(/usr/bin/stat -f '%z' "$downloaded_file")"
     fi  
     
@@ -622,10 +556,6 @@ validate_remote_local_file_sizes()
     fi 
 }
 
-# args:
-# azure_feed - $1
-# channel - $2
-# normalized_architecture - $3
 get_version_from_latestversion_file() {
     eval $invocation
 
@@ -650,8 +580,6 @@ get_version_from_latestversion_file() {
     return 0
 }
 
-# args:
-# json_file - $1
 parse_globaljson_file_for_version() {
     eval $invocation
 
@@ -690,12 +618,7 @@ parse_globaljson_file_for_version() {
     return 0
 }
 
-# args:
-# azure_feed - $1
-# channel - $2
-# normalized_architecture - $3
-# version - $4
-# json_file - $5
+
 get_specific_version_from_version() {
     eval $invocation
 
@@ -724,12 +647,6 @@ get_specific_version_from_version() {
     fi
 }
 
-# args:
-# azure_feed - $1
-# channel - $2
-# normalized_architecture - $3
-# specific_version - $4
-# normalized_os - $5
 construct_download_link() {
     eval $invocation
 
@@ -755,14 +672,7 @@ construct_download_link() {
     return 0
 }
 
-# args:
-# azure_feed - $1
-# specific_version - $2
-# download link - $3 (optional)
 get_specific_product_version() {
-    # If we find a 'productVersion.txt' at the root of any folder, we'll use its contents
-    # to resolve the version of what's in the folder, superseding the specified version.
-    # if 'productVersion.txt' is missing but download link is already available, product version will be taken from download link
     eval $invocation
 
     local azure_feed="$1"
@@ -773,7 +683,6 @@ get_specific_product_version() {
     fi
     local specific_product_version=null
 
-    # Try to get the version number, using the productVersion.txt file located next to the installer file.
     local download_links=($(get_specific_product_version_url "$azure_feed" "$specific_version" true "$package_download_link")
         $(get_specific_product_version_url "$azure_feed" "$specific_version" false "$package_download_link"))
 
@@ -800,18 +709,12 @@ get_specific_product_version() {
         fi
     done
     
-    # Getting the version number with productVersion.txt has failed. Try parsing the download link for a version number.
     say_verbose "Failed to get the version using productVersion.txt file. Download link will be parsed instead."
     specific_product_version="$(get_product_specific_version_from_download_link "$package_download_link" "$specific_version")"
     echo "${specific_product_version//[$'\t\r\n']}"
     return 0
 }
 
-# args:
-# azure_feed - $1
-# specific_version - $2
-# is_flattened - $3
-# download link - $4 (optional)
 get_specific_product_version_url() {
     eval $invocation
 
@@ -855,9 +758,6 @@ get_specific_product_version_url() {
     return 0
 }
 
-# args:
-# download link - $1
-# specific version - $2
 get_product_specific_version_from_download_link()
 {
     eval $invocation
@@ -871,12 +771,9 @@ get_product_specific_version_from_download_link()
         return 0
     fi
 
-    #get filename
     filename="${download_link##*/}"
 
-    #product specific version follows the product name
-    #for filename 'dotnet-sdk-3.1.404-linux-x64.tar.gz': the product version is 3.1.404
-    IFS='-'
+   IFS='-'
     read -ra filename_elems <<< "$filename"
     count=${#filename_elems[@]}
     if [[ "$count" -gt 2 ]]; then
@@ -889,11 +786,6 @@ get_product_specific_version_from_download_link()
     return 0
 }
 
-# args:
-# azure_feed - $1
-# channel - $2
-# normalized_architecture - $3
-# specific_version - $4
 construct_legacy_download_link() {
     eval $invocation
 
@@ -929,8 +821,6 @@ get_user_install_path() {
     return 0
 }
 
-# args:
-# install_dir - $1
 resolve_installation_path() {
     eval $invocation
 
@@ -946,8 +836,6 @@ resolve_installation_path() {
     return 0
 }
 
-# args:
-# relative_or_absolute_path - $1
 get_absolute_path() {
     eval $invocation
 
@@ -956,8 +844,6 @@ get_absolute_path() {
     return 0
 }
 
-# args:
-# override - $1 (boolean, true or false)
 get_cp_options() {
     eval $invocation
 
@@ -967,19 +853,16 @@ get_cp_options() {
     if [ "$override" = false ]; then
         override_switch="-n"
 
-        # create temporary files to check if 'cp -u' is supported
         tmp_dir="$(mktemp -d)"
         tmp_file="$tmp_dir/testfile"
         tmp_file2="$tmp_dir/testfile2"
 
         touch "$tmp_file"
 
-        # use -u instead of -n if it's available
         if cp -u "$tmp_file" "$tmp_file2" 2>/dev/null; then
             override_switch="-u"
         fi
 
-        # clean up
         rm -f "$tmp_file" "$tmp_file2"
         rm -rf "$tmp_dir"
     fi
@@ -987,11 +870,6 @@ get_cp_options() {
     echo "$override_switch"
 }
 
-# args:
-# input_files - stdin
-# root_path - $1
-# out_path - $2
-# override - $3
 copy_files_or_dirs_from_list() {
     eval $invocation
 
@@ -1013,8 +891,6 @@ copy_files_or_dirs_from_list() {
     done
 }
 
-# args:
-# zip_uri - $1
 get_remote_file_size() {
     local zip_uri="$1"
 
@@ -1036,10 +912,6 @@ get_remote_file_size() {
     fi
 }
 
-# args:
-# zip_path - $1
-# out_path - $2
-# remote_file_size - $3
 extract_dotnet_package() {
     eval $invocation
 
@@ -1070,9 +942,6 @@ extract_dotnet_package() {
     return 0
 }
 
-# args:
-# remote_path - $1
-# disable_feed_credential - $2
 get_http_header()
 {
     eval $invocation
@@ -1095,9 +964,6 @@ get_http_header()
     return 0
 }
 
-# args:
-# remote_path - $1
-# disable_feed_credential - $2
 get_http_header_curl() {
     eval $invocation
     local remote_path="$1"
@@ -1113,9 +979,6 @@ get_http_header_curl() {
     return 0
 }
 
-# args:
-# remote_path - $1
-# disable_feed_credential - $2
 get_http_header_wget() {
     eval $invocation
     local remote_path="$1"
@@ -1124,7 +987,6 @@ get_http_header_wget() {
 
     local wget_options_extra=''
 
-    # Test for options that aren't supported on all wget implementations.
     if [[ $(wget -h 2>&1 | grep -E 'waitretry|connect-timeout') ]]; then
         wget_options_extra="--waitretry 2 --connect-timeout 15 "
     else
@@ -1141,9 +1003,6 @@ get_http_header_wget() {
     return $?
 }
 
-# args:
-# remote_path - $1
-# [out_path] - $2 - stdout if not provided
 download() {
     eval $invocation
 
@@ -1185,15 +1044,12 @@ download() {
     return 0
 }
 
-# Updates global variables $http_code and $download_error_msg
 downloadcurl() {
     eval $invocation
     unset http_code
     unset download_error_msg
     local remote_path="$1"
     local out_path="${2:-}"
-    # Append feed_credential as late as possible before calling curl to avoid logging feed_credential
-    # Avoid passing URI with credentials to functions: note, most of them echoing parameters of invocation in verbose output.
     local remote_path_with_credential="${remote_path}${feed_credential}"
     local curl_options="--retry 20 --retry-delay 2 --connect-timeout 15 -sSL -f --create-dirs "
     local curl_exit_code=0;
@@ -1206,14 +1062,13 @@ downloadcurl() {
         curl_exit_code=$?
     fi
 
-    # Regression in curl causes curl with --retry to return a 0 exit code even when it fails to download a file - https://github.com/curl/curl/issues/17554
     if [ $curl_exit_code -eq 0 ] && echo "$curl_output" | grep -q "^curl: ([0-9]*) "; then
         curl_exit_code=$(echo "$curl_output" | sed 's/curl: (\([0-9]*\)).*/\1/')
     fi
 
     if [ $curl_exit_code -gt 0 ]; then
         download_error_msg="Unable to download $remote_path."
-        # Check for curl timeout codes
+        
         if [[ $curl_exit_code == 7 || $curl_exit_code == 28 ]]; then
             download_error_msg+=" Failed to reach the server: connection timeout."
         else
@@ -1230,22 +1085,18 @@ downloadcurl() {
     return 0
 }
 
-
-# Updates global variables $http_code and $download_error_msg
 downloadwget() {
     eval $invocation
     unset http_code
     unset download_error_msg
     local remote_path="$1"
     local out_path="${2:-}"
-    # Append feed_credential as late as possible before calling wget to avoid logging feed_credential
     local remote_path_with_credential="${remote_path}${feed_credential}"
     local wget_options="--tries 20 "
 
     local wget_options_extra=''
     local wget_result=''
 
-    # Test for options that aren't supported on all wget implementations.
     if [[ $(wget -h 2>&1 | grep -E 'waitretry|connect-timeout') ]]; then
         wget_options_extra="--waitretry 2 --connect-timeout 15 "
     else
@@ -1267,7 +1118,6 @@ downloadwget() {
         download_error_msg="Unable to download $remote_path."
         if  [[ ! -z $http_code && $http_code != 2* ]]; then
             download_error_msg+=" Returned HTTP status code: $http_code."
-        # wget exit code 4 stands for network-issue
         elif [[ $wget_result == 4 ]]; then
             download_error_msg+=" Failed to reach the server: connection timeout."
         fi
@@ -1281,8 +1131,6 @@ downloadwget() {
 get_download_link_from_aka_ms() {
     eval $invocation
 
-    #quality is not supported for LTS or STS channel
-    #STS maps to current
     if [[ ! -z "$normalized_quality"  && ("$normalized_channel" == "LTS" || "$normalized_channel" == "STS") ]]; then
         normalized_quality=""
         say_warning "Specifying quality for STS or LTS channel is not supported, the quality will be ignored."
@@ -1290,7 +1138,7 @@ get_download_link_from_aka_ms() {
 
     say_verbose "Retrieving primary payload URL from aka.ms for channel: '$normalized_channel', quality: '$normalized_quality', product: '$normalized_product', os: '$normalized_os', architecture: '$normalized_architecture'." 
 
-    #construct aka.ms link
+    
     aka_ms_link="https://aka.ms/dotnet"
     if  [ "$internal" = true ]; then
         aka_ms_link="$aka_ms_link/internal"
@@ -1302,26 +1150,18 @@ get_download_link_from_aka_ms() {
     aka_ms_link="$aka_ms_link/$normalized_product-$normalized_os-$normalized_architecture.tar.gz"
     say_verbose "Constructed aka.ms link: '$aka_ms_link'."
 
-    #get HTTP response
-    #do not pass credentials as a part of the $aka_ms_link and do not apply credentials in the get_http_header function
-    #otherwise the redirect link would have credentials as well
-    #it would result in applying credentials twice to the resulting link and thus breaking it, and in echoing credentials to the output as a part of redirect link
     disable_feed_credential=true
     response="$(get_http_header $aka_ms_link $disable_feed_credential)"
 
     say_verbose "Received response: $response"
-    # Get results of all the redirects.
+   
     http_codes=$( echo "$response" | awk '$1 ~ /^HTTP/ {print $2}' )
-    # Allow intermediate 301 redirects and tolerate proxy-injected 200s
     broken_redirects=$( echo "$http_codes" | sed '$d' | grep -vE '^(301|200)$' )
-    # The response may end without final code 2xx/4xx/5xx somehow, e.g. network restrictions on www.bing.com causes redirecting to bing.com fails with connection refused.
-    # In this case it should not exclude the last.
     last_http_code=$(  echo "$http_codes" | tail -n 1 )
     if ! [[ $last_http_code =~ ^(2|4|5)[0-9][0-9]$ ]]; then
         broken_redirects=$( echo "$http_codes" | grep -vE '^(301|200)$' )
     fi
 
-    # All HTTP codes are 301 (Moved Permanently), the redirect link exists.
     if [[ -z "$broken_redirects" ]]; then
         aka_ms_download_link=$( echo "$response" | awk '$1 ~ /^Location/{print $2}' | tail -1 | tr -d '\r')
 
@@ -1354,7 +1194,6 @@ get_feeds_to_use()
     fi
 }
 
-# THIS FUNCTION MAY EXIT (if the determined version is already installed).
 generate_download_links() {
 
     download_links=()
@@ -1362,15 +1201,11 @@ generate_download_links() {
     effective_versions=()
     link_types=()
 
-    # If generate_akams_links returns false, no fallback to old links. Just terminate.
-    # This function may also 'exit' (if the determined version is already installed).
     generate_akams_links || return
 
-    # Check other feeds only if we haven't been able to find an aka.ms link.
     if [[ "${#download_links[@]}" -lt 1 ]]; then
         for feed in ${feeds[@]}
         do
-            # generate_regular_links may also 'exit' (if the determined version is already installed).
             generate_regular_links $feed || return
         done
     fi
@@ -1387,7 +1222,6 @@ generate_download_links() {
     done
 }
 
-# THIS FUNCTION MAY EXIT (if the determined version is already installed).
 generate_akams_links() {
     local valid_aka_ms_link=true;
 
@@ -1398,7 +1232,6 @@ generate_akams_links() {
     fi
 
     if [[ -n "$json_file" || "$normalized_version" != "latest" ]]; then
-        # aka.ms links are not needed when exact version is specified via command or json file
         return
     fi
 
@@ -1410,24 +1243,20 @@ generate_akams_links() {
 
         download_link=$aka_ms_download_link
 
-        #get version from the path
-        IFS='/'
+       IFS='/'
         read -ra pathElems <<< "$download_link"
         count=${#pathElems[@]}
         specific_version="${pathElems[count-2]}"
         unset IFS;
         say_verbose "Version: '$specific_version'."
 
-        #Retrieve effective version
         effective_version="$(get_specific_product_version "$azure_feed" "$specific_version" "$download_link")"
 
-        # Add link info to arrays
         download_links+=($download_link)
         specific_versions+=($specific_version)
         effective_versions+=($effective_version)
         link_types+=("aka.ms")
 
-        #  Check if the SDK version is already installed.
         if [[ "$dry_run" != true ]] && is_dotnet_package_installed "$install_root" "$asset_relative_path" "$effective_version"; then
             say "$asset_name with version '$effective_version' is already installed."
             exit 0
@@ -1436,7 +1265,6 @@ generate_akams_links() {
         return 0
     fi
 
-    # if quality is specified - exit with error - there is no fallback approach
     if [ ! -z "$normalized_quality" ]; then
         say_err "Failed to locate the latest version in the channel '$normalized_channel' with '$normalized_quality' quality for '$normalized_product', os: '$normalized_os', architecture: '$normalized_architecture'."
         say_err "Refer to: https://aka.ms/dotnet-os-lifecycle for information on .NET Core support."
@@ -1445,9 +1273,6 @@ generate_akams_links() {
     say_verbose "Falling back to latest.version file approach."
 }
 
-# THIS FUNCTION MAY EXIT (if the determined version is already installed)
-# args:
-# feed - $1
 generate_regular_links() {
     local feed="$1"
     local valid_legacy_download_link=true
@@ -1465,7 +1290,6 @@ generate_regular_links() {
     download_link="$(construct_download_link "$feed" "$channel" "$normalized_architecture" "$specific_version" "$normalized_os")"
     say_verbose "Constructed primary named payload URL: $download_link"
 
-    # Add link info to arrays
     download_links+=($download_link)
     specific_versions+=($specific_version)
     effective_versions+=($effective_version)
@@ -1485,7 +1309,6 @@ generate_regular_links() {
         say_verbose "Could not construct a legacy_download_link; omitting..."
     fi
 
-    #  Check if the SDK version is already installed.
     if [[ "$dry_run" != true ]] && is_dotnet_package_installed "$install_root" "$asset_relative_path" "$effective_version"; then
         say "$asset_name with version '$effective_version' is already installed."
         exit 0
@@ -1575,7 +1398,6 @@ install_dotnet() {
 
         say "Attempting to download using $link_type link $download_link"
 
-        # The download function will set variables $http_code and $download_error_msg in case of failure.
         download_failed=false
         download "$download_link" "$zip_path" 2>&1 || download_failed=true
 
@@ -1606,8 +1428,6 @@ install_dotnet() {
     say "Extracting archive from $download_link"
     extract_dotnet_package "$zip_path" "$install_root" "$remote_file_size" || return 1
 
-    #  Check if the SDK version is installed; if not, fail the installation.
-    # if the version contains "RTM" or "servicing"; check if a 'release-type' SDK version is installed.
     if [[ $specific_version == *"rtm"* || $specific_version == *"servicing"* ]]; then
         IFS='-'
         read -ra verArr <<< "$specific_version"
@@ -1620,15 +1440,13 @@ install_dotnet() {
         fi
     fi
 
-    #  Check if the standard SDK version is installed.
     say_verbose "Checking installation: version = $effective_version"
     if is_dotnet_package_installed "$install_root" "$asset_relative_path" "$effective_version"; then
         say "Installed version is $effective_version"
         return 0
     fi
 
-    # Version verification failed. More likely something is wrong either with the downloaded content or with the verification algorithm.
-    say_err "Failed to verify the version of installed \`$asset_name\`.\nInstallation source: $download_link.\nInstallation location: $install_root.\nReport the bug at https://github.com/dotnet/install-scripts/issues."
+     "Failed to verify the version of installed \`$asset_name\`.\nInstallation source: $download_link.\nInstallation location: $install_root.\nReport the bug at https://github.com/dotnet/install-scripts/issues."
     say_err "\`$asset_name\` with version = $effective_version failed to install with an error."
     return 1
 }
@@ -1731,8 +1549,6 @@ do
         --feed-credential|-[Ff]eed[Cc]redential)
             shift
             feed_credential="$1"
-            #feed_credential should start with "?", for it to be added to the end of the link.
-            #adding "?" at the beginning of the feed_credential if needed.
             [[ -z "$(echo $feed_credential)" ]] || [[ $feed_credential == \?* ]] || feed_credential="?$feed_credential"
             ;;
         --runtime-id|-[Rr]untime[Ii]d)
@@ -1864,7 +1680,6 @@ fi
 
 check_min_reqs
 calculate_vars
-# generate_regular_links call below will 'exit' if the determined version is already installed.
 generate_download_links
 
 if [[ "$dry_run" = true ]]; then

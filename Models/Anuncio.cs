@@ -20,7 +20,6 @@ namespace ConectaFree.Models
         public required string Descricao { get; set; }
         public decimal ValorProposto { get; set; }
 
-        // Quantas pessoas o contratante precisa para esta vaga. Quando todas forem aceitas, a vaga sai de "Aberta".
         public int QuantidadePessoas { get; set; } = 1;
         public int HabilidadeId { get; set; }
         public Habilidade Habilidade { get; set; } = null!;
@@ -33,10 +32,8 @@ namespace ConectaFree.Models
         public bool Urgente { get; set; } = false;
         public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
 
-        // Dia em que o serviço acontece
         public DateOnly? DataServico { get; set; }
 
-        // true: o serviço é no endereço do contratante; false: usa os campos Local* abaixo
         public bool UsarEnderecoEmpresa { get; set; } = true;
 
         [MaxLength(9)] public string? LocalCep { get; set; }

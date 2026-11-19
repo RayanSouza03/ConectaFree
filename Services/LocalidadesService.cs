@@ -4,7 +4,6 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace ConectaFree.Services
 {
-    // Lista oficial de estados e municípios (API de Localidades do IBGE), com cache de 24h
     public class LocalidadesService : ILocalidadesService
     {
         private const string Base = "https://servicodados.ibge.gov.br/api/v1/localidades";
@@ -56,7 +55,6 @@ namespace ConectaFree.Services
             return lista ?? new List<CidadeDto>();
         }
 
-        // Estrutura do IBGE: microrregiao.mesorregiao.UF.sigla (alguns municípios novos só têm regiao-imediata)
         private static string SiglaDoMunicipio(JsonElement m, string ufConsultada)
         {
             if (ufConsultada.Length == 2) return ufConsultada;

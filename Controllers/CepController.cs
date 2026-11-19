@@ -19,7 +19,6 @@ namespace ConectaFree.Controllers
         private static string Txt(JsonElement e, string nome) =>
             e.TryGetProperty(nome, out var v) && v.ValueKind == JsonValueKind.String ? (v.GetString() ?? "") : "";
 
-        // Ordem: ViaCEP -> BrasilAPI -> Google Geocoding (se Google:MapsKey estiver configurada)
         [HttpGet("{cep}")]
         public async Task<IActionResult> Buscar(string cep)
         {
@@ -37,7 +36,7 @@ namespace ConectaFree.Controllers
                 if (!r.TryGetProperty("erro", out _))
                     return Ok(new { cep = digitos, logradouro = Txt(r, "logradouro"), bairro = Txt(r, "bairro"), cidade = Txt(r, "localidade"), estado = Txt(r, "uf"), fonte = "ViaCEP" });
             }
-            catch { /* tenta o próximo provedor */ }
+            catch {}
 
             try
             {
@@ -45,7 +44,7 @@ namespace ConectaFree.Controllers
                 var r = doc.RootElement;
                 return Ok(new { cep = digitos, logradouro = Txt(r, "street"), bairro = Txt(r, "neighborhood"), cidade = Txt(r, "city"), estado = Txt(r, "state"), fonte = "BrasilAPI" });
             }
-            catch { /* tenta o próximo provedor */ }
+            catch {}
 
             var chave = _config["Google:MapsKey"];
             if (!string.IsNullOrWhiteSpace(chave))
@@ -69,7 +68,7 @@ namespace ConectaFree.Controllers
                         return Ok(new { cep = digitos, logradouro = rua, bairro, cidade, estado, fonte = "Google" });
                     }
                 }
-                catch { /* sem resultado */ }
+                catch {}
             }
 
             return NotFound(new { erro = "CEP não encontrado." });

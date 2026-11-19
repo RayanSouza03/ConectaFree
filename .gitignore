@@ -1,8 +1,6 @@
-# Build output
 bin/
 obj/
 
-# Visual Studio and VS Code local files
 .vs/
 *.user
 *.suo
@@ -12,17 +10,14 @@ obj/
 !.vscode/extensions.json
 !.vscode/settings.json
 
-# Local environment and secrets
 appsettings.*.local.json
 *.pfx
 
-# Logs and temporary files
 *.log
 *.tmp
 *.temp
 
-# Operating system files
 .DS_Store
 Thumbs.db
-# Fotos enviadas em modo local
+
 wwwroot/uploads/

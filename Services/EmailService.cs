@@ -4,8 +4,7 @@ using ConectaFree.Interfaces;
 
 namespace ConectaFree.Services
 {
-    // Envia e-mail por Resend ou Brevo (Email:Provedor). Sem chave configurada, só registra um aviso no log.
-    public class EmailService : IEmailService
+     public class EmailService : IEmailService
     {
         private readonly IHttpClientFactory _factory;
         private readonly IConfiguration _config;
@@ -20,7 +19,6 @@ namespace ConectaFree.Services
 
         public void Enfileirar(string para, string? nomeDestino, string assunto, string html)
         {
-            // EnviarAsync captura qualquer erro, então a tarefa nunca termina com exceção não observada
             _ = Task.Run(() => EnviarAsync(para, nomeDestino, assunto, html));
         }
 

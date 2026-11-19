@@ -33,7 +33,6 @@ namespace ConectaFree.Controllers
             return Ok(lista.Select(h => new HabilidadeDto(h.Id, h.Nome)));
         }
 
-        // Cria a categoria se ainda não existir (ignora maiúsculas/minúsculas) e devolve {id, nome}.
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> ObterOuCriar([FromBody] NovaCategoriaDto dto)

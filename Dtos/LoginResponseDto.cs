@@ -11,7 +11,6 @@ namespace ConectaFree.Dtos
 
         public required TipoUsuario TipoUsuario { get; set; }
 
-        // true = a pessoa ainda não aceitou a versão atual dos Termos: o front exibe o aceite antes de liberar o sistema
         public bool PrecisaAceitarTermos { get; set; }
     }
 }

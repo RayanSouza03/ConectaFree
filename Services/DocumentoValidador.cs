@@ -5,7 +5,6 @@ namespace ConectaFree.Services
         public static string Digitos(string? texto) =>
             new string((texto ?? string.Empty).Where(char.IsDigit).ToArray());
 
-        // Valida o formato e os dois dígitos verificadores (não consulta a Receita)
         public static bool CnpjValido(string? cnpj)
         {
             var d = Digitos(cnpj);

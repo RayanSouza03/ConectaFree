@@ -2,7 +2,6 @@ using System.Net;
 
 namespace ConectaFree.Services
 {
-    // Textos dos e-mails. Todo dado vindo de usuário passa por HtmlEncode.
     public static class EmailTemplates
     {
         private static string H(string? texto) => WebUtility.HtmlEncode(texto ?? string.Empty);

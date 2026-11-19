@@ -14,7 +14,7 @@ namespace ConectaFree.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            // Vagas que já existem continuam precisando de 1 pessoa (comportamento de antes)
+            
             migrationBuilder.AddColumn<int>(
                 name: "QuantidadePessoas",
                 table: "Anuncios",

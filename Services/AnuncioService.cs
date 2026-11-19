@@ -113,7 +113,6 @@ namespace ConectaFree.Services
             return await MontarAsync(lista, null, completo: true);
         }
 
-        // Valida data e local e grava no anúncio (criação e edição usam o mesmo caminho)
         private static void AplicarServico(Anuncio anuncio, AnuncioDto dto)
         {
             if (dto.DataServico is null)
@@ -199,7 +198,6 @@ namespace ConectaFree.Services
             anuncio.Status = LerStatus(dto.Status, anuncio.Status);
             AplicarServico(anuncio, dto);
 
-            // Se a vaga já está com todas as pessoas aceitas, ela não pode continuar aberta
             if (anuncio.Status == StatusAnuncio.Aberta && aceitas >= anuncio.QuantidadePessoas)
                 anuncio.Status = StatusAnuncio.EmAndamento;
 
@@ -252,7 +250,6 @@ namespace ConectaFree.Services
             await NotificarNovoCandidatoAsync(anuncio, freelancerId);
         }
 
-        // E-mail ao contratante. A candidatura já foi salva: se o aviso falhar, não derruba a requisição.
         private async Task NotificarNovoCandidatoAsync(Anuncio anuncio, int freelancerId)
         {
             try
@@ -328,7 +325,6 @@ namespace ConectaFree.Services
             var jaEstavaAceita = candidatura.Status == StatusCandidatura.Aceita;
             var anuncio = candidatura.Anuncio;
 
-            // Aceitos de verdade hoje (esta candidatura só conta se já estava aceita)
             var aceitas = await ContarAceitasAsync(anuncio.Id);
 
             if (novo == StatusCandidatura.Aceita && !jaEstavaAceita && aceitas >= anuncio.QuantidadePessoas)
@@ -340,21 +336,18 @@ namespace ConectaFree.Services
             if (novo == StatusCandidatura.Aceita && !jaEstavaAceita)
             {
                 aceitas++;
-                // Completou a quantidade: a vaga entra em andamento e deixa de aparecer para os outros freelancers
                 if (anuncio.Status == StatusAnuncio.Aberta && aceitas >= anuncio.QuantidadePessoas)
                     anuncio.Status = StatusAnuncio.EmAndamento;
             }
             else if (novo == StatusCandidatura.Recusada && jaEstavaAceita)
             {
                 aceitas--;
-                // Desfez um aceite e voltou a faltar gente: a vaga reabre
                 if (anuncio.Status == StatusAnuncio.EmAndamento && aceitas < anuncio.QuantidadePessoas)
                     anuncio.Status = StatusAnuncio.Aberta;
             }
 
             await _context.SaveChangesAsync();
 
-            // Avisa o freelancer só na transição para "Aceita" (clicar de novo não reenvia)
             if (novo == StatusCandidatura.Aceita && !jaEstavaAceita)
             {
                 try

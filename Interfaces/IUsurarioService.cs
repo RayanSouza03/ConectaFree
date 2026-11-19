@@ -3,7 +3,6 @@ using ConectaFree.Models;
 
 namespace ConectaFree.Interfaces
 {
-    // Lançada quando a conta está temporariamente bloqueada por excesso de senhas erradas
     public class ContaBloqueadaException : Exception
     {
         public int MinutosRestantes { get; }

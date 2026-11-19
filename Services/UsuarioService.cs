@@ -135,11 +135,9 @@ namespace ConectaFree.Services
             return dados;
         }
 
-        // Limites do bloqueio por conta: 5 erros seguidos => 15 minutos sem conseguir entrar
         private const int MaxTentativasLogin = 5;
         private static readonly TimeSpan TempoBloqueio = TimeSpan.FromMinutes(15);
 
-        // Hash falso: confere a senha mesmo quando o e-mail não existe, para o tempo de resposta não revelar quem tem conta
         private static readonly string HashFalso = BCrypt.Net.BCrypt.HashPassword("senha-falsa-nao-usada");
 
         public async Task<LoginResponseDto?> LoginAsync(LoginDto dto)
@@ -153,7 +151,6 @@ namespace ConectaFree.Services
                 return null;
             }
 
-            // Conta bloqueada: nem confere a senha (quem acertar agora também espera o prazo acabar)
             if (usuario.BloqueadoAte.HasValue && usuario.BloqueadoAte.Value > DateTime.UtcNow)
             {
                 var minutos = (int)Math.Ceiling((usuario.BloqueadoAte.Value - DateTime.UtcNow).TotalMinutes);
@@ -172,7 +169,6 @@ namespace ConectaFree.Services
                 return null;
             }
 
-            // Acertou: zera o contador
             if (usuario.TentativasLogin > 0 || usuario.BloqueadoAte.HasValue)
             {
                 usuario.TentativasLogin = 0;
@@ -189,11 +185,9 @@ namespace ConectaFree.Services
             Nome = usuario.Nome,
             Email = usuario.Email,
             TipoUsuario = usuario.TipoUsuario,
-            // Quem nunca aceitou, ou aceitou uma versão antiga, precisa aceitar de novo
             PrecisaAceitarTermos = !usuario.AceitouTermos || usuario.VersaoTermosAceita != TermosDeUso.Versao
         };
 
-        // Registra o aceite da versão vigente dos termos (data e versão ficam guardadas como comprovação)
         public async Task AceitarTermosAsync(int usuarioId)
         {
             var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == usuarioId)
@@ -205,8 +199,6 @@ namespace ConectaFree.Services
             await _context.SaveChangesAsync();
         }
 
-        // ---------- Google Identity Services ----------
-        // O front recebe um ID token do Google; aqui conferimos assinatura, validade e se foi emitido para o nosso Client ID.
         public async Task<GoogleLoginResultado> LoginGoogleAsync(GoogleLoginDto dto)
         {
             var clientId = _config["Google:ClientId"];
@@ -232,7 +224,6 @@ namespace ConectaFree.Services
             if (existente != null)
                 return new GoogleLoginResultado { Login = MontarLogin(existente) };
 
-            // Conta nova: o Google não informa tipo, telefone nem CPF/CNPJ. Peça esses dados na tela de cadastro.
             var nomeInformado = string.IsNullOrWhiteSpace(dto.Nome) ? payload.Name : dto.Nome;
             if (dto.TipoUsuario is null || string.IsNullOrWhiteSpace(dto.Telefone) ||
                 string.IsNullOrWhiteSpace(dto.Documento) || dto.AceitouTermos != true)
@@ -244,7 +235,6 @@ namespace ConectaFree.Services
             {
                 Nome = string.IsNullOrWhiteSpace(nomeInformado) ? email : nomeInformado,
                 Email = email,
-                // Sem senha própria: sorteia uma que ninguém conhece (dá para definir uma depois em "Esqueci a senha")
                 Senha = Convert.ToHexString(RandomNumberGenerator.GetBytes(24)),
                 Telefone = dto.Telefone!,
                 Documento = dto.Documento!,
@@ -255,9 +245,6 @@ namespace ConectaFree.Services
             return new GoogleLoginResultado { Login = MontarLogin(novo) };
         }
 
-        // ---------- Esqueci a senha ----------
-        // Token sem tabela: um JWT assinado com a chave do app + o hash da senha ATUAL.
-        // Quando a senha muda, o hash muda e o link antigo deixa de valer (uso único).
         private const string EmissorReset = "ConectaFree-reset";
 
         private SymmetricSecurityKey ChaveReset(Usuario usuario) =>

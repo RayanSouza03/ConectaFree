@@ -16,7 +16,6 @@ namespace ConectaFree.Controllers
             _cnpj = cnpj;
         }
 
-        // Usado pela tela de cadastro (ainda sem login) para validar e preencher os dados da empresa
         [EnableRateLimiting("consulta")]
         [HttpGet("{cnpj}")]
         public async Task<IActionResult> Consultar(string cnpj, CancellationToken ct)

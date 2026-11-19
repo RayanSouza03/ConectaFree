@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ConectaFree.Controllers
 {
-    // Configurações públicas que o front precisa (nada secreto aqui)
     [ApiController]
     [Route("api/[controller]")]
     public class ConfigController : ControllerBase

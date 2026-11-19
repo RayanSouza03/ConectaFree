@@ -3,8 +3,6 @@ using ConectaFree.Models;
 
 namespace ConectaFree.Dtos
 {
-    // Login/cadastro com Google. Só "Credential" é obrigatório; os demais campos
-    // são enviados na segunda chamada, quando o e-mail ainda não tem conta.
     public class GoogleLoginDto
     {
         [Required]

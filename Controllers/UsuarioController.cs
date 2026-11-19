@@ -54,7 +54,6 @@ namespace ConectaFree.Controllers
             }
         }
 
-        // Recebe o ID token do Google. Devolve o login (token JWT) ou { precisaCadastro: true } para contas novas.
         [EnableRateLimiting("login")]
         [HttpPost("google")]
         public async Task<IActionResult> LoginGoogle(GoogleLoginDto dto)
@@ -71,7 +70,6 @@ namespace ConectaFree.Controllers
             }
         }
 
-        // Sempre responde igual, exista o e-mail ou não (não dá para descobrir quem tem conta)
         [EnableRateLimiting("recuperacao")]
         [HttpPost("esqueci-senha")]
         public async Task<IActionResult> EsqueciSenha(EsqueciSenhaDto dto)
@@ -95,7 +93,6 @@ namespace ConectaFree.Controllers
             }
         }
 
-        // Chamado pela janela de aceite exibida no login quando os termos são novos ou mudaram
         [Authorize]
         [HttpPost("aceitar-termos")]
         public async Task<IActionResult> AceitarTermos()

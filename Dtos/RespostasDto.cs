@@ -10,7 +10,6 @@ namespace ConectaFree.Dtos
 
     public record ContratanteResumoDto(int Id, string Nome, string? FotoUrl, LocalVagaDto? Endereco);
 
-    // Rua e número só vão para o dono da vaga; os demais veem bairro/cidade/UF.
     public record LocalServicoDto(
         bool EnderecoDaEmpresa, string? Cep, string? Logradouro, string? Numero, string? Complemento,
         string? Bairro, string? Cidade, string? Estado);
@@ -21,13 +20,11 @@ namespace ConectaFree.Dtos
         ContratanteResumoDto Contratante, int TotalCandidaturas, string? MinhaCandidatura,
         DateOnly? DataServico, LocalServicoDto Local, int QuantidadePessoas, int PessoasAceitas);
 
-    // Perfil completo: só devolvido ao próprio dono (GET/PUT /Usuarios/perfil)
     public record PerfilRespostaDto(
         int Id, string Nome, string Email, string Telefone, string? Bio, string? FotoUrl,
         TipoUsuario TipoUsuario, string? OutraHabilidade, List<HabilidadeDto> Habilidades,
         EnderecoRespostaDto? Endereco, string Documento);
 
-    // Perfil visível para outros usuários (sem e-mail, telefone, documento ou endereço completo)
     public record PerfilPublicoDto(
         int Id, string Nome, string? Bio, string? FotoUrl, TipoUsuario TipoUsuario,
         string? OutraHabilidade, List<HabilidadeDto> Habilidades, LocalDto? Endereco);
